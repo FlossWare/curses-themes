@@ -257,6 +257,43 @@ class TerminalRenderer:
             fill=bg_color
         )
 
+    def draw_shadow(
+        self,
+        y: int,
+        x: int,
+        height: int,
+        width: int,
+        shadow_color: Tuple[int, int, int],
+        offset_x: int = 2,
+        offset_y: int = 1
+    ):
+        """
+        Draw a drop shadow behind a rectangular element.
+
+        Renders shadow strips on the right and bottom edges of a box to
+        create a 3D depth illusion, matching the shadow rendering behavior
+        from Theme3D.draw_box_3d().
+
+        Args:
+            y: Top-left row of the box (not the shadow)
+            x: Top-left column of the box (not the shadow)
+            height: Box height in characters
+            width: Box width in characters
+            shadow_color: RGB color for the shadow
+            offset_x: Horizontal shadow offset in characters (default: 2)
+            offset_y: Vertical shadow offset in characters (default: 1)
+        """
+        shadow_y = y + offset_y
+        shadow_x = x + offset_x
+
+        # Right edge shadow strip
+        if offset_x > 0:
+            self.fill_rect(shadow_y, x + width, height, offset_x, shadow_color)
+
+        # Bottom edge shadow strip (extends full width including offset)
+        if offset_y > 0:
+            self.fill_rect(y + height, shadow_x, offset_y, width, shadow_color)
+
     def draw_box(
         self,
         y: int,
@@ -415,6 +452,16 @@ def render_theme_screenshot(theme: Theme, renderer: TerminalRenderer) -> Image.I
     renderer.fill_rect(3, 2, 15, 54, bg_color)
     renderer.draw_box(3, 2, 15, 54, border_chars, border_fg, border_bg, "DEMO PANEL")
 
+    # Draw shadow behind demo panel for 3D themes
+    if isinstance(theme, Theme3D):
+        try:
+            shadow = theme.get_shadow_color()
+            shadow_color = shadow.foreground if shadow else (0, 0, 0)
+            renderer.draw_shadow(3, 2, 15, 54, shadow_color,
+                                 theme.shadow_offset_x, theme.shadow_offset_y)
+        except Exception:
+            pass
+
     # Buttons (rows 5-7)
     renderer.addstr(5, 4, "Buttons:", fg_color, bg_color)
     renderer.addstr(6, 6, "[ Normal Button ]", button_fg, button_bg)
@@ -433,6 +480,17 @@ def render_theme_screenshot(theme: Theme, renderer: TerminalRenderer) -> Image.I
 
     # Row 3-11: Semantic colors panel
     renderer.draw_box(3, 58, 9, 22, border_chars, border_fg, border_bg, "COLORS")
+
+    # Draw shadow behind colors panel for 3D themes
+    if isinstance(theme, Theme3D):
+        try:
+            shadow = theme.get_shadow_color()
+            shadow_color = shadow.foreground if shadow else (0, 0, 0)
+            renderer.draw_shadow(3, 58, 9, 22, shadow_color,
+                                 theme.shadow_offset_x, theme.shadow_offset_y)
+        except Exception:
+            pass
+
     renderer.addstr(5, 60, "✓ Success message", success_color, bg_color)
     renderer.addstr(6, 60, "✗ Error message", error_color, bg_color)
     renderer.addstr(7, 60, "⚠ Warning message", warning_color, bg_color)
