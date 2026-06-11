@@ -26,8 +26,8 @@ def main(stdscr):
     theme.apply(stdscr)
     
     # Use semantic colors
-    stdscr.addstr(0, 0, "Success!", theme.colors.success)
-    stdscr.addstr(1, 0, "Error!", theme.colors.error)
+    stdscr.addstr(0, 0, "Success!", curses.color_pair(theme.colors.success))
+    stdscr.addstr(1, 0, "Error!", curses.color_pair(theme.colors.error))
     
     # Draw themed boxes
     theme.draw_box(stdscr, 3, 2, 10, 40, title="My Panel")
