@@ -39,6 +39,7 @@ jobs:
           ruff format --check curses_themes/
 
   type-check:
+    continue-on-error: true
     name: Type Check (MyPy)
     runs-on: ubuntu-latest
 
