@@ -73,9 +73,19 @@ Example:
         theme = ThemeManager.load('my-theme')
 """
 
-from .theme import Theme, SemanticColors
+from .theme import Theme, SemanticColors, ComponentColors, ColorPair
 from .manager import ThemeManager
 from .colors import ColorManager
+from .themes import (
+    DefaultTheme,
+    DarkTheme,
+    LightTheme,
+    TI994ATheme,
+    TRS80Theme,
+    DOSTheme,
+    DBase3Theme,
+    DBase4Theme,
+)
 
 __version__ = '0.1.0'
 __author__ = 'FlossWare'
@@ -85,6 +95,16 @@ __all__ = [
     'Theme',
     'ThemeManager',
     'SemanticColors',
+    'ComponentColors',
+    'ColorPair',
     'ColorManager',
+    'DefaultTheme',
+    'DarkTheme',
+    'LightTheme',
+    'TI994ATheme',
+    'TRS80Theme',
+    'DOSTheme',
+    'DBase3Theme',
+    'DBase4Theme',
     '__version__',
 ]

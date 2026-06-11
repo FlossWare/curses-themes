@@ -26,6 +26,72 @@ from typing import Dict, Tuple, Optional
 import curses
 
 
+class ColorPair:
+    """Represents a foreground/background color pair."""
+    def __init__(self, foreground: Tuple[int, int, int], background: Tuple[int, int, int]):
+        self.foreground = foreground
+        self.background = background
+
+    def __repr__(self):
+        return f"ColorPair(fg={self.foreground}, bg={self.background})"
+
+
+class ComponentColors:
+    """
+    Container for component-based color pairs used by themes.
+
+    Provides the component-based API that matches curses-java Theme interface.
+    This is the primary API for widget rendering.
+
+    Attributes:
+        background: Normal background color pair
+        button: Button in normal state
+        button_focused: Button when focused
+        text_input: Text input fields
+        border: Borders and frames
+        selection: Selected/highlighted items
+        disabled: Disabled components
+    """
+
+    def __init__(
+        self,
+        background: int,
+        button: int,
+        button_focused: int,
+        text_input: int,
+        border: int,
+        selection: int,
+        disabled: int
+    ):
+        """
+        Initialize component color pairs.
+
+        Args:
+            background: Curses color pair number for normal background
+            button: Curses color pair number for buttons
+            button_focused: Curses color pair number for focused buttons
+            text_input: Curses color pair number for text input
+            border: Curses color pair number for borders
+            selection: Curses color pair number for selections
+            disabled: Curses color pair number for disabled components
+        """
+        self.background = background
+        self.button = button
+        self.button_focused = button_focused
+        self.text_input = text_input
+        self.border = border
+        self.selection = selection
+        self.disabled = disabled
+
+    def __repr__(self) -> str:
+        """String representation for debugging."""
+        return (
+            f"ComponentColors(background={self.background}, button={self.button}, "
+            f"button_focused={self.button_focused}, text_input={self.text_input}, "
+            f"border={self.border}, selection={self.selection}, disabled={self.disabled})"
+        )
+
+
 class SemanticColors:
     """
     Container for semantic color pairs used by themes.
@@ -139,6 +205,7 @@ class Theme(ABC):
         self.description = description
         self.author = author
         self._colors: Optional[SemanticColors] = None
+        self._components: Optional[ComponentColors] = None
 
     @abstractmethod
     def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
@@ -169,7 +236,70 @@ class Theme(ABC):
         """
         pass
 
-    def get_border_chars(self) -> Dict[str, str]:
+    def get_background(self) -> Optional[ColorPair]:
+        """
+        Get the background color pair for normal components.
+
+        Returns:
+            ColorPair with foreground and background RGB values, or None if not implemented
+        """
+        return None
+
+    def get_button(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for buttons in normal state.
+
+        Returns:
+            ColorPair for button rendering, or None if not implemented
+        """
+        return None
+
+    def get_button_focused(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for buttons when focused.
+
+        Returns:
+            ColorPair for focused button rendering, or None if not implemented
+        """
+        return None
+
+    def get_text_input(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for text input fields.
+
+        Returns:
+            ColorPair for text input rendering, or None if not implemented
+        """
+        return None
+
+    def get_border(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for borders and frames.
+
+        Returns:
+            ColorPair for border rendering, or None if not implemented
+        """
+        return None
+
+    def get_selection(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for selected/highlighted items.
+
+        Returns:
+            ColorPair for selection rendering, or None if not implemented
+        """
+        return None
+
+    def get_disabled(self) -> Optional[ColorPair]:
+        """
+        Get the color pair for disabled components.
+
+        Returns:
+            ColorPair for disabled component rendering, or None if not implemented
+        """
+        return None
+
+    def get_border_chars(self) -> str:
         """
         Get border characters for drawing boxes.
 
@@ -177,24 +307,22 @@ class Theme(ABC):
         box-drawing characters for modern terminals).
 
         Returns:
-            Dictionary with keys: horizontal, vertical, top_left, top_right,
-            bottom_left, bottom_right. Default uses ASCII characters.
+            String with 8 characters in order:
+            top-left, top, top-right, left, right, bottom-left, bottom, bottom-right
+            Default: "+-+||+-+" (ASCII box)
+            Unicode example: "┌─┐│└─┘│"
+
+        Note:
+            This matches the Java Theme.getBorderChars() format for API compatibility.
         """
-        return {
-            'horizontal': '-',
-            'vertical': '|',
-            'top_left': '+',
-            'top_right': '+',
-            'bottom_left': '+',
-            'bottom_right': '+',
-        }
+        return "+-+||+-+"
 
     def apply(self, stdscr) -> None:
         """
         Apply this theme to a curses screen.
 
         Initializes color pairs and sets up the theme for use. Must be called
-        before using theme.colors or theme.draw_box().
+        before using theme.colors, theme.components, or theme.draw_box().
 
         Args:
             stdscr: Curses window object (typically from curses.wrapper)
@@ -206,15 +334,18 @@ class Theme(ABC):
 
         # Initialize colors using the color manager
         color_manager = ColorManager(stdscr)
-        self._colors = color_manager.initialize_theme(self)
+        self._colors, self._components = color_manager.initialize_theme(self)
 
         # Set default screen colors
-        stdscr.bkgd(' ', curses.color_pair(self._colors.background))
+        stdscr.bkgd(' ', curses.color_pair(self._components.background))
 
     @property
     def colors(self) -> SemanticColors:
         """
         Get semantic color pairs for this theme.
+
+        This is the legacy API maintained for backward compatibility.
+        New code should use the component-based methods instead.
 
         Returns:
             SemanticColors instance with initialized color pairs
@@ -228,6 +359,26 @@ class Theme(ABC):
                 "Call theme.apply(stdscr) first."
             )
         return self._colors
+
+    @property
+    def components(self) -> ComponentColors:
+        """
+        Get component-based color pairs for this theme.
+
+        This is the primary API matching curses-java Theme interface.
+
+        Returns:
+            ComponentColors instance with initialized color pairs
+
+        Raises:
+            RuntimeError: If apply() has not been called yet
+        """
+        if self._components is None:
+            raise RuntimeError(
+                f"Theme '{self.name}' has not been applied. "
+                "Call theme.apply(stdscr) first."
+            )
+        return self._components
 
     def draw_box(
         self,
@@ -249,7 +400,7 @@ class Theme(ABC):
             height: Box height in characters
             width: Box width in characters
             title: Optional title to display centered in top border
-            color_pair: Color pair number to use (defaults to primary)
+            color_pair: Color pair number to use (defaults to border color)
 
         Raises:
             ValueError: If box dimensions are too small
@@ -260,19 +411,27 @@ class Theme(ABC):
                 "Minimum is 2x2."
             )
 
-        # Use primary color if none specified
+        # Use border color if none specified
         if color_pair is None:
-            color_pair = self.colors.primary
+            color_pair = self.components.border
 
-        chars = self.get_border_chars()
+        border_chars = self.get_border_chars()
+        if len(border_chars) != 8:
+            raise ValueError(
+                f"get_border_chars() must return 8 characters, got {len(border_chars)}"
+            )
+
+        # Parse border characters: TL T TR L R BL B BR
+        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = border_chars
+
         attr = curses.color_pair(color_pair)
 
         # Draw corners
         try:
-            window.addstr(y, x, chars['top_left'], attr)
-            window.addstr(y, x + width - 1, chars['top_right'], attr)
-            window.addstr(y + height - 1, x, chars['bottom_left'], attr)
-            window.addstr(y + height - 1, x + width - 1, chars['bottom_right'], attr)
+            window.addstr(y, x, top_left, attr)
+            window.addstr(y, x + width - 1, top_right, attr)
+            window.addstr(y + height - 1, x, bottom_left, attr)
+            window.addstr(y + height - 1, x + width - 1, bottom_right, attr)
         except curses.error:
             # Ignore errors at screen boundaries
             pass
@@ -280,16 +439,16 @@ class Theme(ABC):
         # Draw horizontal borders
         for i in range(1, width - 1):
             try:
-                window.addstr(y, x + i, chars['horizontal'], attr)
-                window.addstr(y + height - 1, x + i, chars['horizontal'], attr)
+                window.addstr(y, x + i, top, attr)
+                window.addstr(y + height - 1, x + i, bottom, attr)
             except curses.error:
                 pass
 
         # Draw vertical borders
         for i in range(1, height - 1):
             try:
-                window.addstr(y + i, x, chars['vertical'], attr)
-                window.addstr(y + i, x + width - 1, chars['vertical'], attr)
+                window.addstr(y + i, x, left, attr)
+                window.addstr(y + i, x + width - 1, right, attr)
             except curses.error:
                 pass
 

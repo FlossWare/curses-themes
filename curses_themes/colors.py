@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import curses
 from typing import Tuple, Dict
-from .theme import SemanticColors
+from .theme import SemanticColors, ComponentColors
 
 
 class ColorManager:
@@ -229,18 +229,18 @@ class ColorManager:
 
         return pair_num
 
-    def initialize_theme(self, theme) -> SemanticColors:
+    def initialize_theme(self, theme) -> Tuple[SemanticColors, ComponentColors]:
         """
         Initialize all color pairs for a theme.
 
-        Converts the theme's RGB color map to curses color pairs appropriate
-        for the terminal's capabilities.
+        Converts the theme's RGB color map and component colors to curses
+        color pairs appropriate for the terminal's capabilities.
 
         Args:
-            theme: Theme instance with get_color_map() method
+            theme: Theme instance with get_color_map() and component methods
 
         Returns:
-            SemanticColors instance with initialized color pair numbers
+            Tuple of (SemanticColors, ComponentColors) with initialized color pair numbers
 
         Raises:
             ValueError: If color map is missing required keys
@@ -267,7 +267,7 @@ class ColorManager:
         background_pair = self._init_color_pair(color_map['foreground'], bg_rgb)
 
         # All other colors use the theme's background
-        return SemanticColors(
+        semantic_colors = SemanticColors(
             primary=self._init_color_pair(color_map['primary'], bg_rgb),
             success=self._init_color_pair(color_map['success'], bg_rgb),
             error=self._init_color_pair(color_map['error'], bg_rgb),
@@ -277,6 +277,31 @@ class ColorManager:
             foreground=self._init_color_pair(color_map['foreground'], bg_rgb),
             accent=self._init_color_pair(color_map['accent'], bg_rgb),
         )
+
+        # Initialize component-based color pairs from theme methods
+        component_colors = ComponentColors(
+            background=self._init_color_pair_from_colorpair(theme.get_background()),
+            button=self._init_color_pair_from_colorpair(theme.get_button()),
+            button_focused=self._init_color_pair_from_colorpair(theme.get_button_focused()),
+            text_input=self._init_color_pair_from_colorpair(theme.get_text_input()),
+            border=self._init_color_pair_from_colorpair(theme.get_border()),
+            selection=self._init_color_pair_from_colorpair(theme.get_selection()),
+            disabled=self._init_color_pair_from_colorpair(theme.get_disabled()),
+        )
+
+        return semantic_colors, component_colors
+
+    def _init_color_pair_from_colorpair(self, color_pair) -> int:
+        """
+        Initialize a curses color pair from a ColorPair object.
+
+        Args:
+            color_pair: ColorPair with foreground and background RGB tuples
+
+        Returns:
+            Color pair number that can be used with curses.color_pair()
+        """
+        return self._init_color_pair(color_pair.foreground, color_pair.background)
 
     def reset(self) -> None:
         """

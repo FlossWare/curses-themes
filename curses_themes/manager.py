@@ -104,18 +104,24 @@ class ThemeManager:
         # This is done lazily to avoid circular imports and to defer
         # loading themes until they're actually needed
         try:
+            from .themes.default import DefaultTheme
             from .themes.dark import DarkTheme
             from .themes.light import LightTheme
-            from .themes.dracula import DraculaTheme
-            from .themes.nord import NordTheme
-            from .themes.borland import BorlandTheme
+            from .themes.ti994a import TI994ATheme
+            from .themes.trs80 import TRS80Theme
+            from .themes.dos import DOSTheme
+            from .themes.dbase3 import DBase3Theme
+            from .themes.dbase4 import DBase4Theme
 
             # Register each built-in theme
+            cls.register(DefaultTheme, 'default')
             cls.register(DarkTheme, 'dark')
             cls.register(LightTheme, 'light')
-            cls.register(DraculaTheme, 'dracula')
-            cls.register(NordTheme, 'nord')
-            cls.register(BorlandTheme, 'borland')
+            cls.register(TI994ATheme, 'ti-99-4a')
+            cls.register(TRS80Theme, 'trs-80')
+            cls.register(DOSTheme, 'dos')
+            cls.register(DBase3Theme, 'dbase-iii')
+            cls.register(DBase4Theme, 'dbase-iv')
 
         except ImportError as e:
             # If built-in themes aren't available yet, that's okay
@@ -332,3 +338,25 @@ class ThemeManager:
         theme_count = len(cls._themes)
         current = cls._current_theme.name if cls._current_theme else "None"
         return f"ThemeManager(themes={theme_count}, current='{current}')"
+
+
+# Auto-register built-in themes
+from .themes import (
+    DefaultTheme,
+    DarkTheme,
+    LightTheme,
+    TI994ATheme,
+    TRS80Theme,
+    DOSTheme,
+    DBase3Theme,
+    DBase4Theme,
+)
+
+ThemeManager.register(DefaultTheme, 'default')
+ThemeManager.register(DarkTheme, 'dark')
+ThemeManager.register(LightTheme, 'light')
+ThemeManager.register(TI994ATheme, 'ti-99-4a')
+ThemeManager.register(TRS80Theme, 'trs-80')
+ThemeManager.register(DOSTheme, 'dos')
+ThemeManager.register(DBase3Theme, 'dbase-iii')
+ThemeManager.register(DBase4Theme, 'dbase-iv')

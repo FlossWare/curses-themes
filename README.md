@@ -9,7 +9,7 @@ Inspired by [FlossWare curses-java](https://github.com/FlossWare/curses-java), t
 
 ## Features
 
-- 🎨 **5 Built-in Themes**: Dark (default), Light, Dracula, Nord, Borland
+- 🎨 **8 Built-in Themes**: Modern, classic IDE, and retro computer themes
 - 🔌 **Pluggable Architecture**: Easy custom theme creation
 - 🎯 **Semantic Colors**: `primary`, `success`, `error`, `warning`, `info`
 - 🔄 **Runtime Theme Switching**: Change themes on-the-fly
@@ -61,20 +61,22 @@ pip install -e .
 
 ## Built-in Themes
 
-### Dark (Default)
-Professional dark theme for extended use with comfortable blues and greens.
+### Modern Themes
 
-### Light
-Clean light theme with high contrast for well-lit environments.
+**Default** - Classic terminal with white text on black background  
+**Dark** - Professional dark theme with comfortable blues and greens  
+**Light** - Clean light theme with high contrast for well-lit environments
 
-### Dracula
-Popular dark theme with vibrant purple and pink accents.
+### Retro Computer Themes
 
-### Nord
-Arctic-inspired theme with cool blues from the Nord color palette.
+**TI-99/4A** (1981-1984) - Texas Instruments home computer with cyan-on-blue aesthetic  
+**TRS-80** (1980-1983) - Tandy/Radio Shack monochrome white-on-black display
 
-### Borland
-Classic Borland Turbo C/Pascal IDE theme (cyan on blue).
+### Business Software Themes
+
+**DOS** (1981-1995) - Classic MS-DOS white-on-black with yellow menus  
+**dBASE III** (1984-1985) - Iconic database software with cyan menus  
+**dBASE IV** (1988-1993) - Windowed database interface with blue background
 
 ## Creating Custom Themes
 
