@@ -456,7 +456,12 @@ def render_theme_screenshot(theme: Theme, renderer: TerminalRenderer) -> Image.I
     if isinstance(theme, Theme3D):
         try:
             shadow = theme.get_shadow_color()
-            shadow_color = shadow.foreground if shadow else (0, 0, 0)
+            # For better visibility, use a darker version of the background instead of pure black
+            if shadow and shadow.foreground:
+                shadow_color = shadow.foreground
+            else:
+                # Use 50% darker background color for better contrast
+                shadow_color = tuple(max(0, int(c * 0.5)) for c in bg_color)
             renderer.draw_shadow(3, 2, 15, 54, shadow_color,
                                  theme.shadow_offset_x, theme.shadow_offset_y)
         except Exception:
@@ -485,7 +490,12 @@ def render_theme_screenshot(theme: Theme, renderer: TerminalRenderer) -> Image.I
     if isinstance(theme, Theme3D):
         try:
             shadow = theme.get_shadow_color()
-            shadow_color = shadow.foreground if shadow else (0, 0, 0)
+            # For better visibility, use a darker version of the background instead of pure black
+            if shadow and shadow.foreground:
+                shadow_color = shadow.foreground
+            else:
+                # Use 50% darker background color for better contrast
+                shadow_color = tuple(max(0, int(c * 0.5)) for c in bg_color)
             renderer.draw_shadow(3, 58, 9, 22, shadow_color,
                                  theme.shadow_offset_x, theme.shadow_offset_y)
         except Exception:
@@ -507,7 +517,12 @@ def render_theme_screenshot(theme: Theme, renderer: TerminalRenderer) -> Image.I
             highlight = theme.get_highlight_color()
             lowlight = theme.get_lowlight_color()
 
-            shadow_color = shadow.foreground if shadow else (0, 0, 0)
+            # For better visibility, use a darker version of the background instead of pure black
+            if shadow and shadow.foreground:
+                shadow_color = shadow.foreground
+            else:
+                # Use 50% darker background color for better contrast
+                shadow_color = tuple(max(0, int(c * 0.5)) for c in bg_color)
             highlight_color = highlight.foreground if highlight else (255, 255, 255)
             lowlight_color = lowlight.foreground if lowlight else (128, 128, 128)
 
