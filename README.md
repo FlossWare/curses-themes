@@ -4,6 +4,9 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![codecov](https://codecov.io/gh/FlossWare/curses-themes/branch/main/graph/badge.svg)](https://codecov.io/gh/FlossWare/curses-themes)
+[![Code Quality](https://github.com/FlossWare/curses-themes/workflows/Code%20Quality/badge.svg)](https://github.com/FlossWare/curses-themes/actions/workflows/quality.yml)
+[![Coverage](https://github.com/FlossWare/curses-themes/workflows/Coverage/badge.svg)](https://github.com/FlossWare/curses-themes/actions/workflows/coverage.yml)
 
 Inspired by [FlossWare curses-java](https://github.com/FlossWare/curses-java), this library brings professional theme support to Python's standard `curses` module with zero external dependencies.
 
@@ -59,24 +62,110 @@ cd curses-themes
 pip install -e .
 ```
 
-## Built-in Themes
+## Theme Gallery
 
 ### Modern Themes
 
-**Default** - Classic terminal with white text on black background  
-**Dark** - Professional dark theme with comfortable blues and greens  
-**Light** - Clean light theme with high contrast for well-lit environments
+<table>
+<tr>
+<td width="33%" align="center">
+<img src="screenshots/default.png" width="300" alt="Default Theme"><br>
+<strong>Default</strong><br>
+Classic terminal aesthetic<br>
+<em>Timeless</em>
+</td>
+<td width="33%" align="center">
+<img src="screenshots/dark.png" width="300" alt="Dark Theme"><br>
+<strong>Dark</strong><br>
+Professional dark mode<br>
+<em>Modern</em>
+</td>
+<td width="33%" align="center">
+<img src="screenshots/light.png" width="300" alt="Light Theme"><br>
+<strong>Light</strong><br>
+High contrast for bright environments<br>
+<em>Modern</em>
+</td>
+</tr>
+</table>
 
 ### Retro Computer Themes
 
-**TI-99/4A** (1981-1984) - Texas Instruments home computer with cyan-on-blue aesthetic  
-**TRS-80** (1980-1983) - Tandy/Radio Shack monochrome white-on-black display
+<table>
+<tr>
+<td width="50%" align="center">
+<img src="screenshots/ti-99-4a.png" width="300" alt="TI-99/4A Theme"><br>
+<strong>TI-99/4A</strong><br>
+Texas Instruments home computer<br>
+<em>1981-1984</em>
+</td>
+<td width="50%" align="center">
+<img src="screenshots/trs-80.png" width="300" alt="TRS-80 Theme"><br>
+<strong>TRS-80</strong><br>
+Tandy/Radio Shack monochrome<br>
+<em>1980-1983</em>
+</td>
+</tr>
+</table>
 
 ### Business Software Themes
 
-**DOS** (1981-1995) - Classic MS-DOS white-on-black with yellow menus  
-**dBASE III** (1984-1985) - Iconic database software with cyan menus  
-**dBASE IV** (1988-1993) - Windowed database interface with blue background
+<table>
+<tr>
+<td width="33%" align="center">
+<img src="screenshots/dos.png" width="300" alt="DOS Theme"><br>
+<strong>DOS</strong><br>
+Classic MS-DOS interface<br>
+<em>1981-1995</em>
+</td>
+<td width="33%" align="center">
+<img src="screenshots/dbase-iii.png" width="300" alt="dBASE III Theme"><br>
+<strong>dBASE III</strong><br>
+Iconic database software<br>
+<em>1984-1985</em>
+</td>
+<td width="33%" align="center">
+<img src="screenshots/dbase-iv.png" width="300" alt="dBASE IV Theme"><br>
+<strong>dBASE IV</strong><br>
+Windowed database interface<br>
+<em>1988-1993</em>
+</td>
+</tr>
+</table>
+
+### 3D Effect Themes
+
+<table>
+<tr>
+<td width="50%" align="center">
+<img src="screenshots/borland-3d.png" width="300" alt="Borland 3D Theme"><br>
+<strong>Borland 3D</strong><br>
+Turbo Vision 3D look<br>
+<em>1990-1997</em>
+</td>
+<td width="50%" align="center">
+<img src="screenshots/dbase-iv-3d.png" width="300" alt="dBASE IV 3D Theme"><br>
+<strong>dBASE IV 3D</strong><br>
+3D windowed database UI<br>
+<em>1988-1993</em>
+</td>
+</tr>
+</table>
+
+### Theme Comparison
+
+| Theme | Era | Style | Colors | Best For |
+|-------|-----|-------|--------|----------|
+| Default | Timeless | Minimal | B/W | Universal compatibility |
+| Dark | Modern | Professional | Blues/Greens | Low-light coding |
+| Light | Modern | Clean | High contrast | Bright environments |
+| TI-99/4A | 1981-1984 | Retro | Cyan/Blue | Nostalgia, gaming UIs |
+| TRS-80 | 1980-1983 | Monochrome | White/Black | Authentic retro feel |
+| DOS | 1981-1995 | Classic | White/Yellow | System utilities |
+| dBASE III | 1984-1985 | Business | Cyan menus | Database applications |
+| dBASE IV | 1988-1993 | Windowed | Blue background | Modern database UIs |
+| Borland 3D | 1990-1997 | 3D Effect | Gray/Blue shadows | IDE-style applications |
+| dBASE IV 3D | 1988-1993 | 3D Windowed | Blue with depth | Sophisticated database UIs |
 
 ## Creating Custom Themes
 

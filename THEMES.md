@@ -58,6 +58,8 @@ manager.load_theme('default')
 +----------------------------------+
 Border: ASCII +-+||+-+
 ```
+![Default Screenshot](screenshots/default.png)
+
 
 ---
 
@@ -111,6 +113,8 @@ Border: Unicode ┌─┐││└─┘
 
 **High contrast light theme**
 
+![Dark Screenshot](screenshots/dark.png)
+
 Clean, bright interface with dark text on light background for daytime use.
 
 **Color Palette:**
@@ -163,6 +167,8 @@ Recreates the warm cyan-on-blue palette of the first 16-bit home computer.
 
 **Historical Context:**
 The TI-99/4A competed with the Commodore 64 and Apple II. Its distinctive cyan text on medium blue background became iconic in the BASIC programming environment. The color scheme was warmer and more inviting than the stark white-on-black of competitors.
+![Light Screenshot](screenshots/light.png)
+
 
 **Color Palette:**
 - Background: Cyan on blue
@@ -213,6 +219,8 @@ Pure monochrome white-on-black display matching the professional business aesthe
 **Historical Context:**
 The TRS-80 was one of the "1977 Trinity" of home computers. The Model III and 4 featured crisp monochrome displays that made them popular for business applications and word processing. Radio Shack marketed the professional appearance, contrasting it with "toy-like" color displays.
 
+![TI-99/4A Screenshot](screenshots/ti-99-4a.png)
+
 **Color Palette:**
 - Background: White on black (monochrome)
 - Buttons: White on black
@@ -262,6 +270,8 @@ The iconic interface that powered the IBM PC era with strategic use of yellow me
 
 **Historical Context:**
 MS-DOS powered the IBM PC and compatibles from 1981 through the mid-1990s. Its 80x25 text mode with 16 colors became the de facto standard for PC software. Key applications like WordPerfect, Lotus 1-2-3, and dBASE all shared this visual language.
+
+![TRS-80 Screenshot](screenshots/trs-80.png)
 
 **Color Palette:**
 - Background: White on black
@@ -315,6 +325,8 @@ The signature cyan menu highlighting that became synonymous with database applic
 dBASE III revolutionized database management on PCs, bringing mainframe-style capabilities to the IBM PC. Its distinctive cyan-on-black interface for menus and white command-line "dot prompt" became iconic. By 1985, dBASE III Plus was the best-selling database software, and its .dbf format became an industry standard.
 
 **Color Palette:**
+![DOS Screenshot](screenshots/dos.png)
+
 - Background: White on black (dot prompt)
 - Buttons: Cyan on black (signature menu color)
 - Focused: Black on cyan (inverted)
@@ -368,6 +380,8 @@ dBASE IV (1988) introduced a revolutionary windowed interface with pull-down men
 **Color Palette:**
 - Background: White on blue (Control Center)
 - Buttons: Yellow on blue (menu highlighting)
+![dBASE III Screenshot](screenshots/dbase-iii.png)
+
 - Focused: Blue on yellow (inverted)
 - Text Input: Cyan on blue (data entry)
 - Borders: White on blue
@@ -420,6 +434,8 @@ Border: ASCII +-+||+-+ (80x25 text)
 | **DOS** | 1981-1995 | White/Black | Yellow | ASCII `+-+\|\|+-+` | CLI utilities, PC heritage |
 | **dBASE III** | 1984-1985 | White/Black | Cyan | ASCII `+-+\|\|+-+` | Database apps, data entry |
 | **dBASE IV** | 1988-1993 | White/Blue | Yellow | ASCII `+-+\|\|+-+` | Windowed TUI, menus |
+
+![dBASE IV Screenshot](screenshots/dbase-iv.png)
 
 ---
 
@@ -503,3 +519,121 @@ All themes are licensed under GPL-3.0. See [LICENSE](LICENSE) for details.
 
 Copyright (C) 2024 FlossWare
 
+
+---
+
+## 3D Effect Themes
+
+### 9. Borland 3D Theme
+
+**Professional 3D-styled UI inspired by Turbo Vision**
+
+Recreates the sophisticated windowing aesthetic of Borland's Turbo Vision framework, popular in the 1990s for professional development tools.
+
+**Color Palette:**
+- Background: Gray
+- Foreground: Black on light gray
+- Buttons: Black on light gray with 3D beveled borders
+- Focused: Black on cyan with 3D shadow effect
+- Shadow: Dark gray shadows beneath all UI elements
+- Borders: 3D Unicode box-drawing characters
+
+**When to Use:**
+- IDE-style applications
+- Development tools and debuggers
+- Professional business applications
+- Sophisticated terminal UIs requiring visual depth
+
+**Load Command:**
+```python
+from curses_themes import ThemeManager
+
+manager = ThemeManager()
+manager.load_theme('borland-3d')
+```
+
+**Visual Preview:**
+```
+╔══════════════════════════════════╗
+║ Borland 3D Theme                 ║
+║ Professional IDE aesthetic       ║
+║                                  ║
+║ ╔════════╗  ╔════════════╗       ║
+║ ║ Button ║  ║ Focused    ║▓      ║
+║ ╚════════╝▓ ╚════════════╝▓      ║
+║  Light gray  Cyan + shadow       ║
+║                                  ║
+║ All elements have 3D depth       ║
+╚══════════════════════════════════╝▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+Border: Unicode ╔═╗║╚╝ with shadows
+```
+
+![Borland 3D Screenshot](screenshots/borland-3d.png)
+
+---
+
+### 10. dBASE IV 3D Theme
+
+**3D windowed database UI aesthetic from dBASE IV**
+
+Combines the classic dBASE IV blue interface with modern 3D depth effects for a sophisticated database application look.
+
+**Color Palette:**
+- Background: Blue
+- Foreground: White on blue
+- Buttons: White on blue with 3D beveled borders
+- Focused: Black on cyan with 3D shadow
+- Menu Bar: Black on cyan
+- Shadow: Dark blue/black shadows
+- Borders: 3D Unicode box-drawing
+
+**When to Use:**
+- Database management applications
+- Data entry and reporting tools
+- Business intelligence dashboards
+- Professional database UIs requiring visual hierarchy
+
+**Load Command:**
+```python
+from curses_themes import ThemeManager
+
+manager = ThemeManager()
+manager.load_theme('dbase-iv-3d')
+```
+
+**Visual Preview:**
+```
+╔══════════════════════════════════╗
+║ dBASE IV 3D Theme                ║
+║ White text on blue background    ║
+║                                  ║
+║ ╔════════╗  ╔════════════╗       ║
+║ ║ Button ║  ║ Focused    ║▓      ║
+║ ╚════════╝▓ ╚════════════╝▓      ║
+║  White/Blue  Black/Cyan          ║
+║                                  ║
+║ Menu: Black on cyan background   ║
+╚══════════════════════════════════╝▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+Border: Unicode ╔═╗║╚╝ with 3D shadows
+```
+
+![dBASE IV 3D Screenshot](screenshots/dbase-iv-3d.png)
+
+---
+
+## Theme Comparison Matrix
+
+| Theme | Category | Era | Colors | Borders | 3D Effects | Best For |
+|-------|----------|-----|--------|---------|------------|----------|
+| Default | Modern | Timeless | B&W | ASCII | No | Universal compatibility |
+| Dark | Modern | 2020s | Blue/Cyan | Unicode | No | Low-light coding |
+| Light | Modern | 2020s | High contrast | Unicode | No | Bright environments |
+| TI-99/4A | Retro | 1981-1984 | Cyan/Blue | ASCII | No | Gaming UIs, nostalgia |
+| TRS-80 | Retro | 1980-1983 | White/Black | ASCII | No | Authentic retro |
+| DOS | Retro | 1981-1995 | White/Yellow | ASCII | No | System utilities |
+| dBASE III | Retro | 1984-1985 | Cyan menus | ASCII | No | Database apps |
+| dBASE IV | Retro | 1988-1993 | Blue bg | ASCII | No | Database UIs |
+| Borland 3D | 3D | 1990-1997 | Gray/Cyan | Unicode | Yes | IDEs, dev tools |
+| dBASE IV 3D | 3D | 1988-1993 | Blue/Cyan | Unicode | Yes | Database UIs with depth |
