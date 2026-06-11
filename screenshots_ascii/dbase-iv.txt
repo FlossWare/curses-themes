@@ -1,0 +1,25 @@
+                                Theme: dBASE IV                                 
+  Ashton-Tate/Borland dBASE IV theme with blue Control Center interface         
+                                                                                
+  +------------------------------------------------+                            
+  | Sample Panel                                   +                            
+  |                                                +                            
+  | [ Normal Button ]                              +                            
+  | [[ Focused Button ]]                           +                            
+  |                                                +                            
+  | Input: Type here...                            +                            
+  |                                                +                            
+  | * Selected Item                                +                            
+  |   Normal Item                                  +                            
+  |                                                +                            
+  | Semantic Colors:                               +                            
+  |   [OK] Success message                         +                            
+  |   [ER] Error message                           +                            
+  |+++[!] Warning message++++++++++++++++++++++++++-                            
+      [i] Info message                                                          
+                                                                                
+                                                                                
+                                                                                
+Border: +-+||+-+                                                                
+Colors: FG=N/A, BG=N/A                                                          
+                                                                                

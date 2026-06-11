@@ -37,7 +37,7 @@ class ThemeManager:
     Example:
         ```python
         # Load a built-in theme
-        theme = ThemeManager.load('dracula')
+        theme = ThemeManager.load('dark')
         theme.apply(stdscr)
 
         # Register a custom theme
@@ -240,11 +240,11 @@ class ThemeManager:
 
         Example:
             ```python
-            theme = ThemeManager.load('dracula')
+            theme = ThemeManager.load('dark')
             theme.apply(stdscr)
 
             # Names are normalized
-            theme = ThemeManager.load('Nord')  # Same as 'nord'
+            theme = ThemeManager.load('Dark')  # Same as 'dark'
             theme = ThemeManager.load('my_custom_theme')  # Same as 'my-custom-theme'
             ```
         """

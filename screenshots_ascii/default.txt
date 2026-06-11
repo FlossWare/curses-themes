@@ -1,0 +1,25 @@
+                                 Theme: Default                                 
+  Default theme with white text on black background. Classic terminal appearan  
+                                                                                
+  +------------------------------------------------+                            
+  | Sample Panel                                   +                            
+  |                                                +                            
+  | [ Normal Button ]                              +                            
+  | [[ Focused Button ]]                           +                            
+  |                                                +                            
+  | Input: Type here...                            +                            
+  |                                                +                            
+  | * Selected Item                                +                            
+  |   Normal Item                                  +                            
+  |                                                +                            
+  | Semantic Colors:                               +                            
+  |   [OK] Success message                         +                            
+  |   [ER] Error message                           +                            
+  |+++[!] Warning message++++++++++++++++++++++++++-                            
+      [i] Info message                                                          
+                                                                                
+                                                                                
+                                                                                
+Border: +-+||+-+                                                                
+Colors: FG=N/A, BG=N/A                                                          
+                                                                                

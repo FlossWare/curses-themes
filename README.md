@@ -30,13 +30,13 @@ from curses_themes import ThemeManager
 
 def main(stdscr):
     # Load and apply a theme
-    theme = ThemeManager.load('dracula')
+    theme = ThemeManager.load('dark')
     theme.apply(stdscr)
     
     # Use semantic colors
-    stdscr.addstr(0, 0, "Success!", theme.colors.success)
-    stdscr.addstr(1, 0, "Error!", theme.colors.error)
-    stdscr.addstr(2, 0, "Warning!", theme.colors.warning)
+    stdscr.addstr(0, 0, "Success!", curses.color_pair(theme.colors.success))
+    stdscr.addstr(1, 0, "Error!", curses.color_pair(theme.colors.error))
+    stdscr.addstr(2, 0, "Warning!", curses.color_pair(theme.colors.warning))
     
     # Draw themed boxes
     theme.draw_box(stdscr, 4, 2, 10, 40, title="My Panel")
@@ -206,7 +206,7 @@ import curses
 from curses_themes import ThemeManager
 
 def main(stdscr):
-    themes = ['dark', 'light', 'dracula', 'nord', 'borland']
+    themes = ['default', 'dark', 'light', 'borland3d', 'dbase3']
     current = 0
     
     while True:
@@ -215,7 +215,7 @@ def main(stdscr):
         
         stdscr.clear()
         stdscr.addstr(0, 0, f"Theme: {themes[current]}", 
-                     theme.colors.primary)
+                     curses.color_pair(theme.colors.primary))
         stdscr.addstr(2, 0, "Press 'n' for next, 'q' to quit")
         
         key = stdscr.getch()

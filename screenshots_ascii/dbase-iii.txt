@@ -1,0 +1,25 @@
+                                Theme: dBASE III                                
+  Ashton-Tate dBASE III theme with cyan menus on black background               
+                                                                                
+  +------------------------------------------------+                            
+  | Sample Panel                                   +                            
+  |                                                +                            
+  | [ Normal Button ]                              +                            
+  | [[ Focused Button ]]                           +                            
+  |                                                +                            
+  | Input: Type here...                            +                            
+  |                                                +                            
+  | * Selected Item                                +                            
+  |   Normal Item                                  +                            
+  |                                                +                            
+  | Semantic Colors:                               +                            
+  |   [OK] Success message                         +                            
+  |   [ER] Error message                           +                            
+  |+++[!] Warning message++++++++++++++++++++++++++-                            
+      [i] Info message                                                          
+                                                                                
+                                                                                
+                                                                                
+Border: +-+||+-+                                                                
+Colors: FG=N/A, BG=N/A                                                          
+                                                                                

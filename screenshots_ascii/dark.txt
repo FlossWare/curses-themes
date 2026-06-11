@@ -1,0 +1,25 @@
+                                  Theme: Dark                                   
+  Dark theme with muted colors and dark background. Modern dark mode aesthetic  
+                                                                                
+  ┌────────────────────────────────────────────────┐                            
+  │ Sample Panel                                   ┘                            
+  │                                                ┘                            
+  │ [ Normal Button ]                              ┘                            
+  │ [[ Focused Button ]]                           ┘                            
+  │                                                ┘                            
+  │ Input: Type here...                            ┘                            
+  │                                                ┘                            
+  │ * Selected Item                                ┘                            
+  │   Normal Item                                  ┘                            
+  │                                                ┘                            
+  │ Semantic Colors:                               ┘                            
+  │   [OK] Success message                         ┘                            
+  │   [ER] Error message                           ┘                            
+  │└└└[!] Warning message└└└└└└└└└└└└└└└└└└└└└└└└└└─                            
+      [i] Info message                                                          
+                                                                                
+                                                                                
+                                                                                
+Border: ┌─┐││└─┘                                                                
+Colors: FG=N/A, BG=N/A                                                          
+                                                                                

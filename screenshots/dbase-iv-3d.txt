@@ -1,0 +1,25 @@
+=== DBASE IV 3D ===============================================================
+  Ashton-Tate/Borland dBASE IV 3D windowed Control Center with drop shadows an
+
+ ┌───────────────── Sample Panel ─────────────────┐  ┌─── Semantic Colors ────┐
+ │                                                │░░│                        │
+ │ Buttons:                                       │░░│ [OK]  Success message  │
+ │   [ Normal Button ]                            │░░│ [!!]  Error message    │
+ │   [ FOCUSED BUTTON ]  <-- highlighted          │░░│ [!?]  Warning message  │
+ │                                                │░░│ [ii]  Info message     │
+ │ Text Input:                                    │░░│                        │
+ │   Label: [sample text here______]              │░░│ Disabled text (muted)  │
+ │                                                │░░└────────────────────────┘
+ │ Selection List:                                │░░
+ │   >> Selected Item  <<                         │░░Color Palette (RGB):
+ │      Normal Item                               │░░ BG: #0000EE Blue (VGA)
+ │      Normal Item                               │░░ FG: #FFFFFF White
+ └────────────────────────────────────────────────┘░░ Primary: #FFFF00
+   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ Border style: '┌─┐││└─┘'
+ 3D Effects: ENABLED                    Raised: [##########]
+   Shadow:    fg=#000000 bg=#000000     Sunken: [..........] (input)
+   Highlight: fg=#FFFFFF bg=#FFFFFF     Double border: '╔═╗║║╚═╝'
+   Lowlight:  fg=#000000 bg=#0000EE
+
+ Theme: dBASE IV 3D | Author: FlossWare | 3D: Yes

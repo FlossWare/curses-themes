@@ -1,0 +1,25 @@
+=== DBASE IV ==================================================================
+  Ashton-Tate/Borland dBASE IV theme with blue Control Center interface
+
+ +----------------- Sample Panel -----------------+  +--- Semantic Colors ----+
+ |                                                |  |                        |
+ | Buttons:                                       |  | [OK]  Success message  |
+ |   [ Normal Button ]                            |  | [!!]  Error message    |
+ |   [ FOCUSED BUTTON ]  <-- highlighted          |  | [!?]  Warning message  |
+ |                                                |  | [ii]  Info message     |
+ | Text Input:                                    |  |                        |
+ |   Label: [sample text here______]              |  | Disabled text (muted)  |
+ |                                                |  +------------------------+
+ | Selection List:                                |
+ |   >> Selected Item  <<                         |  Color Palette (RGB):
+ |      Normal Item                               |   BG: #0000EE Blue (VGA)
+ |      Normal Item                               |   FG: #FFFFFF White
+ +------------------------------------------------+   Primary: #FFFF00
+
+ Border style: '+-+||+-+'
+ Era: Ashton-Tate/Borland dBASE IV Control Center (1988-1993)
+ Success: #00FF00  Error: #FF0000
+ Warning: #FFFF00  Info:  #00FFFF
+ Accent:  #FFFF00
+
+ Theme: dBASE IV | Author: FlossWare | 3D: No

@@ -1,0 +1,25 @@
+=== DOS =======================================================================
+  Classic MS-DOS and PC-DOS theme with white-on-black text mode interface
+
+ +----------------- Sample Panel -----------------+  +--- Semantic Colors ----+
+ |                                                |  |                        |
+ | Buttons:                                       |  | [OK]  Success message  |
+ |   [ Normal Button ]                            |  | [!!]  Error message    |
+ |   [ FOCUSED BUTTON ]  <-- highlighted          |  | [!?]  Warning message  |
+ |                                                |  | [ii]  Info message     |
+ | Text Input:                                    |  |                        |
+ |   Label: [sample text here______]              |  | Disabled text (muted)  |
+ |                                                |  +------------------------+
+ | Selection List:                                |
+ |   >> Selected Item  <<                         |  Color Palette (RGB):
+ |      Normal Item                               |   BG: #000000 Black
+ |      Normal Item                               |   FG: #FFFFFF White
+ +------------------------------------------------+   Primary: #FFFF00
+
+ Border style: '+-+||+-+'
+ Era: MS-DOS / PC-DOS text mode (1981-1995)
+ Success: #00FF00  Error: #FF0000
+ Warning: #FFFF00  Info:  #00FFFF
+ Accent:  #FF00FF
+
+ Theme: DOS | Author: FlossWare | 3D: No

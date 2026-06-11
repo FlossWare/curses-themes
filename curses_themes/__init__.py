@@ -28,7 +28,7 @@ Example:
 
         def main(stdscr):
             # Load and apply a theme
-            theme = ThemeManager.load('dracula')
+            theme = ThemeManager.load('dark')
             theme.apply(stdscr)
 
             # Use semantic colors

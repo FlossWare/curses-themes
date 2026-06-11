@@ -1,0 +1,25 @@
+=== LIGHT =====================================================================
+  Light theme with bright background and dark text. Clean, high-contrast light
+
+ ╔═════════════════ Sample Panel ═════════════════╗  ╔═══ Semantic Colors ════╗
+ ║                                                ╚  ║                        ╚
+ ║ Buttons:                                       ╚  ║ [OK]  Success message  ╚
+ ║   [ Normal Button ]                            ╚  ║ [!!]  Error message    ╚
+ ║   [ FOCUSED BUTTON ]  <-- highlighted          ╚  ║ [!?]  Warning message  ╚
+ ║                                                ╚  ║ [ii]  Info message     ╚
+ ║ Text Input:                                    ╚  ║                        ╚
+ ║   Label: [sample text here______]              ╚  ║ Disabled text (muted)  ╚
+ ║                                                ╚  ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║
+ ║ Selection List:                                ╚
+ ║   >> Selected Item  <<                         ╚  Color Palette (RGB):
+ ║      Normal Item                               ╚   BG: #FFFFFF White
+ ║      Normal Item                               ╚   FG: #000000 Black
+ ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║   Primary: #0000FF
+
+ Border style: '╔═╗║╚═╝║'
+ Era: Modern high-contrast light mode
+ Success: #008000  Error: #FF0000
+ Warning: #FFA500  Info:  #0000FF
+ Accent:  #00FFFF
+
+ Theme: Light | Author: FlossWare | 3D: No

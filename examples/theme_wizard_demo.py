@@ -283,7 +283,7 @@ class ThemeWizard:
             'accent': (108, 113, 196),
         }
         
-        presets['Dracula'] = {
+        presets['Dracula Colors'] = {
             'background': (40, 42, 54),
             'foreground': (248, 248, 242),
             'primary': (189, 147, 249),
@@ -294,7 +294,7 @@ class ThemeWizard:
             'accent': (255, 121, 198),
         }
         
-        presets['Nord'] = {
+        presets['Nord Colors'] = {
             'background': (46, 52, 64),
             'foreground': (236, 239, 244),
             'primary': (136, 192, 208),
