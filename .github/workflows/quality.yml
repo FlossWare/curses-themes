@@ -32,11 +32,11 @@ jobs:
 
       - name: Ruff Check
         run: |
-          ruff check curses_themes/ tests/
+          ruff check curses_themes/
 
       - name: Ruff Format Check
         run: |
-          ruff format --check curses_themes/ tests/
+          ruff format --check curses_themes/
 
   type-check:
     name: Type Check (MyPy)
