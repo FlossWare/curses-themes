@@ -187,7 +187,7 @@ class DBase4_3DTheme(Theme3D):
         """
         return ColorPair(self.BLUE, self.BLUE)
 
-    def get_shadow(self) -> ColorPair:
+    def get_shadow_color(self) -> ColorPair:
         """
         Get shadow color pair: BLACK on BLACK.
 
@@ -200,7 +200,7 @@ class DBase4_3DTheme(Theme3D):
         """
         return ColorPair(self.BLACK, self.BLACK)
 
-    def get_highlight(self) -> ColorPair:
+    def get_highlight_color(self) -> ColorPair:
         """
         Get highlight color pair: WHITE on WHITE.
 
@@ -213,7 +213,7 @@ class DBase4_3DTheme(Theme3D):
         """
         return ColorPair(self.WHITE, self.WHITE)
 
-    def get_lowlight(self) -> ColorPair:
+    def get_lowlight_color(self) -> ColorPair:
         """
         Get lowlight color pair: BLACK on BLUE.
 
