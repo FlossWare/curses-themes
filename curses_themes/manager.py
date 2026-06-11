@@ -360,3 +360,10 @@ ThemeManager.register(TRS80Theme, 'trs-80')
 ThemeManager.register(DOSTheme, 'dos')
 ThemeManager.register(DBase3Theme, 'dbase-iii')
 ThemeManager.register(DBase4Theme, 'dbase-iv')
+
+# Import and register 3D themes
+from .themes.borland3d import Borland3DTheme
+from .themes.dbase4_3d import DBase4_3DTheme
+
+ThemeManager.register(Borland3DTheme, 'borland-3d')
+ThemeManager.register(DBase4_3DTheme, 'dbase-iv-3d')

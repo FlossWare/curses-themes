@@ -28,6 +28,8 @@ from .trs80 import TRS80Theme
 from .dos import DOSTheme
 from .dbase3 import DBase3Theme
 from .dbase4 import DBase4Theme
+from .borland3d import Borland3DTheme
+from .dbase4_3d import DBase4_3DTheme
 
 __all__ = [
     'DefaultTheme',
@@ -38,4 +40,6 @@ __all__ = [
     'DOSTheme',
     'DBase3Theme',
     'DBase4Theme',
+    'Borland3DTheme',
+    'DBase4_3DTheme',
 ]
