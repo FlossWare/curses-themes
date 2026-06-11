@@ -21,7 +21,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Dict, List, Type, Optional
+from typing import Optional
+
 from .theme import Theme
 
 
@@ -54,7 +55,7 @@ class ThemeManager:
     """
 
     # Registry of theme classes by normalized name
-    _themes: Dict[str, Type[Theme]] = {}
+    _themes: dict[str, type[Theme]] = {}
 
     # Currently active theme instance
     _current_theme: Optional[Theme] = None
@@ -104,14 +105,14 @@ class ThemeManager:
         # This is done lazily to avoid circular imports and to defer
         # loading themes until they're actually needed
         try:
-            from .themes.default import DefaultTheme
             from .themes.dark import DarkTheme
+            from .themes.dbase3 import DBase3Theme
+            from .themes.dbase4 import DBase4Theme
+            from .themes.default import DefaultTheme
+            from .themes.dos import DOSTheme
             from .themes.light import LightTheme
             from .themes.ti994a import TI994ATheme
             from .themes.trs80 import TRS80Theme
-            from .themes.dos import DOSTheme
-            from .themes.dbase3 import DBase3Theme
-            from .themes.dbase4 import DBase4Theme
 
             # Register each built-in theme
             cls.register(DefaultTheme, 'default')
@@ -123,7 +124,7 @@ class ThemeManager:
             cls.register(DBase3Theme, 'dbase-iii')
             cls.register(DBase4Theme, 'dbase-iv')
 
-        except ImportError as e:
+        except ImportError:
             # If built-in themes aren't available yet, that's okay
             # They might be added later during development
             pass
@@ -131,7 +132,7 @@ class ThemeManager:
         cls._builtin_registered = True
 
     @classmethod
-    def register(cls, theme_class: Type[Theme], name: Optional[str] = None) -> None:
+    def register(cls, theme_class: type[Theme], name: Optional[str] = None) -> None:
         """
         Register a theme class for use.
 
@@ -266,7 +267,7 @@ class ThemeManager:
         return theme_instance
 
     @classmethod
-    def list_themes(cls) -> Dict[str, Dict[str, str]]:
+    def list_themes(cls) -> dict[str, dict[str, str]]:
         """
         List all registered themes with metadata.
 
@@ -342,14 +343,14 @@ class ThemeManager:
 
 # Auto-register built-in themes
 from .themes import (
-    DefaultTheme,
     DarkTheme,
+    DBase3Theme,
+    DBase4Theme,
+    DefaultTheme,
+    DOSTheme,
     LightTheme,
     TI994ATheme,
     TRS80Theme,
-    DOSTheme,
-    DBase3Theme,
-    DBase4Theme,
 )
 
 ThemeManager.register(DefaultTheme, 'default')

@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Dict, Tuple
-from ..theme import Theme, ColorPair
+
+from ..theme import ColorPair, Theme
 
 
 class LightTheme(Theme):
@@ -97,7 +97,7 @@ class LightTheme(Theme):
         """
         return "╔═╗║╚═╝║"
 
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
+    def get_color_map(self) -> dict[str, tuple[int, int, int]]:
         """
         Get RGB color definitions for the Light theme.
 

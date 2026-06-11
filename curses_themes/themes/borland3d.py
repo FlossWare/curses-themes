@@ -67,9 +67,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Dict, Tuple
-from ..theme3d import Theme3D
+
 from ..theme import ColorPair
+from ..theme3d import Theme3D
 
 
 class Borland3DTheme(Theme3D):
@@ -311,7 +311,7 @@ class Borland3DTheme(Theme3D):
         """
         return "╔═╗║║╚═╝"
 
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
+    def get_color_map(self) -> dict[str, tuple[int, int, int]]:
         """
         Get RGB color definitions for the Borland Turbo Vision theme.
 

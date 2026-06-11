@@ -22,8 +22,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import curses
-from typing import Tuple, Dict
-from .theme import SemanticColors, ComponentColors
+from typing import Optional
+
+from .theme import ComponentColors, SemanticColors
 
 
 class ColorManager:
@@ -189,8 +190,8 @@ class ColorManager:
 
     def _init_color_pair(
         self,
-        fg_rgb: Tuple[int, int, int],
-        bg_rgb: Tuple[int, int, int] = None
+        fg_rgb: tuple[int, int, int],
+        bg_rgb: Optional[tuple[int, int, int]] = None
     ) -> int:
         """
         Initialize a curses color pair from RGB values.
@@ -229,7 +230,7 @@ class ColorManager:
 
         return pair_num
 
-    def initialize_theme(self, theme) -> Tuple[SemanticColors, ComponentColors]:
+    def initialize_theme(self, theme) -> tuple[SemanticColors, ComponentColors]:
         """
         Initialize all color pairs for a theme.
 

@@ -41,9 +41,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Optional
+import contextlib
 import curses
-from .theme import Theme, ColorPair
+from typing import Optional
+
+from .theme import ColorPair, Theme
 
 
 class Theme3D(Theme):
@@ -392,19 +394,15 @@ class Theme3D(Theme):
             if self.shadow_offset_x > 0:
                 for i in range(height):
                     for j in range(self.shadow_offset_x):
-                        try:
+                        with contextlib.suppress(curses.error):
                             window.addch(shadow_y + i, shadow_x + width + j, ' ', shadow_attr)
-                        except curses.error:
-                            pass
 
             # Draw shadow on bottom edge
             if self.shadow_offset_y > 0:
                 for i in range(self.shadow_offset_y):
                     for j in range(width + self.shadow_offset_x):
-                        try:
+                        with contextlib.suppress(curses.error):
                             window.addch(shadow_y + height + i, shadow_x + j, ' ', shadow_attr)
-                        except curses.error:
-                            pass
 
         # Draw main border
         border_attr = curses.color_pair(self.components.border)
@@ -442,31 +440,23 @@ class Theme3D(Theme):
 
             # Highlight top edge (just inside the border)
             for i in range(1, width - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + 1, x + i, ' ', highlight_attr)
-                except curses.error:
-                    pass
 
             # Highlight left edge (just inside the border)
             for i in range(1, height - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + i, x + 1, ' ', highlight_attr)
-                except curses.error:
-                    pass
 
             # Lowlight bottom edge (just inside the border)
             for i in range(1, width - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + height - 2, x + i, ' ', lowlight_attr)
-                except curses.error:
-                    pass
 
             # Lowlight right edge (just inside the border)
             for i in range(1, height - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + i, x + width - 2, ' ', lowlight_attr)
-                except curses.error:
-                    pass
         else:
             # Sunken: lowlight on top/left, highlight on bottom/right (reversed)
             highlight_attr = curses.color_pair(self.highlight_color_pair)
@@ -474,39 +464,29 @@ class Theme3D(Theme):
 
             # Lowlight top edge
             for i in range(1, width - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + 1, x + i, ' ', lowlight_attr)
-                except curses.error:
-                    pass
 
             # Lowlight left edge
             for i in range(1, height - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + i, x + 1, ' ', lowlight_attr)
-                except curses.error:
-                    pass
 
             # Highlight bottom edge
             for i in range(1, width - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + height - 2, x + i, ' ', highlight_attr)
-                except curses.error:
-                    pass
 
             # Highlight right edge
             for i in range(1, height - 1):
-                try:
+                with contextlib.suppress(curses.error):
                     window.addch(y + i, x + width - 2, ' ', highlight_attr)
-                except curses.error:
-                    pass
 
         # Draw title if provided
         if title and width > len(title) + 4:
             title_x = x + (width - len(title) - 2) // 2
-            try:
+            with contextlib.suppress(curses.error):
                 window.addstr(y, title_x, f" {title} ", border_attr)
-            except curses.error:
-                pass
 
     def __repr__(self) -> str:
         """String representation for debugging."""

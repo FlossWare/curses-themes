@@ -21,14 +21,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Optional
+import contextlib
 import curses
+from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class ColorPair:
     """Represents a foreground/background color pair."""
-    def __init__(self, foreground: Tuple[int, int, int], background: Tuple[int, int, int]):
+    def __init__(self, foreground: tuple[int, int, int], background: tuple[int, int, int]):
         self.foreground = foreground
         self.background = background
 
@@ -208,7 +209,7 @@ class Theme(ABC):
         self._components: Optional[ComponentColors] = None
 
     @abstractmethod
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
+    def get_color_map(self) -> dict[str, tuple[int, int, int]]:
         """
         Get RGB color definitions for this theme.
 
@@ -455,10 +456,8 @@ class Theme(ABC):
         # Draw title if provided
         if title and width > len(title) + 4:
             title_x = x + (width - len(title) - 2) // 2
-            try:
+            with contextlib.suppress(curses.error):
                 window.addstr(y, title_x, f" {title} ", attr)
-            except curses.error:
-                pass
 
     def __repr__(self) -> str:
         """String representation for debugging."""

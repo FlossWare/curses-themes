@@ -20,26 +20,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from .default import DefaultTheme
+from .borland3d import Borland3DTheme
 from .dark import DarkTheme
+from .dbase3 import DBase3Theme
+from .dbase4 import DBase4Theme
+from .dbase4_3d import DBase4_3DTheme
+from .default import DefaultTheme
+from .dos import DOSTheme
 from .light import LightTheme
 from .ti994a import TI994ATheme
 from .trs80 import TRS80Theme
-from .dos import DOSTheme
-from .dbase3 import DBase3Theme
-from .dbase4 import DBase4Theme
-from .borland3d import Borland3DTheme
-from .dbase4_3d import DBase4_3DTheme
 
 __all__ = [
-    'DefaultTheme',
+    'Borland3DTheme',
+    'DBase3Theme',
+    'DBase4Theme',
+    'DBase4_3DTheme',
+    'DOSTheme',
     'DarkTheme',
+    'DefaultTheme',
     'LightTheme',
     'TI994ATheme',
     'TRS80Theme',
-    'DOSTheme',
-    'DBase3Theme',
-    'DBase4Theme',
-    'Borland3DTheme',
-    'DBase4_3DTheme',
 ]
