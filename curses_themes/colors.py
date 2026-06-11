@@ -295,16 +295,23 @@ class ColorManager:
         )
 
         # Initialize component-based color pairs from theme methods
+        # Add null checks for each component method call
+        background_color = theme.get_background() if hasattr(theme, 'get_background') else None
+        button_color = theme.get_button() if hasattr(theme, 'get_button') else None
+        button_focused_color = theme.get_button_focused() if hasattr(theme, 'get_button_focused') else None
+        text_input_color = theme.get_text_input() if hasattr(theme, 'get_text_input') else None
+        border_color = theme.get_border() if hasattr(theme, 'get_border') else None
+        selection_color = theme.get_selection() if hasattr(theme, 'get_selection') else None
+        disabled_color = theme.get_disabled() if hasattr(theme, 'get_disabled') else None
+
         component_colors = ComponentColors(
-            background=self._init_color_pair_from_colorpair(theme.get_background()),
-            button=self._init_color_pair_from_colorpair(theme.get_button()),
-            button_focused=self._init_color_pair_from_colorpair(
-                theme.get_button_focused()
-            ),
-            text_input=self._init_color_pair_from_colorpair(theme.get_text_input()),
-            border=self._init_color_pair_from_colorpair(theme.get_border()),
-            selection=self._init_color_pair_from_colorpair(theme.get_selection()),
-            disabled=self._init_color_pair_from_colorpair(theme.get_disabled()),
+            background=self._init_color_pair_from_colorpair(background_color),
+            button=self._init_color_pair_from_colorpair(button_color),
+            button_focused=self._init_color_pair_from_colorpair(button_focused_color),
+            text_input=self._init_color_pair_from_colorpair(text_input_color),
+            border=self._init_color_pair_from_colorpair(border_color),
+            selection=self._init_color_pair_from_colorpair(selection_color),
+            disabled=self._init_color_pair_from_colorpair(disabled_color),
         )
 
         return semantic_colors, component_colors
@@ -314,11 +321,13 @@ class ColorManager:
         Initialize a curses color pair from a ColorPair object.
 
         Args:
-            color_pair: ColorPair with foreground and background RGB tuples
+            color_pair: ColorPair with foreground and background RGB tuples, or None
 
         Returns:
             Color pair number that can be used with curses.color_pair()
         """
+        if color_pair is None:
+            return 0
         return self._init_color_pair(color_pair.foreground, color_pair.background)
 
     def reset(self) -> None:
