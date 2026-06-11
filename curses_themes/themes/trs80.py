@@ -48,7 +48,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -67,18 +66,18 @@ class TRS80Theme(Theme):
     """
 
     # Pure monochrome palette
-    BLACK = (0, 0, 0)          # #000000
-    WHITE = (255, 255, 255)    # #FFFFFF - P4 white phosphor
+    BLACK = (0, 0, 0)  # #000000
+    WHITE = (255, 255, 255)  # #FFFFFF - P4 white phosphor
     # For semantic colors, we use subtle grays where needed
     LIGHT_GRAY = (192, 192, 192)  # For success/info
-    DARK_GRAY = (128, 128, 128)   # For warnings
+    DARK_GRAY = (128, 128, 128)  # For warnings
 
     def __init__(self):
         """Initialize the TRS-80 theme."""
         super().__init__(
             name="TRS-80",
             description="Tandy/Radio Shack TRS-80 monochrome theme with white-on-black display",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -137,24 +136,18 @@ class TRS80Theme(Theme):
         """
         return {
             # Background: White on black
-            'background': self.BLACK,
-            'foreground': self.WHITE,
-
+            "background": self.BLACK,
+            "foreground": self.WHITE,
             # Primary: White (same as foreground)
-            'primary': self.WHITE,
-
+            "primary": self.WHITE,
             # Success: Light gray (subtle differentiation)
-            'success': self.LIGHT_GRAY,
-
+            "success": self.LIGHT_GRAY,
             # Error: White (no color, but full brightness for visibility)
-            'error': self.WHITE,
-
+            "error": self.WHITE,
             # Warning: Dark gray (subtle differentiation)
-            'warning': self.DARK_GRAY,
-
+            "warning": self.DARK_GRAY,
             # Info: White (same as foreground)
-            'info': self.WHITE,
-
+            "info": self.WHITE,
             # Accent: White (same as foreground)
-            'accent': self.WHITE,
+            "accent": self.WHITE,
         }

@@ -37,7 +37,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -56,20 +55,20 @@ class TI994ATheme(Theme):
     """
 
     # TI-99/4A color palette (approximated in RGB)
-    BLACK = (0, 0, 0)          # #000000
-    BLUE = (0, 0, 238)         # Medium blue background
-    CYAN = (0, 205, 205)       # TI cyan (lighter than pure cyan)
-    WHITE = (255, 255, 255)    # #FFFFFF
-    GREEN = (0, 205, 0)        # For success messages
-    RED = (205, 0, 0)          # For error messages
-    YELLOW = (205, 205, 0)     # For warnings
+    BLACK = (0, 0, 0)  # #000000
+    BLUE = (0, 0, 238)  # Medium blue background
+    CYAN = (0, 205, 205)  # TI cyan (lighter than pure cyan)
+    WHITE = (255, 255, 255)  # #FFFFFF
+    GREEN = (0, 205, 0)  # For success messages
+    RED = (205, 0, 0)  # For error messages
+    YELLOW = (205, 205, 0)  # For warnings
 
     def __init__(self):
         """Initialize the TI-99/4A theme."""
         super().__init__(
             name="TI-99/4A",
             description="Texas Instruments TI-99/4A home computer theme with cyan-on-blue aesthetic",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -120,24 +119,18 @@ class TI994ATheme(Theme):
         """
         return {
             # Background: Cyan on blue
-            'background': self.BLUE,
-            'foreground': self.CYAN,
-
+            "background": self.BLUE,
+            "foreground": self.CYAN,
             # Primary/Button: White on blue (enhanced visibility)
-            'primary': self.WHITE,
-
+            "primary": self.WHITE,
             # Success: Green on blue
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red on blue
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow on blue
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan on blue (matches foreground)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: White (matches buttons)
-            'accent': self.WHITE,
+            "accent": self.WHITE,
         }

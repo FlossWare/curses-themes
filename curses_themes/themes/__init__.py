@@ -32,14 +32,14 @@ from .ti994a import TI994ATheme
 from .trs80 import TRS80Theme
 
 __all__ = [
-    'Borland3DTheme',
-    'DBase3Theme',
-    'DBase4Theme',
-    'DBase4_3DTheme',
-    'DOSTheme',
-    'DarkTheme',
-    'DefaultTheme',
-    'LightTheme',
-    'TI994ATheme',
-    'TRS80Theme',
+    "Borland3DTheme",
+    "DBase3Theme",
+    "DBase4Theme",
+    "DBase4_3DTheme",
+    "DOSTheme",
+    "DarkTheme",
+    "DefaultTheme",
+    "LightTheme",
+    "TI994ATheme",
+    "TRS80Theme",
 ]

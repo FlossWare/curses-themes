@@ -175,7 +175,7 @@ class ColorManager:
         Returns:
             Basic curses color constant (COLOR_BLACK, COLOR_RED, etc.)
         """
-        min_distance = float('inf')
+        min_distance = float("inf")
         closest_color = curses.COLOR_WHITE
 
         for color, (cr, cg, cb) in self.BASIC_COLORS.items():
@@ -191,7 +191,7 @@ class ColorManager:
     def _init_color_pair(
         self,
         fg_rgb: tuple[int, int, int],
-        bg_rgb: Optional[tuple[int, int, int]] = None
+        bg_rgb: Optional[tuple[int, int, int]] = None,
     ) -> int:
         """
         Initialize a curses color pair from RGB values.
@@ -251,39 +251,45 @@ class ColorManager:
 
         # Validate required colors
         required_colors = {
-            'background', 'foreground', 'primary', 'success',
-            'error', 'warning', 'info', 'accent'
+            "background",
+            "foreground",
+            "primary",
+            "success",
+            "error",
+            "warning",
+            "info",
+            "accent",
         }
         missing = required_colors - set(color_map.keys())
         if missing:
-            raise ValueError(
-                f"Theme '{theme.name}' missing required colors: {missing}"
-            )
+            raise ValueError(f"Theme '{theme.name}' missing required colors: {missing}")
 
         # Get background RGB for all pairs
-        bg_rgb = color_map['background']
+        bg_rgb = color_map["background"]
 
         # Initialize color pairs for each semantic color
         # Background pair uses default background for transparency
-        background_pair = self._init_color_pair(color_map['foreground'], bg_rgb)
+        background_pair = self._init_color_pair(color_map["foreground"], bg_rgb)
 
         # All other colors use the theme's background
         semantic_colors = SemanticColors(
-            primary=self._init_color_pair(color_map['primary'], bg_rgb),
-            success=self._init_color_pair(color_map['success'], bg_rgb),
-            error=self._init_color_pair(color_map['error'], bg_rgb),
-            warning=self._init_color_pair(color_map['warning'], bg_rgb),
-            info=self._init_color_pair(color_map['info'], bg_rgb),
+            primary=self._init_color_pair(color_map["primary"], bg_rgb),
+            success=self._init_color_pair(color_map["success"], bg_rgb),
+            error=self._init_color_pair(color_map["error"], bg_rgb),
+            warning=self._init_color_pair(color_map["warning"], bg_rgb),
+            info=self._init_color_pair(color_map["info"], bg_rgb),
             background=background_pair,
-            foreground=self._init_color_pair(color_map['foreground'], bg_rgb),
-            accent=self._init_color_pair(color_map['accent'], bg_rgb),
+            foreground=self._init_color_pair(color_map["foreground"], bg_rgb),
+            accent=self._init_color_pair(color_map["accent"], bg_rgb),
         )
 
         # Initialize component-based color pairs from theme methods
         component_colors = ComponentColors(
             background=self._init_color_pair_from_colorpair(theme.get_background()),
             button=self._init_color_pair_from_colorpair(theme.get_button()),
-            button_focused=self._init_color_pair_from_colorpair(theme.get_button_focused()),
+            button_focused=self._init_color_pair_from_colorpair(
+                theme.get_button_focused()
+            ),
             text_input=self._init_color_pair_from_colorpair(theme.get_text_input()),
             border=self._init_color_pair_from_colorpair(theme.get_border()),
             selection=self._init_color_pair_from_colorpair(theme.get_selection()),

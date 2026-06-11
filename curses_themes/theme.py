@@ -29,7 +29,10 @@ from typing import Optional
 
 class ColorPair:
     """Represents a foreground/background color pair."""
-    def __init__(self, foreground: tuple[int, int, int], background: tuple[int, int, int]):
+
+    def __init__(
+        self, foreground: tuple[int, int, int], background: tuple[int, int, int]
+    ):
         self.foreground = foreground
         self.background = background
 
@@ -62,7 +65,7 @@ class ComponentColors:
         text_input: int,
         border: int,
         selection: int,
-        disabled: int
+        disabled: int,
     ):
         """
         Initialize component color pairs.
@@ -121,7 +124,7 @@ class SemanticColors:
         info: int,
         background: int,
         foreground: int,
-        accent: int
+        accent: int,
     ):
         """
         Initialize semantic color pairs.
@@ -338,7 +341,7 @@ class Theme(ABC):
         self._colors, self._components = color_manager.initialize_theme(self)
 
         # Set default screen colors
-        stdscr.bkgd(' ', curses.color_pair(self._components.background))
+        stdscr.bkgd(" ", curses.color_pair(self._components.background))
 
     @property
     def colors(self) -> SemanticColors:
@@ -389,7 +392,7 @@ class Theme(ABC):
         height: int,
         width: int,
         title: str = "",
-        color_pair: Optional[int] = None
+        color_pair: Optional[int] = None,
     ) -> None:
         """
         Draw a themed border box on the given window.
@@ -408,8 +411,7 @@ class Theme(ABC):
         """
         if height < 2 or width < 2:
             raise ValueError(
-                f"Box dimensions too small: {height}x{width}. "
-                "Minimum is 2x2."
+                f"Box dimensions too small: {height}x{width}. Minimum is 2x2."
             )
 
         # Use border color if none specified
@@ -423,7 +425,9 @@ class Theme(ABC):
             )
 
         # Parse border characters: TL T TR L R BL B BR
-        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = border_chars
+        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = (
+            border_chars
+        )
 
         attr = curses.color_pair(color_pair)
 

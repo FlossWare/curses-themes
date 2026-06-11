@@ -88,7 +88,7 @@ class ThemeManager:
         Returns:
             Normalized theme name
         """
-        return name.lower().replace(' ', '-').replace('_', '-')
+        return name.lower().replace(" ", "-").replace("_", "-")
 
     @classmethod
     def _register_builtin_themes(cls) -> None:
@@ -115,14 +115,14 @@ class ThemeManager:
             from .themes.trs80 import TRS80Theme
 
             # Register each built-in theme
-            cls.register(DefaultTheme, 'default')
-            cls.register(DarkTheme, 'dark')
-            cls.register(LightTheme, 'light')
-            cls.register(TI994ATheme, 'ti-99-4a')
-            cls.register(TRS80Theme, 'trs-80')
-            cls.register(DOSTheme, 'dos')
-            cls.register(DBase3Theme, 'dbase-iii')
-            cls.register(DBase4Theme, 'dbase-iv')
+            cls.register(DefaultTheme, "default")
+            cls.register(DarkTheme, "dark")
+            cls.register(LightTheme, "light")
+            cls.register(TI994ATheme, "ti-99-4a")
+            cls.register(TRS80Theme, "trs-80")
+            cls.register(DOSTheme, "dos")
+            cls.register(DBase3Theme, "dbase-iii")
+            cls.register(DBase4Theme, "dbase-iv")
 
         except ImportError:
             # If built-in themes aren't available yet, that's okay
@@ -215,7 +215,10 @@ class ThemeManager:
         del cls._themes[normalized_name]
 
         # Clear current theme if it was unregistered
-        if cls._current_theme and cls._normalize_name(cls._current_theme.name) == normalized_name:
+        if (
+            cls._current_theme
+            and cls._normalize_name(cls._current_theme.name) == normalized_name
+        ):
             cls._current_theme = None
 
     @classmethod
@@ -251,10 +254,9 @@ class ThemeManager:
         normalized_name = cls._normalize_name(name)
 
         if normalized_name not in cls._themes:
-            available = ', '.join(sorted(cls._themes.keys()))
+            available = ", ".join(sorted(cls._themes.keys()))
             raise KeyError(
-                f"Theme '{normalized_name}' not found. "
-                f"Available themes: {available}"
+                f"Theme '{normalized_name}' not found. Available themes: {available}"
             )
 
         # Create new instance
@@ -293,9 +295,9 @@ class ThemeManager:
             # Create temporary instance to get metadata
             temp_instance = theme_class()
             result[normalized_name] = {
-                'name': temp_instance.name,
-                'description': temp_instance.description,
-                'author': temp_instance.author,
+                "name": temp_instance.name,
+                "description": temp_instance.description,
+                "author": temp_instance.author,
             }
 
         return result
@@ -353,18 +355,18 @@ from .themes import (
     TRS80Theme,
 )
 
-ThemeManager.register(DefaultTheme, 'default')
-ThemeManager.register(DarkTheme, 'dark')
-ThemeManager.register(LightTheme, 'light')
-ThemeManager.register(TI994ATheme, 'ti-99-4a')
-ThemeManager.register(TRS80Theme, 'trs-80')
-ThemeManager.register(DOSTheme, 'dos')
-ThemeManager.register(DBase3Theme, 'dbase-iii')
-ThemeManager.register(DBase4Theme, 'dbase-iv')
+ThemeManager.register(DefaultTheme, "default")
+ThemeManager.register(DarkTheme, "dark")
+ThemeManager.register(LightTheme, "light")
+ThemeManager.register(TI994ATheme, "ti-99-4a")
+ThemeManager.register(TRS80Theme, "trs-80")
+ThemeManager.register(DOSTheme, "dos")
+ThemeManager.register(DBase3Theme, "dbase-iii")
+ThemeManager.register(DBase4Theme, "dbase-iv")
 
 # Import and register 3D themes
 from .themes.borland3d import Borland3DTheme
 from .themes.dbase4_3d import DBase4_3DTheme
 
-ThemeManager.register(Borland3DTheme, 'borland-3d')
-ThemeManager.register(DBase4_3DTheme, 'dbase-iv-3d')
+ThemeManager.register(Borland3DTheme, "borland-3d")
+ThemeManager.register(DBase4_3DTheme, "dbase-iv-3d")

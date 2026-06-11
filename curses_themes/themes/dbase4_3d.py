@@ -77,7 +77,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair
 from ..theme3d import Theme3D
 
@@ -103,20 +102,20 @@ class DBase4_3DTheme(Theme3D):
     """
 
     # dBASE IV 3D color palette
-    BLACK = (0, 0, 0)          # #000000 - shadows and lowlights
-    BLUE = (0, 0, 238)         # #0000EE - Control Center blue background
-    WHITE = (255, 255, 255)    # #FFFFFF - highlights and borders
-    YELLOW = (255, 255, 0)     # #FFFF00 - raised menu buttons
-    CYAN = (0, 255, 255)       # #00FFFF - sunken input fields
-    RED = (255, 0, 0)          # #FF0000 - error messages
-    GREEN = (0, 255, 0)        # #00FF00 - success indicators
+    BLACK = (0, 0, 0)  # #000000 - shadows and lowlights
+    BLUE = (0, 0, 238)  # #0000EE - Control Center blue background
+    WHITE = (255, 255, 255)  # #FFFFFF - highlights and borders
+    YELLOW = (255, 255, 0)  # #FFFF00 - raised menu buttons
+    CYAN = (0, 255, 255)  # #00FFFF - sunken input fields
+    RED = (255, 0, 0)  # #FF0000 - error messages
+    GREEN = (0, 255, 0)  # #00FF00 - success indicators
 
     def __init__(self):
         """Initialize the dBASE IV 3D theme."""
         super().__init__(
             name="dBASE IV 3D",
             description="Ashton-Tate/Borland dBASE IV 3D windowed Control Center with drop shadows and beveled frames",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -278,24 +277,18 @@ class DBase4_3DTheme(Theme3D):
         """
         return {
             # Background: White on blue (Control Center)
-            'background': self.BLUE,
-            'foreground': self.WHITE,
-
+            "background": self.BLUE,
+            "foreground": self.WHITE,
             # Primary/Button: Yellow on blue (raised menu buttons)
-            'primary': self.YELLOW,
-
+            "primary": self.YELLOW,
             # Success: Green on blue (operation completed successfully)
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red on blue (critical errors and warnings)
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow on blue (caution messages, same as primary)
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan on blue (informational messages, matches text input)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: Yellow (matches buttons/menus for consistency)
-            'accent': self.YELLOW,
+            "accent": self.YELLOW,
         }

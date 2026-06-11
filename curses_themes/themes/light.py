@@ -21,7 +21,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -55,7 +54,7 @@ class LightTheme(Theme):
         super().__init__(
             name="Light",
             description="Light theme with bright background and dark text. Clean, high-contrast light mode aesthetic.",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -108,24 +107,18 @@ class LightTheme(Theme):
         """
         return {
             # Background: BLACK on WHITE
-            'background': self.WHITE,
-            'foreground': self.BLACK,
-
+            "background": self.WHITE,
+            "foreground": self.BLACK,
             # Primary/Button: BLUE on WHITE
-            'primary': self.BLUE,
-
+            "primary": self.BLUE,
             # Success: GREEN
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: RED
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: ORANGE
-            'warning': self.ORANGE,
-
+            "warning": self.ORANGE,
             # Accent: CYAN
-            'accent': self.CYAN,
-
+            "accent": self.CYAN,
             # Info: BLUE (matches primary)
-            'info': self.BLUE,
+            "info": self.BLUE,
         }

@@ -48,7 +48,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -67,19 +66,19 @@ class DBase3Theme(Theme):
     """
 
     # dBASE III color palette
-    BLACK = (0, 0, 0)          # #000000
-    WHITE = (255, 255, 255)    # #FFFFFF
-    CYAN = (0, 255, 255)       # #00FFFF - dBASE's signature menu color
-    GREEN = (0, 255, 0)        # #00FF00 - for data entry fields
-    RED = (255, 0, 0)          # #FF0000
-    YELLOW = (255, 255, 0)     # #FFFF00
+    BLACK = (0, 0, 0)  # #000000
+    WHITE = (255, 255, 255)  # #FFFFFF
+    CYAN = (0, 255, 255)  # #00FFFF - dBASE's signature menu color
+    GREEN = (0, 255, 0)  # #00FF00 - for data entry fields
+    RED = (255, 0, 0)  # #FF0000
+    YELLOW = (255, 255, 0)  # #FFFF00
 
     def __init__(self):
         """Initialize the dBASE III theme."""
         super().__init__(
             name="dBASE III",
             description="Ashton-Tate dBASE III theme with cyan menus on black background",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -153,24 +152,18 @@ class DBase3Theme(Theme):
         """
         return {
             # Background: White on black (dot prompt)
-            'background': self.BLACK,
-            'foreground': self.WHITE,
-
+            "background": self.BLACK,
+            "foreground": self.WHITE,
             # Primary/Button: Cyan on black (signature dBASE menu color)
-            'primary': self.CYAN,
-
+            "primary": self.CYAN,
             # Success/TextInput: Green on black (data entry)
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red on black
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow on black
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan on black (same as primary)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: Cyan (matches primary/buttons)
-            'accent': self.CYAN,
+            "accent": self.CYAN,
         }

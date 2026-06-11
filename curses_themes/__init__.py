@@ -87,24 +87,24 @@ from .themes import (
     TRS80Theme,
 )
 
-__version__ = '0.1'
-__author__ = 'FlossWare'
-__license__ = 'GPL-3.0'
+__version__ = "0.1"
+__author__ = "FlossWare"
+__license__ = "GPL-3.0"
 
 __all__ = [
-    'ColorManager',
-    'ColorPair',
-    'ComponentColors',
-    'DBase3Theme',
-    'DBase4Theme',
-    'DOSTheme',
-    'DarkTheme',
-    'DefaultTheme',
-    'LightTheme',
-    'SemanticColors',
-    'TI994ATheme',
-    'TRS80Theme',
-    'Theme',
-    'ThemeManager',
-    '__version__',
+    "ColorManager",
+    "ColorPair",
+    "ComponentColors",
+    "DBase3Theme",
+    "DBase4Theme",
+    "DOSTheme",
+    "DarkTheme",
+    "DefaultTheme",
+    "LightTheme",
+    "SemanticColors",
+    "TI994ATheme",
+    "TRS80Theme",
+    "Theme",
+    "ThemeManager",
+    "__version__",
 ]

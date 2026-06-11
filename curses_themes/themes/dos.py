@@ -53,7 +53,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -72,20 +71,20 @@ class DOSTheme(Theme):
     """
 
     # DOS CGA/EGA/VGA color palette (standard PC colors)
-    BLACK = (0, 0, 0)          # #000000
-    WHITE = (255, 255, 255)    # #FFFFFF (bright white)
-    YELLOW = (255, 255, 0)     # #FFFF00 (bright yellow)
-    CYAN = (0, 255, 255)       # #00FFFF (bright cyan)
-    RED = (255, 0, 0)          # #FF0000 (bright red)
-    GREEN = (0, 255, 0)        # #00FF00 (bright green)
-    MAGENTA = (255, 0, 255)    # #FF00FF (bright magenta)
+    BLACK = (0, 0, 0)  # #000000
+    WHITE = (255, 255, 255)  # #FFFFFF (bright white)
+    YELLOW = (255, 255, 0)  # #FFFF00 (bright yellow)
+    CYAN = (0, 255, 255)  # #00FFFF (bright cyan)
+    RED = (255, 0, 0)  # #FF0000 (bright red)
+    GREEN = (0, 255, 0)  # #00FF00 (bright green)
+    MAGENTA = (255, 0, 255)  # #FF00FF (bright magenta)
 
     def __init__(self):
         """Initialize the DOS theme."""
         super().__init__(
             name="DOS",
             description="Classic MS-DOS and PC-DOS theme with white-on-black text mode interface",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -163,24 +162,18 @@ class DOSTheme(Theme):
         """
         return {
             # Background: White on black
-            'background': self.BLACK,
-            'foreground': self.WHITE,
-
+            "background": self.BLACK,
+            "foreground": self.WHITE,
             # Primary/Button: Yellow on black (DOS menu highlight)
-            'primary': self.YELLOW,
-
+            "primary": self.YELLOW,
             # Success: Green on black
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red on black
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow on black (same as primary)
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan on black (matches text input)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: Magenta on black (for special highlights)
-            'accent': self.MAGENTA,
+            "accent": self.MAGENTA,
         }

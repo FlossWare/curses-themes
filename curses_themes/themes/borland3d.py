@@ -67,7 +67,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair
 from ..theme3d import Theme3D
 
@@ -127,15 +126,19 @@ class Borland3DTheme(Theme3D):
 
     # Authentic Borland Turbo Vision color palette
     # These values match the original CGA/EGA/VGA colors used in Turbo Pascal 6.0+
-    BLUE = (0, 0, 170)          # #0000AA - The iconic Borland blue background
-    CYAN = (0, 170, 170)        # #00AAAA - Raised buttons and focus color
-    YELLOW = (255, 255, 85)     # #FFFF55 - Text on blue (slightly muted for CRT authenticity)
-    WHITE = (255, 255, 255)     # #FFFFFF - Bright highlights on bevels
-    BLACK = (0, 0, 0)           # #000000 - Shadows and lowlights
+    BLUE = (0, 0, 170)  # #0000AA - The iconic Borland blue background
+    CYAN = (0, 170, 170)  # #00AAAA - Raised buttons and focus color
+    YELLOW = (
+        255,
+        255,
+        85,
+    )  # #FFFF55 - Text on blue (slightly muted for CRT authenticity)
+    WHITE = (255, 255, 255)  # #FFFFFF - Bright highlights on bevels
+    BLACK = (0, 0, 0)  # #000000 - Shadows and lowlights
     LIGHT_GRAY = (170, 170, 170)  # #AAAAAA - Disabled elements
-    RED = (255, 85, 85)         # #FF5555 - Error messages
-    GREEN = (85, 255, 85)       # #55FF55 - Success feedback
-    MAGENTA = (170, 0, 170)     # #AA00AA - Accent color
+    RED = (255, 85, 85)  # #FF5555 - Error messages
+    GREEN = (85, 255, 85)  # #55FF55 - Success feedback
+    MAGENTA = (170, 0, 170)  # #AA00AA - Accent color
 
     def __init__(self):
         """
@@ -148,7 +151,7 @@ class Borland3DTheme(Theme3D):
         super().__init__(
             name="Borland 3D",
             description="Borland Turbo Vision 3D theme with beveled buttons and drop shadows (1990-1997)",
-            author="FlossWare"
+            author="FlossWare",
         )
         # Set shadow offsets to match original Turbo Vision
         self.shadow_offset_x = 2
@@ -335,26 +338,20 @@ class Borland3DTheme(Theme3D):
         """
         return {
             # Background: Yellow text on iconic Borland blue
-            'background': self.BLUE,
-            'foreground': self.YELLOW,
-
+            "background": self.BLUE,
+            "foreground": self.YELLOW,
             # Primary: Cyan for buttons and interactive elements
-            'primary': self.CYAN,
-
+            "primary": self.CYAN,
             # Success: Green for positive feedback
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red for error messages
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow for warnings (matches foreground)
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan for informational messages (matches primary)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: Magenta for special highlights
-            'accent': self.MAGENTA,
+            "accent": self.MAGENTA,
         }
 
     def __repr__(self) -> str:

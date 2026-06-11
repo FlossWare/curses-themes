@@ -20,7 +20,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -43,19 +42,19 @@ class DefaultTheme(Theme):
     """
 
     # Standard 256-color terminal values (0-255 RGB)
-    BLACK = (0, 0, 0)          # #000000
-    WHITE = (255, 255, 255)    # #FFFFFF
-    CYAN = (0, 255, 255)       # #00FFFF
-    GREEN = (0, 255, 0)        # #00FF00
-    RED = (255, 0, 0)          # #FF0000
-    YELLOW = (255, 255, 0)     # #FFFF00
+    BLACK = (0, 0, 0)  # #000000
+    WHITE = (255, 255, 255)  # #FFFFFF
+    CYAN = (0, 255, 255)  # #00FFFF
+    GREEN = (0, 255, 0)  # #00FF00
+    RED = (255, 0, 0)  # #FF0000
+    YELLOW = (255, 255, 0)  # #FFFF00
 
     def __init__(self):
         """Initialize the Default theme."""
         super().__init__(
             name="Default",
             description="Default theme with white text on black background. Classic terminal appearance.",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -109,24 +108,18 @@ class DefaultTheme(Theme):
         """
         return {
             # Background: WHITE on BLACK
-            'background': self.BLACK,
-            'foreground': self.WHITE,
-
+            "background": self.BLACK,
+            "foreground": self.WHITE,
             # Primary/Button: CYAN on BLACK (maps to button and focused states)
-            'primary': self.CYAN,
-
+            "primary": self.CYAN,
             # Success/TextInput: GREEN on BLACK
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: RED on BLACK
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: YELLOW on BLACK
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: CYAN on BLACK (same as primary)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent/Selection: Uses inverse (BLACK on WHITE handled by component)
-            'accent': self.CYAN,
+            "accent": self.CYAN,
         }

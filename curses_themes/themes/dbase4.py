@@ -52,7 +52,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 from ..theme import ColorPair, Theme
 
 
@@ -71,20 +70,20 @@ class DBase4Theme(Theme):
     """
 
     # dBASE IV color palette
-    BLACK = (0, 0, 0)          # #000000
-    BLUE = (0, 0, 238)         # #0000EE - Control Center blue background
-    WHITE = (255, 255, 255)    # #FFFFFF
-    YELLOW = (255, 255, 0)     # #FFFF00 - menu highlighting
-    CYAN = (0, 255, 255)       # #00FFFF - input fields
-    RED = (255, 0, 0)          # #FF0000
-    GREEN = (0, 255, 0)        # #00FF00
+    BLACK = (0, 0, 0)  # #000000
+    BLUE = (0, 0, 238)  # #0000EE - Control Center blue background
+    WHITE = (255, 255, 255)  # #FFFFFF
+    YELLOW = (255, 255, 0)  # #FFFF00 - menu highlighting
+    CYAN = (0, 255, 255)  # #00FFFF - input fields
+    RED = (255, 0, 0)  # #FF0000
+    GREEN = (0, 255, 0)  # #00FF00
 
     def __init__(self):
         """Initialize the dBASE IV theme."""
         super().__init__(
             name="dBASE IV",
             description="Ashton-Tate/Borland dBASE IV theme with blue Control Center interface",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_background(self) -> ColorPair:
@@ -164,24 +163,18 @@ class DBase4Theme(Theme):
         """
         return {
             # Background: White on blue (Control Center)
-            'background': self.BLUE,
-            'foreground': self.WHITE,
-
+            "background": self.BLUE,
+            "foreground": self.WHITE,
             # Primary/Button: Yellow on blue (menu highlighting)
-            'primary': self.YELLOW,
-
+            "primary": self.YELLOW,
             # Success: Green on blue
-            'success': self.GREEN,
-
+            "success": self.GREEN,
             # Error: Red on blue
-            'error': self.RED,
-
+            "error": self.RED,
             # Warning: Yellow on blue (same as primary)
-            'warning': self.YELLOW,
-
+            "warning": self.YELLOW,
             # Info: Cyan on blue (matches text input)
-            'info': self.CYAN,
-
+            "info": self.CYAN,
             # Accent: Yellow (matches buttons/menus)
-            'accent': self.YELLOW,
+            "accent": self.YELLOW,
         }

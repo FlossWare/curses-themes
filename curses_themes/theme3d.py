@@ -250,6 +250,7 @@ class Theme3D(Theme):
 
         # Initialize 3D-specific color pairs
         from .colors import ColorManager
+
         color_manager = ColorManager(stdscr)
 
         shadow = self.get_shadow_color()
@@ -328,7 +329,7 @@ class Theme3D(Theme):
         height: int,
         width: int,
         raised: bool = True,
-        title: str = ""
+        title: str = "",
     ) -> None:
         """
         Draw a 3D bordered box with beveled edges and drop shadow.
@@ -371,8 +372,7 @@ class Theme3D(Theme):
         """
         if height < 2 or width < 2:
             raise ValueError(
-                f"Box dimensions too small: {height}x{width}. "
-                "Minimum is 2x2."
+                f"Box dimensions too small: {height}x{width}. Minimum is 2x2."
             )
 
         border_chars = self.get_border_chars()
@@ -382,7 +382,9 @@ class Theme3D(Theme):
             )
 
         # Parse border characters: TL T TR L R BL B BR
-        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = border_chars
+        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = (
+            border_chars
+        )
 
         # Draw drop shadow first (behind the box)
         if self.shadow_offset_x > 0 or self.shadow_offset_y > 0:
@@ -395,14 +397,18 @@ class Theme3D(Theme):
                 for i in range(height):
                     for j in range(self.shadow_offset_x):
                         with contextlib.suppress(curses.error):
-                            window.addch(shadow_y + i, shadow_x + width + j, ' ', shadow_attr)
+                            window.addch(
+                                shadow_y + i, shadow_x + width + j, " ", shadow_attr
+                            )
 
             # Draw shadow on bottom edge
             if self.shadow_offset_y > 0:
                 for i in range(self.shadow_offset_y):
                     for j in range(width + self.shadow_offset_x):
                         with contextlib.suppress(curses.error):
-                            window.addch(shadow_y + height + i, shadow_x + j, ' ', shadow_attr)
+                            window.addch(
+                                shadow_y + height + i, shadow_x + j, " ", shadow_attr
+                            )
 
         # Draw main border
         border_attr = curses.color_pair(self.components.border)
@@ -441,22 +447,22 @@ class Theme3D(Theme):
             # Highlight top edge (just inside the border)
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + 1, x + i, ' ', highlight_attr)
+                    window.addch(y + 1, x + i, " ", highlight_attr)
 
             # Highlight left edge (just inside the border)
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + 1, ' ', highlight_attr)
+                    window.addch(y + i, x + 1, " ", highlight_attr)
 
             # Lowlight bottom edge (just inside the border)
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + height - 2, x + i, ' ', lowlight_attr)
+                    window.addch(y + height - 2, x + i, " ", lowlight_attr)
 
             # Lowlight right edge (just inside the border)
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + width - 2, ' ', lowlight_attr)
+                    window.addch(y + i, x + width - 2, " ", lowlight_attr)
         else:
             # Sunken: lowlight on top/left, highlight on bottom/right (reversed)
             highlight_attr = curses.color_pair(self.highlight_color_pair)
@@ -465,22 +471,22 @@ class Theme3D(Theme):
             # Lowlight top edge
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + 1, x + i, ' ', lowlight_attr)
+                    window.addch(y + 1, x + i, " ", lowlight_attr)
 
             # Lowlight left edge
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + 1, ' ', lowlight_attr)
+                    window.addch(y + i, x + 1, " ", lowlight_attr)
 
             # Highlight bottom edge
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + height - 2, x + i, ' ', highlight_attr)
+                    window.addch(y + height - 2, x + i, " ", highlight_attr)
 
             # Highlight right edge
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + width - 2, ' ', highlight_attr)
+                    window.addch(y + i, x + width - 2, " ", highlight_attr)
 
         # Draw title if provided
         if title and width > len(title) + 4:
