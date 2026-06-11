@@ -296,13 +296,23 @@ class ColorManager:
 
         # Initialize component-based color pairs from theme methods
         # Add null checks for each component method call
-        background_color = theme.get_background() if hasattr(theme, 'get_background') else None
-        button_color = theme.get_button() if hasattr(theme, 'get_button') else None
-        button_focused_color = theme.get_button_focused() if hasattr(theme, 'get_button_focused') else None
-        text_input_color = theme.get_text_input() if hasattr(theme, 'get_text_input') else None
-        border_color = theme.get_border() if hasattr(theme, 'get_border') else None
-        selection_color = theme.get_selection() if hasattr(theme, 'get_selection') else None
-        disabled_color = theme.get_disabled() if hasattr(theme, 'get_disabled') else None
+        background_color = (
+            theme.get_background() if hasattr(theme, "get_background") else None
+        )
+        button_color = theme.get_button() if hasattr(theme, "get_button") else None
+        button_focused_color = (
+            theme.get_button_focused() if hasattr(theme, "get_button_focused") else None
+        )
+        text_input_color = (
+            theme.get_text_input() if hasattr(theme, "get_text_input") else None
+        )
+        border_color = theme.get_border() if hasattr(theme, "get_border") else None
+        selection_color = (
+            theme.get_selection() if hasattr(theme, "get_selection") else None
+        )
+        disabled_color = (
+            theme.get_disabled() if hasattr(theme, "get_disabled") else None
+        )
 
         component_colors = ComponentColors(
             background=self._init_color_pair_from_colorpair(background_color),
