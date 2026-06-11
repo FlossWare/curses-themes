@@ -63,6 +63,9 @@ class ColorManager:
     # Next color pair number to allocate
     _next_pair = 1
 
+    # Cache of (fg_color, bg_color) -> pair_num to reuse existing pairs
+    _pair_cache: dict[tuple[int, int], int] = {}
+
     def __init__(self, stdscr):
         """
         Initialize color manager for a curses screen.
@@ -210,6 +213,11 @@ class ColorManager:
         else:
             bg_color = self._rgb_to_curses_color(*bg_rgb)
 
+        # Check cache first to reuse existing pair for same color combination
+        cache_key = (fg_color, bg_color)
+        if cache_key in ColorManager._pair_cache:
+            return ColorManager._pair_cache[cache_key]
+
         pair_num = ColorManager._next_pair
         ColorManager._next_pair += 1
 
@@ -227,6 +235,9 @@ class ColorManager:
                 f"Failed to initialize color pair {pair_num} "
                 f"(fg={fg_color}, bg={bg_color}): {e}"
             )
+
+        # Cache the pair for future reuse
+        ColorManager._pair_cache[cache_key] = pair_num
 
         return pair_num
 
@@ -318,6 +329,7 @@ class ColorManager:
         for the lifetime of the curses session.
         """
         ColorManager._next_pair = 1
+        ColorManager._pair_cache.clear()
 
     def __repr__(self) -> str:
         """String representation for debugging."""
