@@ -296,7 +296,7 @@ class Borland3DTheme(Theme3D):
             For dialogs and emphasized panels, use get_double_border_chars()
             which returns double-line borders (╔═╗) for a heavier appearance.
         """
-        return "╭─╮│╰─╯│"
+        return "╭─╮││╰─╯"
 
     def get_double_border_chars(self) -> str:
         """
