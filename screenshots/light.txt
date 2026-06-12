@@ -1,25 +1,30 @@
-=== LIGHT =====================================================================
-  Light theme with bright background and dark text. Clean, high-contrast light
+                                  Theme: Light                                  
+================================================================================
+  Light theme with bright background and dark text. Clean, high-contrast
+  light mode aesthetic.
 
- ╔═════════════════ Sample Panel ═════════════════╗  ╔═══ Semantic Colors ════╗
- ║                                                ╚  ║                        ╚
- ║ Buttons:                                       ╚  ║ [OK]  Success message  ╚
- ║   [ Normal Button ]                            ╚  ║ [!!]  Error message    ╚
- ║   [ FOCUSED BUTTON ]  <-- highlighted          ╚  ║ [!?]  Warning message  ╚
- ║                                                ╚  ║ [ii]  Info message     ╚
- ║ Text Input:                                    ╚  ║                        ╚
- ║   Label: [sample text here______]              ╚  ║ Disabled text (muted)  ╚
- ║                                                ╚  ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║
- ║ Selection List:                                ╚
- ║   >> Selected Item  <<                         ╚  Color Palette (RGB):
- ║      Normal Item                               ╚   BG: #FFFFFF White
- ║      Normal Item                               ╚   FG: #000000 Black
- ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║   Primary: #0000FF
+  ╔════════════════════════════════════════════════════╗
+  ║ Sample Panel                                       ╚
+  ║════════════════════════════════════════════════════╚
+  ║                                                    ╚
+  ║  [ Normal Button ]                                 ╚
+  ║  [ Focused Button ] <--                            ╚
+  ║                                                    ╚
+  ║  Input: [Type here...             ]                ╚
+  ║                                                    ╚
+  ║  List Items:                                       ╚
+  ║    > Selected Item (highlighted)                   ╚
+  ║      Normal Item                                   ╚
+  ║      Another Item                                  ╚
+  ║                                                    ╚
+  ║  Status Messages:                                  ╚
+  ║    [OK] Success: Operation completed               ╚
+  ║    [!!] Error: Something went wrong                ╚
+  ║    [/!\] Warning: Check this carefully             ╚
+  ║    [i] Info: Additional details here               ╚
+  ║                                                    ╚
+  ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║
 
- Border style: '╔═╗║╚═╝║'
- Era: Modern high-contrast light mode
- Success: #008000  Error: #FF0000
- Warning: #FFA500  Info:  #0000FF
- Accent:  #00FFFF
-
- Theme: Light | Author: FlossWare | 3D: No
+  Theme Details:
+  --------------------------------------------------
+  Border Style:  Unicode Box Drawing

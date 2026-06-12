@@ -1,25 +1,30 @@
-=== TRS-80 ====================================================================
+                                 Theme: TRS-80                                  
+================================================================================
   Tandy/Radio Shack TRS-80 monochrome theme with white-on-black display
 
- +----------------- Sample Panel -----------------+  +--- Semantic Colors ----+
- |                                                |  |                        |
- | Buttons:                                       |  | [OK]  Success message  |
- |   [ Normal Button ]                            |  | [!!]  Error message    |
- |   [ FOCUSED BUTTON ]  <-- highlighted          |  | [!?]  Warning message  |
- |                                                |  | [ii]  Info message     |
- | Text Input:                                    |  |                        |
- |   Label: [sample text here______]              |  | Disabled text (muted)  |
- |                                                |  +------------------------+
- | Selection List:                                |
- |   >> Selected Item  <<                         |  Color Palette (RGB):
- |      Normal Item                               |   BG: #000000 Black
- |      Normal Item                               |   FG: #FFFFFF White
- +------------------------------------------------+   Primary: #FFFFFF
+  +----------------------------------------------------+
+  | Sample Panel                                       |
+  |----------------------------------------------------|
+  |                                                    |
+  |  [ Normal Button ]                                 |
+  |  [ Focused Button ] <--                            |
+  |                                                    |
+  |  Input: [Type here...             ]                |
+  |                                                    |
+  |  List Items:                                       |
+  |    > Selected Item (highlighted)                   |
+  |      Normal Item                                   |
+  |      Another Item                                  |
+  |                                                    |
+  |  Status Messages:                                  |
+  |    [OK] Success: Operation completed               |
+  |    [!!] Error: Something went wrong                |
+  |    [/!\] Warning: Check this carefully             |
+  |    [i] Info: Additional details here               |
+  |                                                    |
+  +----------------------------------------------------+
 
- Border style: '+-+||+-+'
- Era: Tandy/Radio Shack TRS-80 (1977-1983) -- monochrome phosphor display
- Success: #C0C0C0  Error: #FFFFFF
- Warning: #808080  Info:  #FFFFFF
- Accent:  #FFFFFF
-
- Theme: TRS-80 | Author: FlossWare | 3D: No
+  Theme Details:
+  --------------------------------------------------
+  Border Style:  ASCII
+  Border Chars:  '+-+||+-+'

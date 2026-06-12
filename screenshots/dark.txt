@@ -1,25 +1,30 @@
-=== DARK ======================================================================
-  Dark theme with muted colors and dark background. Modern dark mode aesthetic
+                                  Theme: Dark                                   
+================================================================================
+  Dark theme with muted colors and dark background. Modern dark mode
+  aesthetic.
 
- ┌───────────────── Sample Panel ─────────────────┐  ┌─── Semantic Colors ────┐
- │                                                │  │                        │
- │ Buttons:                                       │  │ [OK]  Success message  │
- │   [ Normal Button ]                            │  │ [!!]  Error message    │
- │   [ FOCUSED BUTTON ]  <-- highlighted          │  │ [!?]  Warning message  │
- │                                                │  │ [ii]  Info message     │
- │ Text Input:                                    │  │                        │
- │   Label: [sample text here______]              │  │ Disabled text (muted)  │
- │                                                │  └────────────────────────┘
- │ Selection List:                                │
- │   >> Selected Item  <<                         │  Color Palette (RGB):
- │      Normal Item                               │   BG: #000000 Black
- │      Normal Item                               │   FG: #00FFFF Cyan (Bright)
- └────────────────────────────────────────────────┘   Primary: #0000FF
+  ┌────────────────────────────────────────────────────┐
+  │ Sample Panel                                       │
+  │────────────────────────────────────────────────────│
+  │                                                    │
+  │  [ Normal Button ]                                 │
+  │  [ Focused Button ] <--                            │
+  │                                                    │
+  │  Input: [Type here...             ]                │
+  │                                                    │
+  │  List Items:                                       │
+  │    > Selected Item (highlighted)                   │
+  │      Normal Item                                   │
+  │      Another Item                                  │
+  │                                                    │
+  │  Status Messages:                                  │
+  │    [OK] Success: Operation completed               │
+  │    [!!] Error: Something went wrong                │
+  │    [/!\] Warning: Check this carefully             │
+  │    [i] Info: Additional details here               │
+  │                                                    │
+  └────────────────────────────────────────────────────┘
 
- Border style: '┌─┐││└─┘'
- Era: Modern dark mode aesthetic
- Success: #00FF00  Error: #FF0000
- Warning: #FFFF00  Info:  #FFFFFF
- Accent:  #00FFFF
-
- Theme: Dark | Author: FlossWare | 3D: No
+  Theme Details:
+  --------------------------------------------------
+  Border Style:  Unicode Box Drawing

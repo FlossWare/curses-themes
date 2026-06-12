@@ -1,25 +1,30 @@
-=== BORLAND 3D ================================================================
-  Borland Turbo Vision 3D theme with beveled buttons and drop shadows (1990-19
+                               Theme: Borland 3D                                
+================================================================================
+  Borland Turbo Vision 3D theme with beveled buttons and drop shadows
+  (1990-1997)
 
- ╭───────────────── Sample Panel ─────────────────╮  ╭─── Semantic Colors ────╮
- │                                                │░░│                        │
- │ Buttons:                                       │░░│ [OK]  Success message  │
- │   [ Normal Button ]                            │░░│ [!!]  Error message    │
- │   [ FOCUSED BUTTON ]  <-- highlighted          │░░│ [!?]  Warning message  │
- │                                                │░░│ [ii]  Info message     │
- │ Text Input:                                    │░░│                        │
- │   Label: [sample text here______]              │░░│ Disabled text (muted)  │
- │                                                │░░╰────────────────────────╯
- │ Selection List:                                │░░
- │   >> Selected Item  <<                         │░░Color Palette (RGB):
- │      Normal Item                               │░░ BG: #0000AA Blue (CGA)
- │      Normal Item                               │░░ FG: #FFFF55 Yellow (CGA)
- ╰────────────────────────────────────────────────╯░░ Primary: #00AAAA
-   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
- Border style: '╭─╮││╰─╯'
- 3D Effects: ENABLED                    Raised: [##########]
-   Shadow:    fg=#000000 bg=#000000     Sunken: [..........] (input)
-   Highlight: fg=#FFFFFF bg=#00AAAA     Double border: '╔═╗║║╚═╝'
-   Lowlight:  fg=#000000 bg=#00AAAA
+  ╭────────────────────────────────────────────────────╮
+  │ Sample Panel                                       │
+  │────────────────────────────────────────────────────│
+  │                                                    │
+  │  [ Normal Button ]                                 │
+  │  [ Focused Button ] <--                            │
+  │                                                    │
+  │  Input: [Type here...             ]                │
+  │                                                    │
+  │  List Items:                                       │
+  │    > Selected Item (highlighted)                   │
+  │      Normal Item                                   │
+  │      Another Item                                  │
+  │                                                    │
+  │  Status Messages:                                  │
+  │    [OK] Success: Operation completed               │
+  │    [!!] Error: Something went wrong                │
+  │    [/!\] Warning: Check this carefully             │
+  │    [i] Info: Additional details here               │
+  │                                                    │
+  ╰────────────────────────────────────────────────────╯
 
- Theme: Borland 3D | Author: FlossWare | 3D: Yes
+  Theme Details:
+  --------------------------------------------------
+  Border Style:  Unicode Box Drawing
