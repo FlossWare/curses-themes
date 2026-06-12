@@ -40,13 +40,14 @@ from curses_themes.theme3d import Theme3D
 # ASCII canvas helper
 # ---------------------------------------------------------------------------
 
+
 class AsciiCanvas:
     """Simple 2-D character buffer for composing text screenshots."""
 
     def __init__(self, width: int = 80, height: int = 25):
         self.width = width
         self.height = height
-        self.grid = [[' '] * width for _ in range(height)]
+        self.grid = [[" "] * width for _ in range(height)]
 
     def put(self, row: int, col: int, text: str) -> None:
         """Write *text* starting at (row, col), clipping to canvas bounds."""
@@ -66,8 +67,15 @@ class AsciiCanvas:
         for i in range(length):
             self.put(row + i, col, char)
 
-    def box(self, row: int, col: int, height: int, width: int,
-            border_chars: str, title: str = "") -> None:
+    def box(
+        self,
+        row: int,
+        col: int,
+        height: int,
+        width: int,
+        border_chars: str,
+        title: str = "",
+    ) -> None:
         """Draw a bordered box using an 8-character border string (TL T TR L R BL B BR)."""
         if len(border_chars) != 8:
             border_chars = "+-+||+-+"
@@ -95,16 +103,17 @@ class AsciiCanvas:
 
     def render(self) -> str:
         """Return the canvas as a single string with trailing whitespace stripped."""
-        lines = [''.join(row).rstrip() for row in self.grid]
+        lines = ["".join(row).rstrip() for row in self.grid]
         # Remove trailing blank lines
         while lines and not lines[-1]:
             lines.pop()
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
 # Color helpers
 # ---------------------------------------------------------------------------
+
 
 def rgb_to_hex(rgb: tuple) -> str:
     """Convert an (R,G,B) tuple to a hex string like #RRGGBB."""
@@ -139,6 +148,7 @@ def describe_color(rgb: tuple) -> str:
 # ---------------------------------------------------------------------------
 # Theme screenshot renderer
 # ---------------------------------------------------------------------------
+
 
 def render_theme(theme_name: str) -> str:
     """Render an ASCII text screenshot for the given theme name.
@@ -214,12 +224,12 @@ def render_theme(theme_name: str) -> str:
     # Row 13-16: Color Palette (right side)
     # ------------------------------------------------------------------
     canvas.put(13, sem_x, "Color Palette (RGB):")
-    bg_rgb = color_map.get('background', (0, 0, 0))
-    fg_rgb = color_map.get('foreground', (255, 255, 255))
+    bg_rgb = color_map.get("background", (0, 0, 0))
+    fg_rgb = color_map.get("foreground", (255, 255, 255))
     canvas.put(14, sem_x + 1, f"BG: {rgb_to_hex(bg_rgb)} {describe_color(bg_rgb)}")
     canvas.put(15, sem_x + 1, f"FG: {rgb_to_hex(fg_rgb)} {describe_color(fg_rgb)}")
 
-    primary_rgb = color_map.get('primary', (0, 0, 0))
+    primary_rgb = color_map.get("primary", (0, 0, 0))
     canvas.put(16, sem_x + 1, f"Primary: {rgb_to_hex(primary_rgb)}")
 
     # ------------------------------------------------------------------
@@ -233,9 +243,21 @@ def render_theme(theme_name: str) -> str:
             shadow = theme.get_shadow_color()
             highlight = theme.get_highlight_color()
             lowlight = theme.get_lowlight_color()
-            canvas.put(20, 3, f"Shadow:    fg={rgb_to_hex(shadow.foreground)} bg={rgb_to_hex(shadow.background)}")
-            canvas.put(21, 3, f"Highlight: fg={rgb_to_hex(highlight.foreground)} bg={rgb_to_hex(highlight.background)}")
-            canvas.put(22, 3, f"Lowlight:  fg={rgb_to_hex(lowlight.foreground)} bg={rgb_to_hex(lowlight.background)}")
+            canvas.put(
+                20,
+                3,
+                f"Shadow:    fg={rgb_to_hex(shadow.foreground)} bg={rgb_to_hex(shadow.background)}",
+            )
+            canvas.put(
+                21,
+                3,
+                f"Highlight: fg={rgb_to_hex(highlight.foreground)} bg={rgb_to_hex(highlight.background)}",
+            )
+            canvas.put(
+                22,
+                3,
+                f"Lowlight:  fg={rgb_to_hex(lowlight.foreground)} bg={rgb_to_hex(lowlight.background)}",
+            )
         except Exception:
             canvas.put(20, 3, "(3D color details unavailable)")
 
@@ -255,14 +277,18 @@ def render_theme(theme_name: str) -> str:
             canvas.put(19, 1, f"Era: {era}")
 
         # Additional color info
-        success_rgb = color_map.get('success', (0, 0, 0))
-        error_rgb = color_map.get('error', (0, 0, 0))
-        warning_rgb = color_map.get('warning', (0, 0, 0))
-        info_rgb = color_map.get('info', (0, 0, 0))
-        canvas.put(20, 1, f"Success: {rgb_to_hex(success_rgb)}  Error: {rgb_to_hex(error_rgb)}")
-        canvas.put(21, 1, f"Warning: {rgb_to_hex(warning_rgb)}  Info:  {rgb_to_hex(info_rgb)}")
+        success_rgb = color_map.get("success", (0, 0, 0))
+        error_rgb = color_map.get("error", (0, 0, 0))
+        warning_rgb = color_map.get("warning", (0, 0, 0))
+        info_rgb = color_map.get("info", (0, 0, 0))
+        canvas.put(
+            20, 1, f"Success: {rgb_to_hex(success_rgb)}  Error: {rgb_to_hex(error_rgb)}"
+        )
+        canvas.put(
+            21, 1, f"Warning: {rgb_to_hex(warning_rgb)}  Info:  {rgb_to_hex(info_rgb)}"
+        )
 
-        accent_rgb = color_map.get('accent', (0, 0, 0))
+        accent_rgb = color_map.get("accent", (0, 0, 0))
         canvas.put(22, 1, f"Accent:  {rgb_to_hex(accent_rgb)}")
 
     # ------------------------------------------------------------------
@@ -295,14 +321,15 @@ def _theme_era(name: str) -> str:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate ASCII text screenshots of all themes"
     )
     parser.add_argument(
-        '--output-dir',
-        default='screenshots',
-        help='Output directory for screenshots (default: screenshots/)'
+        "--output-dir",
+        default="screenshots",
+        help="Output directory for screenshots (default: screenshots/)",
     )
     args = parser.parse_args()
 
@@ -320,7 +347,7 @@ def main():
         try:
             screenshot = render_theme(theme_name)
             out_file = output_path / f"{theme_name}.txt"
-            out_file.write_text(screenshot + '\n', encoding='utf-8')
+            out_file.write_text(screenshot + "\n", encoding="utf-8")
             generated.append(str(out_file))
             print(f"  [OK] {out_file}")
         except Exception as exc:

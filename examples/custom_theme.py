@@ -46,7 +46,7 @@ class SolarizedDarkTheme(Theme):
         super().__init__(
             name="Solarized Dark",
             description="Professional dark theme with carefully balanced colors",
-            author="FlossWare"
+            author="FlossWare",
         )
 
     def get_color_map(self):
@@ -58,14 +58,14 @@ class SolarizedDarkTheme(Theme):
             Each RGB value is in range 0-255.
         """
         # Solarized base colors
-        base03 = (0, 43, 54)      # Dark background
-        base02 = (7, 54, 66)      # Darker background highlights
-        base01 = (88, 110, 117)   # Content tone (comments)
+        base03 = (0, 43, 54)  # Dark background
+        base02 = (7, 54, 66)  # Darker background highlights
+        base01 = (88, 110, 117)  # Content tone (comments)
         base00 = (101, 123, 131)  # Body text
-        base0 = (131, 148, 150)   # Primary content
-        base1 = (147, 161, 161)   # Optional emphasized content
-        base2 = (238, 232, 213)   # Background highlights
-        base3 = (253, 246, 227)   # Light background
+        base0 = (131, 148, 150)  # Primary content
+        base1 = (147, 161, 161)  # Optional emphasized content
+        base2 = (238, 232, 213)  # Background highlights
+        base3 = (253, 246, 227)  # Light background
 
         # Solarized accent colors
         yellow = (181, 137, 0)
@@ -78,14 +78,14 @@ class SolarizedDarkTheme(Theme):
         green = (133, 153, 0)
 
         return {
-            'background': base03,     # Dark background
-            'foreground': base0,      # Primary text
-            'primary': blue,          # Main UI highlights
-            'success': green,         # Positive feedback
-            'error': red,             # Error messages
-            'warning': yellow,        # Warnings
-            'info': cyan,             # Information
-            'accent': violet,         # Secondary highlights
+            "background": base03,  # Dark background
+            "foreground": base0,  # Primary text
+            "primary": blue,  # Main UI highlights
+            "success": green,  # Positive feedback
+            "error": red,  # Error messages
+            "warning": yellow,  # Warnings
+            "info": cyan,  # Information
+            "accent": violet,  # Secondary highlights
         }
 
 
@@ -104,7 +104,7 @@ def main(stdscr):
     ThemeManager.register(SolarizedDarkTheme)
 
     # Load and apply the custom theme
-    theme = ThemeManager.load('solarized-dark')
+    theme = ThemeManager.load("solarized-dark")
     theme.apply(stdscr)
 
     # Display theme information
@@ -128,27 +128,42 @@ def main(stdscr):
     row += 1
 
     stdscr.addstr(row, 0, "Primary: ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Main UI highlights and focus", curses.color_pair(theme.colors.primary))
+    stdscr.addstr(
+        row, 10, "Main UI highlights and focus", curses.color_pair(theme.colors.primary)
+    )
     row += 1
 
     stdscr.addstr(row, 0, "Success: ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Operation completed successfully", curses.color_pair(theme.colors.success))
+    stdscr.addstr(
+        row,
+        10,
+        "Operation completed successfully",
+        curses.color_pair(theme.colors.success),
+    )
     row += 1
 
     stdscr.addstr(row, 0, "Error:   ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Critical error occurred", curses.color_pair(theme.colors.error))
+    stdscr.addstr(
+        row, 10, "Critical error occurred", curses.color_pair(theme.colors.error)
+    )
     row += 1
 
     stdscr.addstr(row, 0, "Warning: ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Proceed with caution", curses.color_pair(theme.colors.warning))
+    stdscr.addstr(
+        row, 10, "Proceed with caution", curses.color_pair(theme.colors.warning)
+    )
     row += 1
 
     stdscr.addstr(row, 0, "Info:    ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Additional information", curses.color_pair(theme.colors.info))
+    stdscr.addstr(
+        row, 10, "Additional information", curses.color_pair(theme.colors.info)
+    )
     row += 1
 
     stdscr.addstr(row, 0, "Accent:  ", theme.colors.foreground)
-    stdscr.addstr(row, 10, "Secondary highlights", curses.color_pair(theme.colors.accent))
+    stdscr.addstr(
+        row, 10, "Secondary highlights", curses.color_pair(theme.colors.accent)
+    )
     row += 2
 
     # Draw a themed box
@@ -163,8 +178,12 @@ def main(stdscr):
     theme.draw_box(stdscr, box_y, box_x, box_height, box_width, title="Sample Panel")
 
     # Add content inside the box
-    stdscr.addstr(box_y + 1, box_x + 2, "This is a themed border box", theme.colors.foreground)
-    stdscr.addstr(box_y + 2, box_x + 2, "with custom Solarized colors", theme.colors.accent)
+    stdscr.addstr(
+        box_y + 1, box_x + 2, "This is a themed border box", theme.colors.foreground
+    )
+    stdscr.addstr(
+        box_y + 2, box_x + 2, "with custom Solarized colors", theme.colors.accent
+    )
 
     row += box_height + 2
 

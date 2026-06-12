@@ -20,22 +20,32 @@ def draw_demo_ui(stdscr, theme):
 
     # Title
     title = f"Theme: {theme.name}"
-    stdscr.addstr(0, (width - len(title)) // 2, title,
-                 curses.color_pair(theme.components.button_focused) | curses.A_BOLD)
+    stdscr.addstr(
+        0,
+        (width - len(title)) // 2,
+        title,
+        curses.color_pair(theme.components.button_focused) | curses.A_BOLD,
+    )
 
     # Description
     if theme.description:
-        desc_lines = theme.description.split('\n')
+        desc_lines = theme.description.split("\n")
         for i, line in enumerate(desc_lines[:2]):  # Show first 2 lines
             if len(line) > width - 4:
-                line = line[:width - 7] + "..."
-            stdscr.addstr(2 + i, 2, line, curses.color_pair(theme.components.foreground))
+                line = line[: width - 7] + "..."
+            stdscr.addstr(
+                2 + i, 2, line, curses.color_pair(theme.components.foreground)
+            )
 
     # Sample buttons
     y = 5
     stdscr.addstr(y, 4, "[ Normal Button ]", curses.color_pair(theme.components.button))
-    stdscr.addstr(y + 1, 4, "[ Focused Button ]",
-                 curses.color_pair(theme.components.button_focused) | curses.A_BOLD)
+    stdscr.addstr(
+        y + 1,
+        4,
+        "[ Focused Button ]",
+        curses.color_pair(theme.components.button_focused) | curses.A_BOLD,
+    )
 
     # Sample text input
     y += 3
@@ -44,13 +54,21 @@ def draw_demo_ui(stdscr, theme):
 
     # Sample selection
     y += 2
-    stdscr.addstr(y, 4, "Selected Item",
-                 curses.color_pair(theme.components.selection) | curses.A_BOLD)
-    stdscr.addstr(y + 1, 4, "Normal Item", curses.color_pair(theme.components.foreground))
+    stdscr.addstr(
+        y,
+        4,
+        "Selected Item",
+        curses.color_pair(theme.components.selection) | curses.A_BOLD,
+    )
+    stdscr.addstr(
+        y + 1, 4, "Normal Item", curses.color_pair(theme.components.foreground)
+    )
 
     # Semantic colors (if available)
     y += 3
-    stdscr.addstr(y, 4, "Semantic Colors:", curses.color_pair(theme.components.foreground))
+    stdscr.addstr(
+        y, 4, "Semantic Colors:", curses.color_pair(theme.components.foreground)
+    )
     y += 1
     try:
         stdscr.addstr(y, 6, "✓ Success", curses.color_pair(theme.colors.success))
@@ -73,14 +91,28 @@ def draw_demo_ui(stdscr, theme):
     # Draw a themed box
     if height > 20 and width > 50:
         theme.draw_box(stdscr, height - 8, 2, 6, width - 4, title="Themed Border")
-        stdscr.addstr(height - 6, 4, "Border style:", curses.color_pair(theme.components.foreground))
+        stdscr.addstr(
+            height - 6,
+            4,
+            "Border style:",
+            curses.color_pair(theme.components.foreground),
+        )
         border_chars = theme.get_border_chars()
-        stdscr.addstr(height - 5, 4, f"  {border_chars}", curses.color_pair(theme.components.border))
+        stdscr.addstr(
+            height - 5,
+            4,
+            f"  {border_chars}",
+            curses.color_pair(theme.components.border),
+        )
 
     # Instructions
     instructions = "Press any key for next theme, 'q' to quit"
-    stdscr.addstr(height - 2, (width - len(instructions)) // 2, instructions,
-                 curses.color_pair(theme.components.foreground))
+    stdscr.addstr(
+        height - 2,
+        (width - len(instructions)) // 2,
+        instructions,
+        curses.color_pair(theme.components.foreground),
+    )
 
     stdscr.refresh()
 
@@ -89,11 +121,11 @@ def main(stdscr):
     """Main demo loop."""
     # Retro themes from curses-java
     theme_names = [
-        'ti-99-4a',     # Texas Instruments TI-99/4A (1981-1984)
-        'trs-80',       # Tandy/Radio Shack TRS-80 (1980-1983)
-        'dos',          # MS-DOS (1981-1995)
-        'dbase-iii',    # dBASE III (1984-1985)
-        'dbase-iv',     # dBASE IV (1988-1993)
+        "ti-99-4a",  # Texas Instruments TI-99/4A (1981-1984)
+        "trs-80",  # Tandy/Radio Shack TRS-80 (1980-1983)
+        "dos",  # MS-DOS (1981-1995)
+        "dbase-iii",  # dBASE III (1984-1985)
+        "dbase-iv",  # dBASE IV (1988-1993)
     ]
 
     current_idx = 0
@@ -110,7 +142,7 @@ def main(stdscr):
         key = stdscr.getch()
 
         # Check for quit
-        if key == ord('q') or key == ord('Q'):
+        if key == ord("q") or key == ord("Q"):
             break
 
         # Move to next theme
@@ -125,4 +157,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nError: {e}")
         import traceback
+
         traceback.print_exc()

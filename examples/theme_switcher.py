@@ -31,12 +31,14 @@ import sys
 import os
 
 # Add parent directory to path to allow running from examples directory
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from curses_themes import ThemeManager
 
 
-def draw_theme_demo(stdscr, theme, theme_name: str, theme_index: int, total_themes: int):
+def draw_theme_demo(
+    stdscr, theme, theme_name: str, theme_index: int, total_themes: int
+):
     """
     Draw the theme demonstration screen.
 
@@ -122,13 +124,10 @@ def draw_theme_demo(stdscr, theme, theme_name: str, theme_index: int, total_them
         box_height,
         box_width,
         title="Primary Color",
-        color_pair=theme.colors.primary
+        color_pair=theme.colors.primary,
     )
     stdscr.addstr(
-        y + 2,
-        x_label + box_width + 4,
-        "Using primary color",
-        theme.colors.primary
+        y + 2, x_label + box_width + 4, "Using primary color", theme.colors.primary
     )
 
     y += box_height + 1
@@ -141,7 +140,7 @@ def draw_theme_demo(stdscr, theme, theme_name: str, theme_index: int, total_them
         box_height,
         box_width,
         title="Success",
-        color_pair=theme.colors.success
+        color_pair=theme.colors.success,
     )
     stdscr.addstr(y + 2, x_label + 2, "Using success color", theme.colors.success)
 
@@ -153,13 +152,10 @@ def draw_theme_demo(stdscr, theme, theme_name: str, theme_index: int, total_them
         box_height,
         box_width,
         title="Error",
-        color_pair=theme.colors.error
+        color_pair=theme.colors.error,
     )
     stdscr.addstr(
-        y + 2,
-        x_label + box_width + 4,
-        "Using error color",
-        theme.colors.error
+        y + 2, x_label + box_width + 4, "Using error color", theme.colors.error
     )
 
     stdscr.refresh()
@@ -177,7 +173,7 @@ def main(stdscr):
     stdscr.keypad(True)  # Enable keypad for special keys
 
     # Get all available themes
-    theme_names = ['default', 'dark', 'light']
+    theme_names = ["default", "dark", "light"]
     current_index = 0
 
     # Load and apply initial theme
@@ -192,7 +188,7 @@ def main(stdscr):
             current_theme,
             theme_names[current_index],
             current_index,
-            len(theme_names)
+            len(theme_names),
         )
 
         # Get user input
@@ -202,15 +198,15 @@ def main(stdscr):
             break
 
         # Handle key presses
-        if key == ord('q') or key == ord('Q'):
+        if key == ord("q") or key == ord("Q"):
             # Quit
             break
-        elif key == ord('n') or key == ord('N'):
+        elif key == ord("n") or key == ord("N"):
             # Next theme
             current_index = (current_index + 1) % len(theme_names)
             current_theme = ThemeManager.load(theme_names[current_index])
             current_theme.apply(stdscr)
-        elif key == ord('p') or key == ord('P'):
+        elif key == ord("p") or key == ord("P"):
             # Previous theme
             current_index = (current_index - 1) % len(theme_names)
             current_theme = ThemeManager.load(theme_names[current_index])
@@ -225,4 +221,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()

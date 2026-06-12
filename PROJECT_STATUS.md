@@ -33,9 +33,9 @@
 **Issue #1: Implement 5 built-in themes**
 - Dark (default)
 - Light
-- Dracula
-- Nord
-- Borland
+- Borland 3D
+- dBase III
+- dBase IV
 
 **Issue #2: Create example applications**
 - basic_usage.py
@@ -105,7 +105,7 @@ from curses_themes import ThemeManager
 
 def main(stdscr):
     # Load a theme
-    theme = ThemeManager.load('dracula')
+    theme = ThemeManager.load('dark')
     theme.apply(stdscr)
     
     # Use semantic colors
@@ -141,7 +141,7 @@ from curses_themes import ThemeManager
 class AutoDevUI:
     def __init__(self, stdscr):
         # Load theme from user preferences
-        theme = ThemeManager.load('dark')  # or 'dracula', 'nord', etc.
+        theme = ThemeManager.load('dark')  # or 'light', 'borland3d', 'dbase3', etc.
         theme.apply(stdscr)
         
         # Use theme colors instead of hardcoded curses.init_pair

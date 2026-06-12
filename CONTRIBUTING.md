@@ -180,7 +180,7 @@ class MyTheme(Theme):
     A brief description of your theme.
     
     Provide more details about:
-    - The inspiration (e.g., "Based on the Nord color palette")
+    - The inspiration (e.g., "Based on the Borland Turbo Vision palette")
     - The intended use case (e.g., "Designed for low-light environments")
     - Any special characteristics (e.g., "Features warm earth tones")
     
@@ -556,7 +556,7 @@ Documentation improvements are always welcome:
 
 6. **Commit with clear messages:**
    ```bash
-   git commit -m "Add Nord theme with accessibility features"
+   git commit -m "Add Borland 3D theme with accessibility features"
    ```
 
 ### Submitting the Pull Request
@@ -929,7 +929,7 @@ Follow these semantic color conventions:
 
 Choose colors that work well together:
 
-- Use established color palettes when possible (Solarized, Nord, Dracula, etc.)
+- Use established color palettes when possible (Solarized, retro system palettes, etc.)
 - Maintain consistent color temperature (warm vs. cool)
 - Limit the number of different hues (5-8 is typical)
 - Consider the overall mood (professional, playful, retro, etc.)

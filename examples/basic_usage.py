@@ -37,7 +37,7 @@ def main(stdscr):
     stdscr.clear()
 
     # Load and apply the default theme
-    theme = ThemeManager.load('default')
+    theme = ThemeManager.load("default")
     theme.apply(stdscr)
 
     # Get window dimensions
@@ -45,37 +45,60 @@ def main(stdscr):
 
     # Display title
     title = "curses-themes Basic Example"
-    stdscr.addstr(0, (width - len(title)) // 2, title,
-                  curses.color_pair(theme.colors.primary) | curses.A_BOLD)
+    stdscr.addstr(
+        0,
+        (width - len(title)) // 2,
+        title,
+        curses.color_pair(theme.colors.primary) | curses.A_BOLD,
+    )
 
     # Display semantic color examples
     y_pos = 2
-    stdscr.addstr(y_pos, 2, "Semantic Color Examples:",
-                  curses.color_pair(theme.colors.foreground) | curses.A_BOLD)
+    stdscr.addstr(
+        y_pos,
+        2,
+        "Semantic Color Examples:",
+        curses.color_pair(theme.colors.foreground) | curses.A_BOLD,
+    )
 
     y_pos += 2
-    stdscr.addstr(y_pos, 4, "Primary: Main UI highlights and focus",
-                  curses.color_pair(theme.colors.primary))
+    stdscr.addstr(
+        y_pos,
+        4,
+        "Primary: Main UI highlights and focus",
+        curses.color_pair(theme.colors.primary),
+    )
 
     y_pos += 1
-    stdscr.addstr(y_pos, 4, "Success: Operation completed successfully!",
-                  curses.color_pair(theme.colors.success))
+    stdscr.addstr(
+        y_pos,
+        4,
+        "Success: Operation completed successfully!",
+        curses.color_pair(theme.colors.success),
+    )
 
     y_pos += 1
-    stdscr.addstr(y_pos, 4, "Error: Something went wrong!",
-                  curses.color_pair(theme.colors.error))
+    stdscr.addstr(
+        y_pos, 4, "Error: Something went wrong!", curses.color_pair(theme.colors.error)
+    )
 
     y_pos += 1
-    stdscr.addstr(y_pos, 4, "Warning: Proceed with caution",
-                  curses.color_pair(theme.colors.warning))
+    stdscr.addstr(
+        y_pos,
+        4,
+        "Warning: Proceed with caution",
+        curses.color_pair(theme.colors.warning),
+    )
 
     y_pos += 1
-    stdscr.addstr(y_pos, 4, "Info: Helpful information here",
-                  curses.color_pair(theme.colors.info))
+    stdscr.addstr(
+        y_pos, 4, "Info: Helpful information here", curses.color_pair(theme.colors.info)
+    )
 
     y_pos += 1
-    stdscr.addstr(y_pos, 4, "Accent: Secondary highlights",
-                  curses.color_pair(theme.colors.accent))
+    stdscr.addstr(
+        y_pos, 4, "Accent: Secondary highlights", curses.color_pair(theme.colors.accent)
+    )
 
     # Draw a themed box with title
     box_y = y_pos + 3
@@ -83,31 +106,44 @@ def main(stdscr):
     box_height = 8
     box_width = width - 8
 
-    theme.draw_box(stdscr, box_y, box_x, box_height, box_width,
-                   title="Themed Border Box")
+    theme.draw_box(
+        stdscr, box_y, box_x, box_height, box_width, title="Themed Border Box"
+    )
 
     # Add content inside the box
     content_y = box_y + 2
     content_x = box_x + 2
 
-    stdscr.addstr(content_y, content_x,
-                  "This box demonstrates themed borders and styling.",
-                  curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(
+        content_y,
+        content_x,
+        "This box demonstrates themed borders and styling.",
+        curses.color_pair(theme.colors.foreground),
+    )
 
-    stdscr.addstr(content_y + 2, content_x,
-                  "Themes provide consistent visual appearance across",
-                  curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(
+        content_y + 2,
+        content_x,
+        "Themes provide consistent visual appearance across",
+        curses.color_pair(theme.colors.foreground),
+    )
 
-    stdscr.addstr(content_y + 3, content_x,
-                  "your entire curses application.",
-                  curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(
+        content_y + 3,
+        content_x,
+        "your entire curses application.",
+        curses.color_pair(theme.colors.foreground),
+    )
 
     # Display instructions at the bottom
     instructions = "Press any key to quit"
     try:
-        stdscr.addstr(height - 2, (width - len(instructions)) // 2,
-                     instructions,
-                     curses.color_pair(theme.colors.info) | curses.A_DIM)
+        stdscr.addstr(
+            height - 2,
+            (width - len(instructions)) // 2,
+            instructions,
+            curses.color_pair(theme.colors.info) | curses.A_DIM,
+        )
     except curses.error:
         # Ignore if too close to bottom edge
         pass
