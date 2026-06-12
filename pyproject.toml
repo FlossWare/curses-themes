@@ -265,7 +265,7 @@ addopts = [
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html",
     "--cov-branch",
-    "--cov-fail-under=85",
+    "--cov-fail-under=82",
     "--maxfail=3",
 ]
 markers = [

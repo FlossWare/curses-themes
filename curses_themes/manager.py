@@ -113,6 +113,8 @@ class ThemeManager:
             from .themes.light import LightTheme
             from .themes.ti994a import TI994ATheme
             from .themes.trs80 import TRS80Theme
+            from .themes.borland3d import Borland3DTheme
+            from .themes.dbase4_3d import DBase4_3DTheme
 
             # Register each built-in theme
             cls.register(DefaultTheme, "default")
@@ -123,6 +125,8 @@ class ThemeManager:
             cls.register(DOSTheme, "dos")
             cls.register(DBase3Theme, "dbase-iii")
             cls.register(DBase4Theme, "dbase-iv")
+            cls.register(Borland3DTheme, "borland-3d")
+            cls.register(DBase4_3DTheme, "dbase-iv-3d")
 
         except ImportError:
             # If built-in themes aren't available yet, that's okay
