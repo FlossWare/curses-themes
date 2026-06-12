@@ -212,13 +212,12 @@ class ThemeManager:
                 f"Available themes: {', '.join(cls._themes.keys())}"
             )
 
+        # Get the theme class before deletion
+        theme_class = cls._themes[normalized_name]
         del cls._themes[normalized_name]
 
-        # Clear current theme if it was unregistered
-        if (
-            cls._current_theme
-            and cls._normalize_name(cls._current_theme.name) == normalized_name
-        ):
+        # Clear current theme if it was an instance of the unregistered theme
+        if cls._current_theme and isinstance(cls._current_theme, theme_class):
             cls._current_theme = None
 
     @classmethod
