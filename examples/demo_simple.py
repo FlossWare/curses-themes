@@ -14,6 +14,7 @@ the Free Software Foundation, either version 3 of the License, or
 """
 
 import curses
+
 from curses_themes import ThemeManager
 
 
@@ -71,7 +72,12 @@ def main(stdscr):
     )
     stdscr.addstr(row + 3, 4, "Theme: dark", curses.color_pair(theme.colors.accent))
 
-    stdscr.addstr(height - 2, 2, "Press any key to exit", curses.color_pair(theme.colors.info) | curses.A_DIM)
+    stdscr.addstr(
+        height - 2,
+        2,
+        "Press any key to exit",
+        curses.color_pair(theme.colors.info) | curses.A_DIM,
+    )
     stdscr.refresh()
     stdscr.getch()
 

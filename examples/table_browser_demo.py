@@ -50,11 +50,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import curses
-from curses import panel
-from curses_themes import ThemeManager
-from typing import List, Dict, Any, Optional, Tuple
-from datetime import datetime, timedelta
 import random
+from curses import panel
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
+
+from curses_themes import ThemeManager
 
 
 # Sample database tables for demonstration
@@ -672,7 +673,7 @@ class TableBrowser:
                 0,
                 detail_height,
                 detail_width,
-                title=f"Record Details",
+                title="Record Details",
             )
         except Exception:
             # Fallback if draw_box not available
@@ -824,8 +825,7 @@ class TableBrowser:
         elif key == curses.KEY_UP:
             if self.current_row > 0:
                 self.current_row -= 1
-                if self.current_row < self.top_row:
-                    self.top_row = self.current_row
+                self.top_row = min(self.top_row, self.current_row)
 
         elif key == curses.KEY_DOWN:
             if self.current_row < len(data) - 1:

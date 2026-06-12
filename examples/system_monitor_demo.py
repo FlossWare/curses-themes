@@ -50,9 +50,11 @@ Features Demonstrated:
 
 import curses
 import time
-import psutil
 from datetime import timedelta
-from typing import List, Tuple, Optional
+from typing import List, Tuple
+
+import psutil
+
 from curses_themes import ThemeManager
 
 

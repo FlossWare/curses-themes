@@ -47,14 +47,14 @@ import curses
 import json
 import os
 import sys
-from typing import Dict, Tuple, Optional, List
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from enum import Enum
+from typing import Dict, Optional, Tuple
 
 # Add parent directory to path to allow running from examples directory
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from curses_themes import Theme, ThemeManager, ColorPair
+from curses_themes import ColorPair, Theme
 
 
 class WizardStep(Enum):
@@ -853,15 +853,11 @@ if __name__ == "__main__":
             elif key == ord("\n") or key == curses.KEY_ENTER:
                 self.next_step()
 
-        elif self.current_step == WizardStep.METADATA:
-            if key == ord("\n") or key == curses.KEY_ENTER:
-                self.next_step()
-
-        elif self.current_step == WizardStep.BORDER_CHARS:
-            if key == ord("\n") or key == curses.KEY_ENTER:
-                self.next_step()
-
-        elif self.current_step in [WizardStep.PREVIEW, WizardStep.EXPORT]:
+        elif (
+            self.current_step == WizardStep.METADATA
+            or self.current_step == WizardStep.BORDER_CHARS
+            or self.current_step in [WizardStep.PREVIEW, WizardStep.EXPORT]
+        ):
             if key == ord("\n") or key == curses.KEY_ENTER:
                 self.next_step()
 

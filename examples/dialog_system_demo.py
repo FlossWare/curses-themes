@@ -64,9 +64,8 @@ Requirements:
 
 import curses
 import time
-from typing import List, Tuple, Optional
-from curses_themes import ThemeManager
 
+from curses_themes import ThemeManager
 
 # ============================================================================
 # Dialog Base Class and Helper Functions
@@ -447,9 +446,7 @@ def show_confirmation_dialog(stdscr, theme, title, message):
 
         if key == ord("\t"):  # Tab
             focused_button = (focused_button + 1) % 3
-        elif key == curses.KEY_BTAB:  # Shift+Tab
-            focused_button = (focused_button - 1) % 3
-        elif key == curses.KEY_LEFT:
+        elif key == curses.KEY_BTAB or key == curses.KEY_LEFT:  # Shift+Tab
             focused_button = (focused_button - 1) % 3
         elif key == curses.KEY_RIGHT:
             focused_button = (focused_button + 1) % 3
@@ -517,9 +514,7 @@ def show_input_dialog(stdscr, theme, title, prompt, default_value=""):
 
         # Draw prompt
         try:
-            dialog_win.addstr(
-                2, 3, prompt, curses.color_pair(theme.colors.foreground)
-            )
+            dialog_win.addstr(2, 3, prompt, curses.color_pair(theme.colors.foreground))
         except curses.error:
             pass
 
@@ -566,31 +561,30 @@ def show_input_dialog(stdscr, theme, title, prompt, default_value=""):
                 focused_item = 1
             elif 32 <= key <= 126:
                 input_value += chr(key)
-        else:  # Button has focus
-            if key == ord("\t"):  # Tab
-                focused_item = 2 if focused_item == 1 else 1
-            elif key == curses.KEY_BTAB:  # Shift+Tab
-                if focused_item == 1:
-                    focused_item = 0
-                else:
-                    focused_item = 1
-            elif key == curses.KEY_LEFT:
-                focused_item = 1 if focused_item == 2 else 0
-            elif key == curses.KEY_RIGHT:
-                focused_item = 2 if focused_item == 1 else 0
-            elif key in [ord("\n"), ord(" ")]:  # Enter or Space
-                del dialog_win
-                stdscr.touchwin()
-                stdscr.refresh()
-                if focused_item == 1:
-                    return (DialogResult.OK, input_value)
-                else:
-                    return (DialogResult.CANCEL, None)
-            elif key == 27:  # Esc
-                del dialog_win
-                stdscr.touchwin()
-                stdscr.refresh()
+        elif key == ord("\t"):  # Tab
+            focused_item = 2 if focused_item == 1 else 1
+        elif key == curses.KEY_BTAB:  # Shift+Tab
+            if focused_item == 1:
+                focused_item = 0
+            else:
+                focused_item = 1
+        elif key == curses.KEY_LEFT:
+            focused_item = 1 if focused_item == 2 else 0
+        elif key == curses.KEY_RIGHT:
+            focused_item = 2 if focused_item == 1 else 0
+        elif key in [ord("\n"), ord(" ")]:  # Enter or Space
+            del dialog_win
+            stdscr.touchwin()
+            stdscr.refresh()
+            if focused_item == 1:
+                return (DialogResult.OK, input_value)
+            else:
                 return (DialogResult.CANCEL, None)
+        elif key == 27:  # Esc
+            del dialog_win
+            stdscr.touchwin()
+            stdscr.refresh()
+            return (DialogResult.CANCEL, None)
 
 
 # ============================================================================
@@ -712,36 +706,33 @@ def show_form_dialog(stdscr, theme, title, fields):
                 focused_item = (focused_item + 1) % (num_fields + 2)
             elif 32 <= key <= 126:
                 field_values[focused_item] += chr(key)
-        else:  # Button has focus
-            if key == ord("\t"):  # Tab
-                focused_item = (focused_item + 1) % (num_fields + 2)
-            elif key == curses.KEY_BTAB:  # Shift+Tab
-                focused_item = (focused_item - 1) % (num_fields + 2)
-            elif key == curses.KEY_LEFT:
-                focused_item = (
-                    num_fields if focused_item == num_fields + 1 else num_fields + 1
-                )
-            elif key == curses.KEY_RIGHT:
-                focused_item = (
-                    num_fields + 1 if focused_item == num_fields else num_fields
-                )
-            elif key in [ord("\n"), ord(" ")]:  # Enter or Space
-                del dialog_win
-                stdscr.touchwin()
-                stdscr.refresh()
-                if focused_item == num_fields:
-                    # Return values as dictionary
-                    result = {
-                        label: value for (label, _), value in zip(fields, field_values)
-                    }
-                    return (DialogResult.OK, result)
-                else:
-                    return (DialogResult.CANCEL, None)
-            elif key == 27:  # Esc
-                del dialog_win
-                stdscr.touchwin()
-                stdscr.refresh()
+        elif key == ord("\t"):  # Tab
+            focused_item = (focused_item + 1) % (num_fields + 2)
+        elif key == curses.KEY_BTAB:  # Shift+Tab
+            focused_item = (focused_item - 1) % (num_fields + 2)
+        elif key == curses.KEY_LEFT:
+            focused_item = (
+                num_fields if focused_item == num_fields + 1 else num_fields + 1
+            )
+        elif key == curses.KEY_RIGHT:
+            focused_item = num_fields + 1 if focused_item == num_fields else num_fields
+        elif key in [ord("\n"), ord(" ")]:  # Enter or Space
+            del dialog_win
+            stdscr.touchwin()
+            stdscr.refresh()
+            if focused_item == num_fields:
+                # Return values as dictionary
+                result = {
+                    label: value for (label, _), value in zip(fields, field_values)
+                }
+                return (DialogResult.OK, result)
+            else:
                 return (DialogResult.CANCEL, None)
+        elif key == 27:  # Esc
+            del dialog_win
+            stdscr.touchwin()
+            stdscr.refresh()
+            return (DialogResult.CANCEL, None)
 
 
 # ============================================================================
@@ -785,9 +776,7 @@ def show_progress_dialog(stdscr, theme, title, message):
 
         # Draw message
         try:
-            dialog_win.addstr(
-                2, 3, message, curses.color_pair(theme.colors.foreground)
-            )
+            dialog_win.addstr(2, 3, message, curses.color_pair(theme.colors.foreground))
         except curses.error:
             pass
 
@@ -969,8 +958,7 @@ def show_file_picker_dialog(stdscr, theme, title):
             if key == curses.KEY_UP:
                 if selected_index > 0:
                     selected_index -= 1
-                    if selected_index < scroll_offset:
-                        scroll_offset = selected_index
+                    scroll_offset = min(scroll_offset, selected_index)
             elif key == curses.KEY_DOWN:
                 if selected_index < len(items) - 1:
                     selected_index += 1
@@ -1007,43 +995,42 @@ def show_file_picker_dialog(stdscr, theme, title):
                 stdscr.touchwin()
                 stdscr.refresh()
                 return (DialogResult.CANCEL, None)
-        else:  # Button has focus
-            if key == ord("\t"):  # Tab
-                focused_item = 2 if focused_item == 1 else 1
-            elif key == curses.KEY_BTAB:  # Shift+Tab
-                if focused_item == 1:
-                    focused_item = 0
-                else:
-                    focused_item = 1
-            elif key == curses.KEY_LEFT:
-                focused_item = 1 if focused_item == 2 else 0
-            elif key == curses.KEY_RIGHT:
-                focused_item = 2 if focused_item == 1 else 0
-            elif key in [ord("\n"), ord(" ")]:  # Enter or Space
-                if focused_item == 1:
-                    # OK - return selected file
-                    selected_item = items[selected_index]
-                    try:
-                        full_path = os.path.join(current_dir, selected_item)
-                        if not os.path.isdir(full_path):
-                            del dialog_win
-                            stdscr.touchwin()
-                            stdscr.refresh()
-                            return (DialogResult.OK, full_path)
-                    except (OSError, PermissionError):
-                        # Ignore errors when accessing file
-                        pass
-                else:
-                    # Cancel
-                    del dialog_win
-                    stdscr.touchwin()
-                    stdscr.refresh()
-                    return (DialogResult.CANCEL, None)
-            elif key == 27:  # Esc
+        elif key == ord("\t"):  # Tab
+            focused_item = 2 if focused_item == 1 else 1
+        elif key == curses.KEY_BTAB:  # Shift+Tab
+            if focused_item == 1:
+                focused_item = 0
+            else:
+                focused_item = 1
+        elif key == curses.KEY_LEFT:
+            focused_item = 1 if focused_item == 2 else 0
+        elif key == curses.KEY_RIGHT:
+            focused_item = 2 if focused_item == 1 else 0
+        elif key in [ord("\n"), ord(" ")]:  # Enter or Space
+            if focused_item == 1:
+                # OK - return selected file
+                selected_item = items[selected_index]
+                try:
+                    full_path = os.path.join(current_dir, selected_item)
+                    if not os.path.isdir(full_path):
+                        del dialog_win
+                        stdscr.touchwin()
+                        stdscr.refresh()
+                        return (DialogResult.OK, full_path)
+                except (OSError, PermissionError):
+                    # Ignore errors when accessing file
+                    pass
+            else:
+                # Cancel
                 del dialog_win
                 stdscr.touchwin()
                 stdscr.refresh()
                 return (DialogResult.CANCEL, None)
+        elif key == 27:  # Esc
+            del dialog_win
+            stdscr.touchwin()
+            stdscr.refresh()
+            return (DialogResult.CANCEL, None)
 
 
 # ============================================================================
@@ -1189,7 +1176,7 @@ def main(stdscr):
                 theme.apply(stdscr)
                 last_result = f"Switched to {theme.name}"
             except Exception as e:
-                last_result = f"Error loading theme: {str(e)}"
+                last_result = f"Error loading theme: {e!s}"
         elif key == ord("1"):
             # Info message box
             show_message_box(

@@ -35,7 +35,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from curses_themes import ThemeManager
 from curses_themes.theme3d import Theme3D
 
-
 # ---------------------------------------------------------------------------
 # ASCII canvas helper
 # ---------------------------------------------------------------------------
@@ -235,7 +234,7 @@ def render_theme(theme_name: str) -> str:
     # ------------------------------------------------------------------
     # Row 18-22: Theme metadata / 3D info
     # ------------------------------------------------------------------
-    canvas.put(18, 1, f"Border style: {repr(border_chars)}")
+    canvas.put(18, 1, f"Border style: {border_chars!r}")
 
     if is_3d:
         canvas.put(19, 1, "3D Effects: ENABLED")
@@ -267,7 +266,7 @@ def render_theme(theme_name: str) -> str:
         # Double-border example
         try:
             dbl = theme.get_double_border_chars()
-            canvas.put(21, 40, f"Double border: {repr(dbl)}")
+            canvas.put(21, 40, f"Double border: {dbl!r}")
         except Exception:
             pass
     else:

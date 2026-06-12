@@ -52,8 +52,8 @@ Usage:
 """
 
 import curses
-import sys
 import os
+import sys
 from typing import List, Optional, Tuple
 
 # Add parent directory to path to allow running from examples directory
@@ -92,7 +92,7 @@ class TextBuffer:
             Tuple of (success, message)
         """
         try:
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 self.lines = f.read().splitlines() or [""]
             self.filename = filename
             self.cursor_row = 0
@@ -438,8 +438,7 @@ class TextEditor:
         sidebar_width = 20 if self.show_browser else 0
 
         # Adjust scroll to keep cursor visible
-        if self.buffer.cursor_row < self.scroll_row:
-            self.scroll_row = self.buffer.cursor_row
+        self.scroll_row = min(self.scroll_row, self.buffer.cursor_row)
         if self.buffer.cursor_row >= self.scroll_row + editor_height:
             self.scroll_row = self.buffer.cursor_row - editor_height + 1
 
@@ -511,8 +510,9 @@ class TextEditor:
         )
 
         # Adjust browser scroll
-        if self.browser.selected < self.browser.scroll_offset:
-            self.browser.scroll_offset = self.browser.selected
+        self.browser.scroll_offset = min(
+            self.browser.scroll_offset, self.browser.selected
+        )
         if self.browser.selected >= self.browser.scroll_offset + browser_height:
             self.browser.scroll_offset = self.browser.selected - browser_height + 1
 

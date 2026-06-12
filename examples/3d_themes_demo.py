@@ -36,6 +36,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import curses
+
 from curses_themes import ThemeManager
 
 
@@ -386,7 +387,7 @@ def main(stdscr):
             # Try loading the 3D theme
             theme = ThemeManager.load(name)
             available_themes.append(name)
-        except RuntimeError as e:
+        except RuntimeError:
             # Fall back to base theme if 3D version doesn't exist
             base_name = name.replace("-3d", "")
             try:
@@ -395,7 +396,7 @@ def main(stdscr):
             except RuntimeError:
                 # Skip this theme if neither version works
                 pass
-        except Exception as e:
+        except Exception:
             # Skip themes that fail to load for other reasons
             pass
 
@@ -410,7 +411,7 @@ def main(stdscr):
         try:
             theme = ThemeManager.load(available_themes[current_idx])
             theme.apply(stdscr)
-        except RuntimeError as e:
+        except RuntimeError:
             # Fall back to default theme if theme application fails
             try:
                 theme = ThemeManager.load("default")
@@ -418,7 +419,7 @@ def main(stdscr):
             except Exception:
                 # If even default fails, exit gracefully
                 return
-        except Exception as e:
+        except Exception:
             # Unknown error - try default theme
             try:
                 theme = ThemeManager.load("default")

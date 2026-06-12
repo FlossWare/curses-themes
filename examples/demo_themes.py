@@ -18,6 +18,7 @@ the Free Software Foundation, either version 3 of the License, or
 """
 
 import curses
+
 from curses_themes import ThemeManager
 
 

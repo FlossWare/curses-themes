@@ -8,6 +8,7 @@ Press any key to cycle through themes, 'q' to quit.
 """
 
 import curses
+
 from curses_themes import ThemeManager
 
 
@@ -33,9 +34,7 @@ def draw_demo_ui(stdscr, theme):
         for i, line in enumerate(desc_lines[:2]):  # Show first 2 lines
             if len(line) > width - 4:
                 line = line[: width - 7] + "..."
-            stdscr.addstr(
-                2 + i, 2, line, curses.color_pair(theme.colors.foreground)
-            )
+            stdscr.addstr(2 + i, 2, line, curses.color_pair(theme.colors.foreground))
 
     # Sample buttons
     y = 5
@@ -60,15 +59,11 @@ def draw_demo_ui(stdscr, theme):
         "Selected Item",
         curses.color_pair(theme.components.selection) | curses.A_BOLD,
     )
-    stdscr.addstr(
-        y + 1, 4, "Normal Item", curses.color_pair(theme.colors.foreground)
-    )
+    stdscr.addstr(y + 1, 4, "Normal Item", curses.color_pair(theme.colors.foreground))
 
     # Semantic colors (if available)
     y += 3
-    stdscr.addstr(
-        y, 4, "Semantic Colors:", curses.color_pair(theme.colors.foreground)
-    )
+    stdscr.addstr(y, 4, "Semantic Colors:", curses.color_pair(theme.colors.foreground))
     y += 1
     try:
         stdscr.addstr(y, 6, "✓ Success", curses.color_pair(theme.colors.success))
@@ -138,7 +133,9 @@ def main(stdscr):
         except Exception as e:
             # Fall back to default theme on error
             stdscr.clear()
-            stdscr.addstr(0, 0, f"Error loading theme '{theme_names[current_idx]}': {e}")
+            stdscr.addstr(
+                0, 0, f"Error loading theme '{theme_names[current_idx]}': {e}"
+            )
             stdscr.addstr(1, 0, "Attempting to use default theme...")
             stdscr.refresh()
             stdscr.getch()

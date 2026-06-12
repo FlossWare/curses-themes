@@ -7,6 +7,7 @@ Generates ASCII screenshots without requiring a real terminal.
 
 import argparse
 from pathlib import Path
+
 from curses_themes import ThemeManager
 
 
@@ -154,7 +155,7 @@ def generate_theme_sample(theme_name, width=80, height=30):
     # Border style
     border_name = "ASCII" if bc["horiz"] == "-" else "Unicode Box Drawing"
     lines.append(f"  Border Style:  {border_name}")
-    lines.append(f"  Border Chars:  {repr(border_str)}")
+    lines.append(f"  Border Chars:  {border_str!r}")
 
     # Author
     if hasattr(theme, "author") and theme.author:

@@ -27,6 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import curses
+
 from curses_themes import Theme, ThemeManager
 
 
@@ -188,10 +189,16 @@ def main(stdscr):
     # Add content inside the box
     # theme.colors.X returns a color pair NUMBER - must wrap in curses.color_pair()
     stdscr.addstr(
-        box_y + 1, box_x + 2, "This is a themed border box", curses.color_pair(theme.colors.foreground)
+        box_y + 1,
+        box_x + 2,
+        "This is a themed border box",
+        curses.color_pair(theme.colors.foreground),
     )
     stdscr.addstr(
-        box_y + 2, box_x + 2, "with custom Solarized colors", curses.color_pair(theme.colors.accent)
+        box_y + 2,
+        box_x + 2,
+        "with custom Solarized colors",
+        curses.color_pair(theme.colors.accent),
     )
 
     row += box_height + 2
