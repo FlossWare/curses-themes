@@ -1,0 +1,173 @@
+name: Manual Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type (leave empty if providing explicit version)'
+        required: false
+        type: choice
+        options:
+          - ''
+          - minor
+          - major
+      version:
+        description: 'Explicit version (X.Y format, leave empty if using bump_type)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  manual-version:
+    name: Manual version bump
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Validate inputs
+        id: validate
+        run: |
+          BUMP_TYPE="${{ inputs.bump_type }}"
+          VERSION="${{ inputs.version }}"
+
+          # Check that exactly one input is provided
+          if [[ -z "$BUMP_TYPE" && -z "$VERSION" ]]; then
+            echo "❌ Error: Must provide either bump_type OR version"
+            exit 1
+          fi
+
+          if [[ -n "$BUMP_TYPE" && -n "$VERSION" ]]; then
+            echo "❌ Error: Cannot provide both bump_type AND version"
+            exit 1
+          fi
+
+          # Validate version format if provided (X.Y only)
+          if [[ -n "$VERSION" ]]; then
+            if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+              echo "❌ Error: Version must be in X.Y format (e.g., 1.0, 0.9)"
+              exit 1
+            fi
+          fi
+
+          echo "✅ Input validation passed"
+
+      - name: Get current version
+        id: get-current
+        run: |
+          CURRENT=$(sed -n '7p' pyproject.toml | grep -oP 'version = "\K[0-9]+\.[0-9]+')
+          echo "current-version=$CURRENT" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT"
+
+      - name: Calculate new version
+        id: calculate
+        run: |
+          CURRENT="${{ steps.get-current.outputs.current-version }}"
+          BUMP_TYPE="${{ inputs.bump_type }}"
+          VERSION="${{ inputs.version }}"
+
+          # Extract major and minor from current version
+          CURRENT_MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+          CURRENT_MINOR=$(echo "$CURRENT" | cut -d. -f2)
+
+          if [[ -n "$BUMP_TYPE" ]]; then
+            # Calculate based on bump type
+            if [[ "$BUMP_TYPE" == "minor" ]]; then
+              NEW_MINOR=$((CURRENT_MINOR + 1))
+              NEW_VERSION="${CURRENT_MAJOR}.${NEW_MINOR}"
+            elif [[ "$BUMP_TYPE" == "major" ]]; then
+              NEW_MAJOR=$((CURRENT_MAJOR + 1))
+              NEW_VERSION="${NEW_MAJOR}.0"
+            fi
+            echo "Bump type: $BUMP_TYPE"
+          else
+            # Use provided version, but validate it's greater than current
+            NEW_VERSION="$VERSION"
+            NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
+            NEW_MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
+
+            # Compare versions (major.minor)
+            if [[ $NEW_MAJOR -lt $CURRENT_MAJOR ]] || \
+               [[ $NEW_MAJOR -eq $CURRENT_MAJOR && $NEW_MINOR -le $CURRENT_MINOR ]]; then
+              echo "❌ Error: New version ($NEW_VERSION) must be greater than current ($CURRENT)"
+              exit 1
+            fi
+            echo "Explicit version provided: $NEW_VERSION"
+          fi
+
+          echo "New version: $NEW_VERSION"
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update version files
+        run: |
+          NEW_VERSION="${{ steps.calculate.outputs.new-version }}"
+
+          # Update pyproject.toml line 7
+          sed -i '7s/version = "[0-9]\+\.[0-9]\+"/version = "'"$NEW_VERSION"'"/' pyproject.toml
+
+          # Update curses_themes/__init__.py
+          sed -i 's/__version__ = "[0-9]\+\.[0-9]\+"/__version__ = "'"$NEW_VERSION"'"/' curses_themes/__init__.py
+
+          echo "✅ Updated version to $NEW_VERSION in both files"
+
+      - name: Validate version sync
+        run: |
+          PYPROJECT_VERSION=$(sed -n '7p' pyproject.toml | grep -oP 'version = "\K[0-9]+\.[0-9]+')
+          INIT_VERSION=$(grep -oP '__version__ = "\K[0-9]+\.[0-9]+' curses_themes/__init__.py)
+
+          if [ "$PYPROJECT_VERSION" != "$INIT_VERSION" ]; then
+            echo "❌ ERROR: Version mismatch!"
+            echo "pyproject.toml: $PYPROJECT_VERSION"
+            echo "__init__.py: $INIT_VERSION"
+            exit 1
+          fi
+
+          echo "✅ Version sync validated: $PYPROJECT_VERSION"
+
+      - name: Commit and tag
+        run: |
+          NEW_VERSION="${{ steps.calculate.outputs.new-version }}"
+
+          # Stage changes
+          git add pyproject.toml curses_themes/__init__.py
+
+          # Create commit message
+          if [[ -n "${{ inputs.bump_type }}" ]]; then
+            COMMIT_MSG="Manual version bump to $NEW_VERSION (${{ inputs.bump_type }})"
+          else
+            COMMIT_MSG="Manual version bump to $NEW_VERSION"
+          fi
+
+          # Commit
+          git commit -m "$COMMIT_MSG"
+
+          # Create tag
+          TAG="v$NEW_VERSION"
+          git tag -a "$TAG" -m "Release $NEW_VERSION"
+
+          echo "✅ Created commit and tag $TAG"
+
+      - name: Push changes
+        run: |
+          NEW_VERSION="${{ steps.calculate.outputs.new-version }}"
+          TAG="v$NEW_VERSION"
+
+          # Push commit to main
+          git push origin HEAD:main
+
+          # Push tag
+          git push origin "$TAG"
+
+          echo "✅ Pushed commit and tag $TAG"
+          echo "🚀 This will trigger create-release.yml → release.yml → PyPI publish"
