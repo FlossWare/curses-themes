@@ -76,9 +76,12 @@ Example:
 from .colors import ColorManager
 from .manager import ThemeManager
 from .theme import ColorPair, ComponentColors, SemanticColors, Theme
+from .theme3d import Theme3D
 from .themes import (
+    Borland3DTheme,
     DarkTheme,
     DBase3Theme,
+    DBase4_3DTheme,
     DBase4Theme,
     DefaultTheme,
     DOSTheme,
@@ -92,11 +95,13 @@ __author__ = "FlossWare"
 __license__ = "GPL-3.0"
 
 __all__ = [
+    "Borland3DTheme",
     "ColorManager",
     "ColorPair",
     "ComponentColors",
     "DBase3Theme",
     "DBase4Theme",
+    "DBase4_3DTheme",
     "DOSTheme",
     "DarkTheme",
     "DefaultTheme",
@@ -105,6 +110,7 @@ __all__ = [
     "TI994ATheme",
     "TRS80Theme",
     "Theme",
+    "Theme3D",
     "ThemeManager",
     "__version__",
 ]

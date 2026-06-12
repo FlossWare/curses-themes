@@ -344,32 +344,3 @@ class ThemeManager:
         theme_count = len(cls._themes)
         current = cls._current_theme.name if cls._current_theme else "None"
         return f"ThemeManager(themes={theme_count}, current='{current}')"
-
-
-# Auto-register built-in themes
-from .themes import (
-    DarkTheme,
-    DBase3Theme,
-    DBase4Theme,
-    DefaultTheme,
-    DOSTheme,
-    LightTheme,
-    TI994ATheme,
-    TRS80Theme,
-)
-
-ThemeManager.register(DefaultTheme, "default")
-ThemeManager.register(DarkTheme, "dark")
-ThemeManager.register(LightTheme, "light")
-ThemeManager.register(TI994ATheme, "ti-99-4a")
-ThemeManager.register(TRS80Theme, "trs-80")
-ThemeManager.register(DOSTheme, "dos")
-ThemeManager.register(DBase3Theme, "dbase-iii")
-ThemeManager.register(DBase4Theme, "dbase-iv")
-
-# Import and register 3D themes
-from .themes.borland3d import Borland3DTheme
-from .themes.dbase4_3d import DBase4_3DTheme
-
-ThemeManager.register(Borland3DTheme, "borland-3d")
-ThemeManager.register(DBase4_3DTheme, "dbase-iv-3d")

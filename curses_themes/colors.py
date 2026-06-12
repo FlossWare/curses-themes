@@ -191,7 +191,7 @@ class ColorManager:
 
         return closest_color
 
-    def _init_color_pair(
+    def init_color_pair(
         self,
         fg_rgb: tuple[int, int, int],
         bg_rgb: Optional[tuple[int, int, int]] = None,
@@ -280,18 +280,18 @@ class ColorManager:
 
         # Initialize color pairs for each semantic color
         # Background pair uses default background for transparency
-        background_pair = self._init_color_pair(color_map["foreground"], bg_rgb)
+        background_pair = self.init_color_pair(color_map["foreground"], bg_rgb)
 
         # All other colors use the theme's background
         semantic_colors = SemanticColors(
-            primary=self._init_color_pair(color_map["primary"], bg_rgb),
-            success=self._init_color_pair(color_map["success"], bg_rgb),
-            error=self._init_color_pair(color_map["error"], bg_rgb),
-            warning=self._init_color_pair(color_map["warning"], bg_rgb),
-            info=self._init_color_pair(color_map["info"], bg_rgb),
+            primary=self.init_color_pair(color_map["primary"], bg_rgb),
+            success=self.init_color_pair(color_map["success"], bg_rgb),
+            error=self.init_color_pair(color_map["error"], bg_rgb),
+            warning=self.init_color_pair(color_map["warning"], bg_rgb),
+            info=self.init_color_pair(color_map["info"], bg_rgb),
             background=background_pair,
-            foreground=self._init_color_pair(color_map["foreground"], bg_rgb),
-            accent=self._init_color_pair(color_map["accent"], bg_rgb),
+            foreground=self.init_color_pair(color_map["foreground"], bg_rgb),
+            accent=self.init_color_pair(color_map["accent"], bg_rgb),
         )
 
         # Initialize component-based color pairs from theme methods
@@ -338,7 +338,7 @@ class ColorManager:
         """
         if color_pair is None:
             return 0
-        return self._init_color_pair(color_pair.foreground, color_pair.background)
+        return self.init_color_pair(color_pair.foreground, color_pair.background)
 
     def reset(self) -> None:
         """

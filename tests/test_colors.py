@@ -115,7 +115,7 @@ class TestColorPairManagement:
         manager = ColorManager(mock_stdscr)
 
         # Initialize white on black
-        pair_num = manager._init_color_pair((255, 255, 255), (0, 0, 0))
+        pair_num = manager.init_color_pair((255, 255, 255), (0, 0, 0))
 
         assert pair_num == 1  # First pair
         assert ColorManager._next_pair == 2  # Counter incremented
@@ -126,8 +126,8 @@ class TestColorPairManagement:
         manager = ColorManager(mock_stdscr)
 
         # Initialize same pair twice
-        pair1 = manager._init_color_pair((255, 255, 255), (0, 0, 0))
-        pair2 = manager._init_color_pair((255, 255, 255), (0, 0, 0))
+        pair1 = manager.init_color_pair((255, 255, 255), (0, 0, 0))
+        pair2 = manager.init_color_pair((255, 255, 255), (0, 0, 0))
 
         assert pair1 == pair2  # Same pair number
         assert ColorManager._next_pair == 2  # Only one pair allocated
@@ -136,7 +136,7 @@ class TestColorPairManagement:
         """Test color pair with None background (default terminal background)."""
         manager = ColorManager(mock_stdscr)
 
-        pair_num = manager._init_color_pair((255, 255, 255), None)
+        pair_num = manager.init_color_pair((255, 255, 255), None)
 
         assert pair_num == 1
         # Check that bg_color was set to -1 for default background

@@ -257,13 +257,13 @@ class Theme3D(Theme):
         highlight = self.get_highlight_color()
         lowlight = self.get_lowlight_color()
 
-        self._shadow_color_pair = color_manager._init_color_pair(
+        self._shadow_color_pair = color_manager.init_color_pair(
             shadow.foreground, shadow.background
         )
-        self._highlight_color_pair = color_manager._init_color_pair(
+        self._highlight_color_pair = color_manager.init_color_pair(
             highlight.foreground, highlight.background
         )
-        self._lowlight_color_pair = color_manager._init_color_pair(
+        self._lowlight_color_pair = color_manager.init_color_pair(
             lowlight.foreground, lowlight.background
         )
 
