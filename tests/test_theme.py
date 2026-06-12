@@ -43,12 +43,12 @@ class TestThemeColorAccess:
 
     def test_colors_property_before_apply_raises_error(self, simple_theme):
         """Test accessing colors property before apply() raises RuntimeError."""
-        with pytest.raises(RuntimeError, match="has not been applied"):
+        with pytest.raises(RuntimeError, match="colors not available|has not been applied"):
             _ = simple_theme.colors
 
     def test_components_property_before_apply_raises_error(self, simple_theme):
         """Test accessing components property before apply() raises RuntimeError."""
-        with pytest.raises(RuntimeError, match="has not been applied"):
+        with pytest.raises(RuntimeError, match="components not available|has not been applied"):
             _ = simple_theme.components
 
     def test_colors_property_after_apply(
@@ -280,3 +280,66 @@ class TestThemeWithComponentColors:
         # Component colors should be initialized
         assert theme.components.button > 0
         assert theme.components.button_focused > 0
+
+
+class TestThemeErrorMessages:
+    """Test suite for API misuse error messages."""
+
+    def test_colors_before_apply_error_message(self, simple_theme):
+        """Test helpful error when accessing colors before apply()."""
+        with pytest.raises(RuntimeError) as exc_info:
+            _ = simple_theme.colors
+
+        error_msg = str(exc_info.value)
+        assert (
+            "has not been applied" in error_msg.lower()
+            or "not available" in error_msg.lower()
+        )
+        assert "apply(" in error_msg
+        assert "stdscr" in error_msg.lower()
+
+    def test_components_before_apply_error_message(self, simple_theme):
+        """Test helpful error when accessing components before apply()."""
+        with pytest.raises(RuntimeError) as exc_info:
+            _ = simple_theme.components
+
+        error_msg = str(exc_info.value)
+        assert (
+            "has not been applied" in error_msg.lower()
+            or "not available" in error_msg.lower()
+        )
+        assert "apply(" in error_msg
+
+    def test_draw_box_invalid_window_error(self, mock_curses, simple_theme):
+        """Test helpful error when drawing on invalid/dead window."""
+        from unittest.mock import Mock
+
+        # Create a mock window that raises error on getmaxyx
+        dead_window = Mock()
+        dead_window.getmaxyx.side_effect = mock_curses.error("window died")
+
+        simple_theme._components = Mock()  # Fake apply
+        simple_theme._components.border = 1
+
+        with pytest.raises(RuntimeError) as exc_info:
+            simple_theme.draw_box(dead_window, 0, 0, 5, 5)
+
+        error_msg = str(exc_info.value)
+        assert "window" in error_msg.lower() and (
+            "valid" in error_msg.lower() or "dead" in error_msg.lower()
+        )
+
+    def test_apply_invalid_stdscr_error(self, mock_curses, simple_theme):
+        """Test helpful error when applying theme to invalid stdscr."""
+        from unittest.mock import Mock
+
+        dead_stdscr = Mock()
+        dead_stdscr.getmaxyx.side_effect = mock_curses.error("endwin called")
+
+        with pytest.raises(RuntimeError) as exc_info:
+            simple_theme.apply(dead_stdscr)
+
+        error_msg = str(exc_info.value)
+        assert "window" in error_msg.lower() and (
+            "valid" in error_msg.lower() or "apply" in error_msg.lower()
+        )

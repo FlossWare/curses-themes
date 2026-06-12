@@ -881,7 +881,8 @@ def show_file_picker_dialog(stdscr, theme, title):
     try:
         current_dir = os.getcwd()
         items = [".."] + sorted(os.listdir(current_dir))
-    except:
+    except (OSError, PermissionError):
+        # Fallback if directory is not accessible
         items = [".."]
 
     selected_index = 0
@@ -927,7 +928,8 @@ def show_file_picker_dialog(stdscr, theme, title):
                 full_path = os.path.join(current_dir, item)
                 is_dir = os.path.isdir(full_path) or item == ".."
                 prefix = "[DIR] " if is_dir else "      "
-            except:
+            except (OSError, PermissionError):
+                # Fallback if file is not accessible
                 prefix = "      "
 
             display_text = prefix + item
@@ -997,7 +999,8 @@ def show_file_picker_dialog(stdscr, theme, title):
                     items = [".."] + sorted(os.listdir(current_dir))
                     selected_index = 0
                     scroll_offset = 0
-                except:
+                except (OSError, PermissionError):
+                    # Ignore errors when accessing directory
                     pass
             elif key == 27:  # Esc
                 del dialog_win
@@ -1027,7 +1030,8 @@ def show_file_picker_dialog(stdscr, theme, title):
                             stdscr.touchwin()
                             stdscr.refresh()
                             return (DialogResult.OK, full_path)
-                    except:
+                    except (OSError, PermissionError):
+                        # Ignore errors when accessing file
                         pass
                 else:
                     # Cancel
@@ -1158,7 +1162,8 @@ def main(stdscr):
             theme.apply(stdscr)
             current_theme_idx = i
             break
-        except:
+        except Exception:
+            # Try next theme if this one fails to load
             continue
 
     # Fallback to default if no theme loaded

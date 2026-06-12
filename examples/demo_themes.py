@@ -1,4 +1,22 @@
 #!/usr/bin/env python3
+"""
+Theme cycling demonstration for curses-themes.
+
+This example shows how to cycle through multiple themes interactively,
+demonstrating the variety of visual styles available in the library.
+
+Controls:
+    n - Next theme
+    q - Quit
+
+Copyright (C) 2024 FlossWare
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+"""
+
 import curses
 from curses_themes import ThemeManager
 
@@ -10,8 +28,25 @@ def show_theme(stdscr, theme_name):
         pass
 
     stdscr.clear()
-    theme = ThemeManager.load(theme_name)
-    theme.apply(stdscr)
+
+    # Load and apply theme with error handling
+    try:
+        theme = ThemeManager.load(theme_name)
+        theme.apply(stdscr)
+    except RuntimeError as e:
+        # Terminal doesn't support colors or theme init failed
+        stdscr.addstr(0, 0, f"Theme error: {e}")
+        stdscr.refresh()
+        return
+    except Exception as e:
+        # Unknown error - use fallback theme
+        try:
+            theme = ThemeManager.load("default")
+            theme.apply(stdscr)
+        except Exception:
+            stdscr.addstr(0, 0, f"Error loading theme: {e}")
+            stdscr.refresh()
+            return
 
     height, width = stdscr.getmaxyx()
 

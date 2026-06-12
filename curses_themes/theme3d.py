@@ -43,9 +43,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import contextlib
 import curses
+from abc import abstractmethod
 from typing import Optional
 
-from .theme import ColorPair, Theme
+from .theme import ColorPair, Theme, _calculate_display_width
 
 
 class Theme3D(Theme):
@@ -159,6 +160,7 @@ class Theme3D(Theme):
             raise ValueError("Shadow offset must be non-negative")
         self._shadow_offset_y = value
 
+    @abstractmethod
     def get_shadow_color(self) -> ColorPair:
         """
         Get the shadow color for drop shadows.
@@ -174,6 +176,7 @@ class Theme3D(Theme):
         """
         raise NotImplementedError("Subclasses must implement get_shadow_color()")
 
+    @abstractmethod
     def get_highlight_color(self) -> ColorPair:
         """
         Get the highlight color for raised edges.
@@ -190,6 +193,7 @@ class Theme3D(Theme):
         """
         raise NotImplementedError("Subclasses must implement get_highlight_color()")
 
+    @abstractmethod
     def get_lowlight_color(self) -> ColorPair:
         """
         Get the lowlight color for shaded edges.
@@ -253,9 +257,23 @@ class Theme3D(Theme):
 
         color_manager = ColorManager(stdscr)
 
-        shadow = self.get_shadow_color()
-        highlight = self.get_highlight_color()
-        lowlight = self.get_lowlight_color()
+        try:
+            shadow = self.get_shadow_color()
+            highlight = self.get_highlight_color()
+            lowlight = self.get_lowlight_color()
+        except NotImplementedError as e:
+            # Extract method name from error message
+            method_name = str(e).split()[-1].rstrip('()')
+            raise RuntimeError(
+                f"Theme3D '{self.name}' is incomplete - {method_name}() not implemented.\n"
+                f"Theme3D subclasses must implement these three methods:\n"
+                f"  - get_shadow_color(): ColorPair for drop shadows\n"
+                f"  - get_highlight_color(): ColorPair for raised top/left edges\n"
+                f"  - get_lowlight_color(): ColorPair for raised bottom/right edges\n"
+                f"Example:\n"
+                f"  def {method_name}(self):\n"
+                f"      return ColorPair((255, 255, 255), (200, 200, 200))"
+            ) from e
 
         self._shadow_color_pair = color_manager.init_color_pair(
             shadow.foreground, shadow.background
@@ -489,10 +507,13 @@ class Theme3D(Theme):
                     window.addch(y + i, x + width - 2, " ", highlight_attr)
 
         # Draw title if provided
-        if title and width > len(title) + 4:
-            title_x = x + (width - len(title) - 2) // 2
-            with contextlib.suppress(curses.error):
-                window.addstr(y, title_x, f" {title} ", border_attr)
+        if title:
+            # Calculate display width accounting for CJK/wide characters
+            title_display_width = _calculate_display_width(title)
+            if width > title_display_width + 4:
+                title_x = x + (width - title_display_width - 2) // 2
+                with contextlib.suppress(curses.error):
+                    window.addstr(y, title_x, f" {title} ", border_attr)
 
     def __repr__(self) -> str:
         """String representation for debugging."""

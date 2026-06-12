@@ -134,7 +134,82 @@ The `ColorManager` automatically detects terminal capabilities:
 
 Your themes work everywhere without code changes!
 
-### 3. Theme Registration
+### ColorManager Best Practices
+
+**Understanding State Persistence**
+
+ColorManager uses class-level state that persists across instances:
+
+```python
+import curses
+from curses_themes import ColorManager
+
+def demo1(stdscr):
+    mgr = ColorManager(stdscr)
+    pair1 = mgr.init_color_pair((255, 0, 0), (0, 0, 0))  # Returns 1
+    print(f"Allocated pair: {pair1}")
+
+def demo2(stdscr):
+    mgr = ColorManager(stdscr)  # New instance!
+    # Same colors return cached pair number
+    pair2 = mgr.init_color_pair((255, 0, 0), (0, 0, 0))  # Returns 1 (cached)
+    # New colors continue allocation
+    pair3 = mgr.init_color_pair((0, 255, 0), (0, 0, 0))  # Returns 2
+    print(f"Cached: {pair2}, New: {pair3}")
+
+curses.wrapper(demo1)
+curses.wrapper(demo2)
+# Output: Allocated pair: 1
+#         Cached: 1, New: 2
+```
+
+**Why This Design?**
+
+1. **Prevents duplicate pairs**: Same colors always get the same pair number
+2. **Conserves COLOR_PAIRS**: Terminals have limited color pairs (often 256)
+3. **Works with theme switching**: Multiple themes can coexist without conflicts
+
+**What NOT to do:**
+
+```python
+# DON'T call reset() in production code
+mgr = ColorManager(stdscr)
+mgr.reset()  # This breaks ALL active color pairs!
+
+# DON'T assume new instance = fresh state
+mgr1 = ColorManager(stdscr)
+mgr2 = ColorManager(stdscr)  # Shares state with mgr1
+```
+
+### 3. Color Pair API Usage
+
+**Important**: Theme color attributes return **integers** (color pair numbers), not curses attributes.
+
+```python
+theme.colors.primary        # Returns: 1 (an integer)
+theme.components.button     # Returns: 2 (an integer)
+```
+
+**Always wrap with `curses.color_pair()` for display functions**:
+
+```python
+# CORRECT
+stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))
+
+# WRONG - missing wrapper
+stdscr.addstr(0, 0, "Text", theme.colors.primary)
+```
+
+**Exception**: Library methods like `draw_box()` expect raw numbers:
+
+```python
+# CORRECT - no wrapper for draw_box
+theme.draw_box(stdscr, 0, 0, 10, 40, color_pair=theme.components.border)
+```
+
+See [API Documentation - Understanding Color Pairs](API.md#understanding-color-pairs) for complete details.
+
+### 4. Theme Registration
 
 Themes are registered with `ThemeManager` by name:
 

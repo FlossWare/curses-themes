@@ -101,7 +101,8 @@ def draw_3d_box(window, theme, y, x, height, width, title="", raised=True):
                 # Try to get a darker color for shadow (disabled or background)
                 shadow_color = theme.components.disabled
                 draw_shadow(window, y, x, height, width, shadow_color)
-            except:
+            except (AttributeError, curses.error):
+                # Ignore if shadow color not available or drawing fails at boundaries
                 pass
 
 
@@ -385,14 +386,18 @@ def main(stdscr):
             # Try loading the 3D theme
             theme = ThemeManager.load(name)
             available_themes.append(name)
-        except Exception:
+        except RuntimeError as e:
             # Fall back to base theme if 3D version doesn't exist
             base_name = name.replace("-3d", "")
             try:
                 theme = ThemeManager.load(base_name)
                 available_themes.append(base_name)
-            except Exception:
+            except RuntimeError:
+                # Skip this theme if neither version works
                 pass
+        except Exception as e:
+            # Skip themes that fail to load for other reasons
+            pass
 
     # If no themes available, use default
     if not available_themes:
@@ -405,10 +410,21 @@ def main(stdscr):
         try:
             theme = ThemeManager.load(available_themes[current_idx])
             theme.apply(stdscr)
+        except RuntimeError as e:
+            # Fall back to default theme if theme application fails
+            try:
+                theme = ThemeManager.load("default")
+                theme.apply(stdscr)
+            except Exception:
+                # If even default fails, exit gracefully
+                return
         except Exception as e:
-            # Fall back to default theme
-            theme = ThemeManager.load("default")
-            theme.apply(stdscr)
+            # Unknown error - try default theme
+            try:
+                theme = ThemeManager.load("default")
+                theme.apply(stdscr)
+            except Exception:
+                return
 
         # Draw the demo screen
         draw_demo_screen(stdscr, theme)

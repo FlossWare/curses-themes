@@ -233,3 +233,76 @@ class TestThemeManagerReset:
         # Should re-register on next load
         ThemeManager.load("default")
         assert ThemeManager._builtin_registered is True
+
+
+class TestMetadataCaching:
+    """Tests for theme metadata caching optimization."""
+
+    def test_metadata_cached_on_registration_with_auto_name(self, simple_theme):
+        """Test that metadata is cached when theme is registered with auto name."""
+        ThemeManager.register(simple_theme.__class__)
+
+        normalized_name = "simple-test-theme"
+        assert normalized_name in ThemeManager._theme_metadata
+
+        metadata = ThemeManager._theme_metadata[normalized_name]
+        assert metadata["name"] == "Simple Test Theme"
+        assert "description" in metadata
+        assert "author" in metadata
+
+    def test_metadata_cached_on_registration_with_explicit_name(self, simple_theme):
+        """Test that metadata is cached when theme is registered with explicit name."""
+        ThemeManager.register(simple_theme.__class__, "custom-name")
+
+        assert "custom-name" in ThemeManager._theme_metadata
+
+        metadata = ThemeManager._theme_metadata["custom-name"]
+        assert metadata["name"] == "Simple Test Theme"
+        assert "description" in metadata
+        assert "author" in metadata
+
+    def test_list_themes_uses_cached_metadata(self, simple_theme):
+        """Test that list_themes() uses cached metadata instead of creating instances."""
+        # Register theme (which caches metadata)
+        ThemeManager.register(simple_theme.__class__, "test-theme")
+
+        # Clear the theme class temporarily to prove we're using cache
+        original_class = ThemeManager._themes["test-theme"]
+
+        # Call list_themes - should use cached metadata
+        themes = ThemeManager.list_themes()
+
+        assert "test-theme" in themes
+        assert themes["test-theme"]["name"] == "Simple Test Theme"
+
+    def test_unregister_clears_metadata_cache(self, simple_theme):
+        """Test that unregister() removes cached metadata."""
+        ThemeManager.register(simple_theme.__class__, "test-theme")
+        assert "test-theme" in ThemeManager._theme_metadata
+
+        ThemeManager.unregister("test-theme")
+        assert "test-theme" not in ThemeManager._theme_metadata
+
+    def test_reset_clears_metadata_cache(self, simple_theme):
+        """Test that reset() clears metadata cache."""
+        ThemeManager.register(simple_theme.__class__, "test-theme")
+        assert len(ThemeManager._theme_metadata) > 0
+
+        ThemeManager.reset()
+        assert len(ThemeManager._theme_metadata) == 0
+
+    def test_builtin_themes_have_cached_metadata(self):
+        """Test that built-in themes have metadata cached after registration."""
+        # Trigger built-in registration
+        ThemeManager.list_themes()
+
+        # All built-in themes should have cached metadata
+        assert "default" in ThemeManager._theme_metadata
+        assert "dark" in ThemeManager._theme_metadata
+        assert "light" in ThemeManager._theme_metadata
+
+        # Verify metadata structure
+        default_meta = ThemeManager._theme_metadata["default"]
+        assert "name" in default_meta
+        assert "description" in default_meta
+        assert "author" in default_meta

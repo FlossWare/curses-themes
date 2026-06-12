@@ -524,6 +524,37 @@ def main(stdscr):
 - `stdscr`: The curses window object
 - `color_count` (int): Number of colors supported (8, 16, or 256)
 
+#### State Persistence
+
+**Important:** ColorManager uses class-level state that persists across all instances.
+
+The `_next_pair` counter and `_pair_cache` dictionary are class variables, not instance variables. This means:
+
+- Creating multiple ColorManager instances does NOT reset color pairs
+- All instances share the same color pair allocation pool
+- Color pairs persist until the Python process exits
+- The cache ensures identical color combinations reuse the same pair number
+
+This design prevents duplicate color pair allocation and helps avoid exceeding the terminal's `COLOR_PAIRS` limit.
+
+**Example:**
+```python
+def main(stdscr):
+    # First manager allocates pairs 1-10
+    mgr1 = ColorManager(stdscr)
+    semantic1, component1 = mgr1.initialize_theme(theme1)
+    
+    # Second manager continues from pair 11
+    # (or reuses cached pairs if colors match)
+    mgr2 = ColorManager(stdscr)
+    semantic2, component2 = mgr2.initialize_theme(theme2)
+    
+    # Both managers share the same pair cache
+    # Same RGB combinations return the same pair numbers
+```
+
+**Testing Note:** The `reset()` method exists primarily for test isolation. In production code, you should rarely need to call it.
+
 #### Methods
 
 ##### initialize_theme()
@@ -554,13 +585,183 @@ stdscr.addstr(0, 0, "Text", curses.color_pair(semantic_colors.primary))
 stdscr.addstr(1, 0, "Button", curses.color_pair(component_colors.button))
 ```
 
+## Understanding Color Pairs
+
+### What Are Color Pair Numbers?
+
+When you access `theme.colors.primary` or `theme.components.button`, you get an **integer** (the color pair number), not a curses attribute. This number is an internal identifier that curses uses to track foreground/background color combinations.
+
+```python
+theme = ThemeManager.load('dark')
+theme.apply(stdscr)
+
+print(type(theme.colors.primary))  # <class 'int'>
+print(theme.colors.primary)        # 1 (or some other integer)
+```
+
+### The curses.color_pair() Wrapper
+
+To use a color pair number with curses display functions, you **must** wrap it with `curses.color_pair()`:
+
+```python
+# CORRECT - wrap the number
+stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))
+
+# WRONG - using raw number
+stdscr.addstr(0, 0, "Text", theme.colors.primary)  # May display incorrectly or crash
+```
+
+### When to Use Each Form
+
+#### Use curses.color_pair() wrapper:
+
+Always use `curses.color_pair()` when passing colors to **curses display functions**:
+
+- `window.addstr(y, x, text, curses.color_pair(num))`
+- `window.addch(y, x, ch, curses.color_pair(num))`
+- `window.bkgd(' ', curses.color_pair(num))`
+- `window.chgat(y, x, n, curses.color_pair(num))`
+- `window.attrset(curses.color_pair(num))`
+
+```python
+# All correct usages
+stdscr.addstr(0, 0, "Success", curses.color_pair(theme.colors.success))
+stdscr.bkgd(' ', curses.color_pair(theme.components.background))
+stdscr.chgat(0, 0, 10, curses.color_pair(theme.colors.error))
+```
+
+#### Use raw color pair numbers:
+
+Use the raw integer when passing to **library methods that expect pair numbers**:
+
+- `theme.draw_box(window, y, x, h, w, color_pair=num)` - No wrapper needed
+- Storing in data structures for later use
+- Comparing color pair values
+
+```python
+# Correct - draw_box expects the raw number
+theme.draw_box(stdscr, 0, 0, 10, 40, color_pair=theme.components.border)
+
+# Wrong - don't wrap when passing to library methods
+theme.draw_box(stdscr, 0, 0, 10, 40, 
+               color_pair=curses.color_pair(theme.components.border))  # WRONG!
+```
+
+### Common Mistakes
+
+#### Mistake 1: Forgetting the wrapper
+
+```python
+# WRONG - missing curses.color_pair()
+stdscr.addstr(0, 0, "Error", theme.colors.error)
+
+# CORRECT
+stdscr.addstr(0, 0, "Error", curses.color_pair(theme.colors.error))
+```
+
+#### Mistake 2: Double-wrapping
+
+```python
+# WRONG - draw_box internally applies curses.color_pair()
+theme.draw_box(stdscr, 0, 0, 10, 40, 
+               color_pair=curses.color_pair(theme.components.border))
+
+# CORRECT - pass raw number
+theme.draw_box(stdscr, 0, 0, 10, 40, 
+               color_pair=theme.components.border)
+```
+
+#### Mistake 3: Using hardcoded numbers
+
+```python
+# WRONG - hardcoded, not theme-aware
+stdscr.addstr(0, 0, "Text", curses.color_pair(1))
+
+# CORRECT - use theme color names
+stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))
+```
+
+### Complete Working Example
+
+```python
+import curses
+from curses_themes import ThemeManager
+
+def main(stdscr):
+    theme = ThemeManager.load('dark')
+    theme.apply(stdscr)
+    
+    # Display functions - use curses.color_pair()
+    stdscr.addstr(0, 0, "Title", 
+                  curses.color_pair(theme.colors.primary) | curses.A_BOLD)
+    stdscr.addstr(2, 0, "Success message", 
+                  curses.color_pair(theme.colors.success))
+    stdscr.addstr(3, 0, "[Button]", 
+                  curses.color_pair(theme.components.button))
+    
+    # Background - use curses.color_pair()
+    stdscr.bkgd(' ', curses.color_pair(theme.components.background))
+    
+    # Library methods - use raw number
+    theme.draw_box(stdscr, 5, 0, 10, 40, 
+                   title="Panel",
+                   color_pair=theme.components.border)
+    
+    stdscr.refresh()
+    stdscr.getch()
+
+if __name__ == "__main__":
+    curses.wrapper(main)
+```
+
+### Why This Design?
+
+This API design matches the standard curses model:
+
+1. **Separation of concerns**: Color pair numbers are identifiers, `curses.color_pair()` converts them to display attributes
+2. **Flexibility**: You can combine color pairs with other attributes using bitwise OR:
+   ```python
+   curses.color_pair(theme.colors.primary) | curses.A_BOLD | curses.A_UNDERLINE
+   ```
+3. **Performance**: Raw numbers can be stored and passed around efficiently
+4. **Compatibility**: Works with standard curses API conventions
+
+### Quick Reference
+
+| Context | Use | Example |
+|---------|-----|----------|
+| `addstr()`, `addch()` | `curses.color_pair(num)` | `stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))` |
+| `bkgd()`, `chgat()` | `curses.color_pair(num)` | `stdscr.bkgd(' ', curses.color_pair(theme.components.background))` |
+| `draw_box()` | Raw number | `theme.draw_box(stdscr, 0, 0, 10, 40, color_pair=theme.components.border)` |
+| Storing in variables | Raw number | `border_color = theme.components.border` |
+| Combining with attributes | `curses.color_pair(num)` | `curses.color_pair(theme.colors.error) | curses.A_BOLD` |
+
+---
+
 ##### reset()
 
 ```python
 def reset(self) -> None
 ```
 
-Resets color pair counter. This is primarily for testing. In normal use, color pairs persist for the lifetime of the curses session.
+Resets the class-level color pair counter and cache. **This affects ALL ColorManager instances.**
+
+**Warning:** This is a class-level operation. Calling `reset()` on any ColorManager instance will invalidate color pairs created by ALL instances. Previously allocated pair numbers will become invalid.
+
+**Use Cases:**
+- Test isolation (pytest fixtures)
+- Never use in production code
+
+**Example:**
+```python
+# In pytest conftest.py
+@pytest.fixture(autouse=True)
+def reset_color_manager():
+    from curses_themes.colors import ColorManager
+    yield
+    ColorManager._next_pair = 1
+    ColorManager._pair_cache.clear()
+```
 
 #### Color Conversion Methods
 

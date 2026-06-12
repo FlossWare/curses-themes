@@ -46,6 +46,33 @@ class ColorManager:
     Attributes:
         stdscr: The curses window object
         color_count: Number of colors supported (8, 16, or 256)
+
+    State Persistence:
+        ColorManager uses class-level state (_next_pair and _pair_cache) that
+        persists across all instances within a single Python process. This design
+        ensures color pairs are never duplicated, even when creating multiple
+        ColorManager instances:
+
+        - _next_pair: Class variable tracking the next available color pair number
+        - _pair_cache: Class-level dict caching (fg, bg) -> pair_num mappings
+
+        This means:
+        1. Creating a new ColorManager(stdscr) does NOT reset color pairs
+        2. All ColorManager instances share the same pair allocation pool
+        3. Color pairs persist until Python process exits or reset() is called
+        4. The reset() method is primarily for testing and should rarely be used
+
+        Example showing persistence:
+        ```python
+        def part1(stdscr):
+            mgr1 = ColorManager(stdscr)
+            pair1 = mgr1.init_color_pair((255, 0, 0), (0, 0, 0))  # Returns 1
+
+        def part2(stdscr):
+            mgr2 = ColorManager(stdscr)  # New instance
+            pair2 = mgr2.init_color_pair((255, 0, 0), (0, 0, 0))  # Returns 1 (cached)
+            pair3 = mgr2.init_color_pair((0, 255, 0), (0, 0, 0))  # Returns 2
+        ```
     """
 
     # Standard 8-color palette (ANSI colors)
@@ -60,10 +87,15 @@ class ColorManager:
         curses.COLOR_WHITE: (229, 229, 229),
     }
 
-    # Next color pair number to allocate
+    # Class-level state persists across all ColorManager instances
+    # This ensures color pairs are never duplicated in a single process
+
+    # Next color pair number to allocate (shared across all instances)
+    # Starts at 1 since 0 is reserved by curses for default colors
     _next_pair = 1
 
     # Cache of (fg_color, bg_color) -> pair_num to reuse existing pairs
+    # Shared across all instances to prevent duplicate pair allocation
     _pair_cache: dict[tuple[int, int], int] = {}
 
     def __init__(self, stdscr):
@@ -199,12 +231,25 @@ class ColorManager:
         """
         Initialize a curses color pair from RGB values.
 
+        Uses class-level cache to reuse existing pairs for identical color
+        combinations across all ColorManager instances. This prevents exceeding
+        the terminal's COLOR_PAIRS limit.
+
         Args:
             fg_rgb: Foreground RGB tuple (R, G, B)
             bg_rgb: Background RGB tuple, or None for default background
 
         Returns:
-            Color pair number that can be used with curses.color_pair()
+            Integer color pair number. When using with curses display functions,
+            wrap this with curses.color_pair():
+
+            >>> pair_num = manager.init_color_pair((255, 255, 255), (0, 0, 0))
+            >>> stdscr.addstr(0, 0, "Text", curses.color_pair(pair_num))
+
+        Note:
+            The same color combination always returns the same pair number,
+            even across different ColorManager instances, due to class-level
+            caching.
         """
         fg_color = self._rgb_to_curses_color(*fg_rgb)
 
@@ -273,7 +318,24 @@ class ColorManager:
         }
         missing = required_colors - set(color_map.keys())
         if missing:
-            raise ValueError(f"Theme '{theme.name}' missing required colors: {missing}")
+            missing_list = ', '.join(sorted(missing))
+            raise ValueError(
+                f"Theme '{theme.name}' is incomplete - missing required colors: {missing_list}\n"
+                f"get_color_map() must return all 8 required colors:\n"
+                f"  {', '.join(sorted(required_colors))}\n"
+                f"Example:\n"
+                f"  def get_color_map(self):\n"
+                f"      return {{\n"
+                f"          'background': (0, 0, 0),\n"
+                f"          'foreground': (255, 255, 255),\n"
+                f"          'primary': (0, 120, 215),\n"
+                f"          'success': (16, 124, 16),\n"
+                f"          'error': (232, 17, 35),\n"
+                f"          'warning': (193, 156, 0),\n"
+                f"          'info': (0, 120, 212),\n"
+                f"          'accent': (142, 68, 173),\n"
+                f"      }}"
+            )
 
         # Get background RGB for all pairs
         bg_rgb = color_map["background"]
@@ -342,10 +404,16 @@ class ColorManager:
 
     def reset(self) -> None:
         """
-        Reset color pair counter.
+        Reset color pair counter and cache.
 
-        This is primarily for testing. In normal use, color pairs persist
-        for the lifetime of the curses session.
+        WARNING: This is a class-level operation that affects ALL ColorManager
+        instances. It should only be used in testing environments.
+
+        In production code, color pairs should persist for the lifetime of the
+        curses session. Calling reset() will cause previously allocated pair
+        numbers to be invalid, potentially breaking active themes.
+
+        This method is primarily for pytest fixtures to ensure test isolation.
         """
         ColorManager._next_pair = 1
         ColorManager._pair_cache.clear()

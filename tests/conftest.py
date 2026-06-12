@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Shared pytest fixtures for curses-themes tests."""
 
-import pytest
 from unittest.mock import MagicMock, Mock
-import curses_themes
+
+import pytest
+
 from curses_themes import Theme
 
 
@@ -61,6 +62,7 @@ def mock_curses(monkeypatch):
     # Patch curses module in curses_themes.colors
     monkeypatch.setattr("curses_themes.colors.curses", mock)
     monkeypatch.setattr("curses_themes.theme.curses", mock)
+    monkeypatch.setattr("curses_themes.theme3d.curses", mock)
 
     return mock
 
@@ -71,6 +73,7 @@ def mock_stdscr():
     stdscr = MagicMock()
     stdscr.getmaxyx.return_value = (24, 80)
     stdscr.addstr = Mock()
+    stdscr.addch = Mock()
     stdscr.bkgd = Mock()
     stdscr.refresh = Mock()
     stdscr.getch = Mock(return_value=ord("q"))
@@ -105,6 +108,43 @@ class SimpleTheme(Theme):
 def simple_theme():
     """Fixture providing a minimal concrete Theme instance."""
     return SimpleTheme()
+
+
+@pytest.fixture
+def simple_3d_theme():
+    """Create a minimal 3D theme for testing."""
+    from curses_themes import ColorPair, Theme3D
+
+    class Simple3DTheme(Theme3D):
+        def __init__(self):
+            super().__init__(
+                name="Simple 3D Test Theme",
+                description="A minimal 3D theme for testing",
+                author="Test Suite",
+            )
+
+        def get_color_map(self):
+            return {
+                "background": (200, 200, 200),
+                "foreground": (0, 0, 0),
+                "primary": (0, 120, 215),
+                "success": (16, 124, 16),
+                "error": (232, 17, 35),
+                "warning": (193, 156, 0),
+                "info": (0, 120, 212),
+                "accent": (142, 68, 173),
+            }
+
+        def get_shadow_color(self):
+            return ColorPair((0, 0, 0), (0, 0, 0))
+
+        def get_highlight_color(self):
+            return ColorPair((255, 255, 255), (200, 200, 200))
+
+        def get_lowlight_color(self):
+            return ColorPair((128, 128, 128), (200, 200, 200))
+
+    return Simple3DTheme()
 
 
 @pytest.fixture(autouse=True)

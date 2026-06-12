@@ -187,3 +187,32 @@ class TestThemeInitialization:
 
         with pytest.raises(ValueError, match="missing required colors"):
             manager.initialize_theme(theme)
+
+    def test_missing_colors_error_shows_all_required(self, mock_curses, mock_stdscr):
+        """Test that missing colors error lists all required colors."""
+        from curses_themes import Theme
+
+        class IncompleteTheme(Theme):
+            def __init__(self):
+                super().__init__("Incomplete", "Missing colors")
+
+            def get_color_map(self):
+                return {
+                    "background": (0, 0, 0),
+                    "foreground": (255, 255, 255),
+                    # Missing 6 colors
+                }
+
+        manager = ColorManager(mock_stdscr)
+        theme = IncompleteTheme()
+
+        with pytest.raises(ValueError) as exc_info:
+            manager.initialize_theme(theme)
+
+        error_msg = str(exc_info.value)
+        # Should list what's missing
+        assert "primary" in error_msg or "success" in error_msg
+        # Should show all required colors
+        assert "get_color_map" in error_msg.lower()
+        # Should have example
+        assert "example" in error_msg.lower() or "return" in error_msg.lower()

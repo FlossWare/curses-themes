@@ -75,7 +75,7 @@ def draw_theme_demo(
     stdscr.addstr(y, x_label, "Semantic Colors:")
     y += 2
 
-    # Primary
+    # Primary - theme.colors.X is a color pair NUMBER - must wrap in curses.color_pair()
     stdscr.addstr(y, x_label, "Primary:", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(y, x_sample, "Important UI elements", curses.color_pair(theme.colors.primary))
     y += 1
@@ -177,8 +177,15 @@ def main(stdscr):
     current_index = 0
 
     # Load and apply initial theme
-    current_theme = ThemeManager.load(theme_names[current_index])
-    current_theme.apply(stdscr)
+    try:
+        current_theme = ThemeManager.load(theme_names[current_index])
+        current_theme.apply(stdscr)
+    except Exception as e:
+        # Fall back to default theme on error
+        stdscr.addstr(0, 0, f"Error loading theme: {e}")
+        stdscr.refresh()
+        stdscr.getch()
+        return
 
     # Main event loop
     while True:
@@ -204,13 +211,21 @@ def main(stdscr):
         elif key == ord("n") or key == ord("N"):
             # Next theme
             current_index = (current_index + 1) % len(theme_names)
-            current_theme = ThemeManager.load(theme_names[current_index])
-            current_theme.apply(stdscr)
+            try:
+                current_theme = ThemeManager.load(theme_names[current_index])
+                current_theme.apply(stdscr)
+            except Exception as e:
+                # Fall back to previous working theme on error
+                current_index = (current_index - 1) % len(theme_names)
         elif key == ord("p") or key == ord("P"):
             # Previous theme
             current_index = (current_index - 1) % len(theme_names)
-            current_theme = ThemeManager.load(theme_names[current_index])
-            current_theme.apply(stdscr)
+            try:
+                current_theme = ThemeManager.load(theme_names[current_index])
+                current_theme.apply(stdscr)
+            except Exception as e:
+                # Fall back to next working theme on error
+                current_index = (current_index + 1) % len(theme_names)
 
 
 if __name__ == "__main__":

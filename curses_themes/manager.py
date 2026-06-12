@@ -57,6 +57,9 @@ class ThemeManager:
     # Registry of theme classes by normalized name
     _themes: dict[str, type[Theme]] = {}
 
+    # Cache of theme metadata (name, description, author) by normalized name
+    _theme_metadata: dict[str, dict[str, str]] = {}
+
     # Currently active theme instance
     _current_theme: Optional[Theme] = None
 
@@ -175,6 +178,23 @@ class ThemeManager:
         if name is None:
             temp_instance = theme_class()  # type: ignore[call-arg]
             name = temp_instance.name
+            # Cache metadata while we have the instance
+            cls._theme_metadata[cls._normalize_name(name)] = {
+                "name": temp_instance.name,
+                "description": temp_instance.description,
+                "author": temp_instance.author,
+            }
+        else:
+            # When explicit name is provided, we still need to cache metadata
+            # Create temporary instance only if not already cached
+            normalized_name = cls._normalize_name(name)
+            if normalized_name not in cls._theme_metadata:
+                temp_instance = theme_class()  # type: ignore[call-arg]
+                cls._theme_metadata[normalized_name] = {
+                    "name": temp_instance.name,
+                    "description": temp_instance.description,
+                    "author": temp_instance.author,
+                }
 
         normalized_name = cls._normalize_name(name)
 
@@ -219,6 +239,10 @@ class ThemeManager:
         # Get the theme class before deletion
         theme_class = cls._themes[normalized_name]
         del cls._themes[normalized_name]
+
+        # Also remove cached metadata
+        if normalized_name in cls._theme_metadata:
+            del cls._theme_metadata[normalized_name]
 
         # Clear current theme if it was an instance of the unregistered theme
         if cls._current_theme and isinstance(cls._current_theme, theme_class):
@@ -294,14 +318,23 @@ class ThemeManager:
         cls._register_builtin_themes()
 
         result = {}
-        for normalized_name, theme_class in sorted(cls._themes.items()):
-            # Create temporary instance to get metadata
-            temp_instance = theme_class()  # type: ignore[call-arg]
-            result[normalized_name] = {
-                "name": temp_instance.name,
-                "description": temp_instance.description,
-                "author": temp_instance.author,
-            }
+        for normalized_name in sorted(cls._themes.keys()):
+            # Use cached metadata if available
+            if normalized_name in cls._theme_metadata:
+                result[normalized_name] = cls._theme_metadata[normalized_name].copy()
+            else:
+                # Fallback: create temp instance if metadata wasn't cached
+                # This should rarely happen (only for themes registered before this optimization)
+                theme_class = cls._themes[normalized_name]
+                temp_instance = theme_class()  # type: ignore[call-arg]
+                metadata = {
+                    "name": temp_instance.name,
+                    "description": temp_instance.description,
+                    "author": temp_instance.author,
+                }
+                # Cache it for next time
+                cls._theme_metadata[normalized_name] = metadata
+                result[normalized_name] = metadata.copy()
 
         return result
 
@@ -335,6 +368,7 @@ class ThemeManager:
             They will be re-registered on next load() or list_themes() call.
         """
         cls._themes.clear()
+        cls._theme_metadata.clear()
         cls._current_theme = None
         cls._builtin_registered = False
 

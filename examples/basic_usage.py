@@ -37,8 +37,22 @@ def main(stdscr):
     stdscr.clear()
 
     # Load and apply the default theme
-    theme = ThemeManager.load("default")
-    theme.apply(stdscr)
+    try:
+        theme = ThemeManager.load("default")
+        theme.apply(stdscr)
+    except RuntimeError as e:
+        # Terminal doesn't support colors or theme init failed
+        stdscr.addstr(0, 0, f"Theme error: {e}")
+        stdscr.addstr(1, 0, "This terminal may not support colors.")
+        stdscr.refresh()
+        stdscr.getch()
+        return
+    except Exception as e:
+        # Unknown error
+        stdscr.addstr(0, 0, f"Error loading theme: {e}")
+        stdscr.refresh()
+        stdscr.getch()
+        return
 
     # Get window dimensions
     height, width = stdscr.getmaxyx()
@@ -145,7 +159,7 @@ def main(stdscr):
             curses.color_pair(theme.colors.info) | curses.A_DIM,
         )
     except curses.error:
-        # Ignore if too close to bottom edge
+        # Ignore errors when drawing at screen boundaries
         pass
 
     # Refresh and wait for keypress

@@ -23,8 +23,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import contextlib
 import curses
+import unicodedata
 from abc import ABC, abstractmethod
 from typing import Optional
+
+
+def _calculate_display_width(text: str) -> int:
+    """Calculate the display width of text accounting for CJK characters.
+
+    Uses unicodedata.east_asian_width() to properly handle double-width
+    CJK (Chinese, Japanese, Korean) characters and other wide Unicode
+    characters that occupy two terminal columns.
+
+    Args:
+        text: The text string to measure
+
+    Returns:
+        Display width in terminal columns
+
+    Example:
+        >>> _calculate_display_width('Hello')  # ASCII
+        5
+        >>> _calculate_display_width('こんにちは')  # Japanese
+        10
+        >>> _calculate_display_width('你好世界')  # Chinese
+        8
+    """
+    width = 0
+    for char in text:
+        ea_width = unicodedata.east_asian_width(char)
+        # 'F' (Fullwidth) and 'W' (Wide) take 2 columns
+        # 'H' (Halfwidth), 'Na' (Narrow), 'N' (Neutral), 'A' (Ambiguous) take 1 column
+        if ea_width in ("F", "W"):
+            width += 2
+        else:
+            width += 1
+    return width
 
 
 class ColorPair:
@@ -321,6 +355,28 @@ class Theme(ABC):
         """
         return "+-+||+-+"
 
+    def _validate_stdscr(self, stdscr, operation: str) -> None:
+        """
+        Validate stdscr is alive and usable.
+
+        Args:
+            stdscr: The curses window to validate
+            operation: Description of operation for error message
+
+        Raises:
+            RuntimeError: If stdscr appears to be dead/ended
+        """
+        try:
+            # Try to get window size - will fail if stdscr is dead
+            stdscr.getmaxyx()
+        except (AttributeError, curses.error) as e:
+            raise RuntimeError(
+                f"Cannot {operation} - curses window is no longer valid.\n"
+                f"This usually happens after curses.endwin() or when used outside curses.wrapper().\n"
+                f"Ensure theme operations happen within the curses.wrapper() callback.\n"
+                f"Original error: {e}"
+            )
+
     def apply(self, stdscr) -> None:
         """
         Apply this theme to a curses screen.
@@ -335,6 +391,9 @@ class Theme(ABC):
             RuntimeError: If color initialization fails
         """
         from .colors import ColorManager
+
+        # Validate stdscr is alive
+        self._validate_stdscr(stdscr, "apply theme")
 
         # Initialize colors using the color manager
         color_manager = ColorManager(stdscr)
@@ -352,15 +411,28 @@ class Theme(ABC):
         New code should use the component-based methods instead.
 
         Returns:
-            SemanticColors instance with initialized color pairs
+            SemanticColors instance with initialized color pair numbers.
+            Each attribute (primary, success, error, etc.) is an integer that
+            must be wrapped with curses.color_pair() when used with curses
+            display functions.
 
         Raises:
             RuntimeError: If apply() has not been called yet
+
+        Example:
+            >>> theme.apply(stdscr)
+            >>> # Correct usage - wrap with curses.color_pair()
+            >>> stdscr.addstr(0, 0, "Success!", curses.color_pair(theme.colors.success))
+            >>> # Wrong - missing wrapper will not display correctly
+            >>> stdscr.addstr(0, 0, "Error!", theme.colors.error)  # DON'T DO THIS
         """
         if self._colors is None:
             raise RuntimeError(
-                f"Theme '{self.name}' has not been applied. "
-                "Call theme.apply(stdscr) first."
+                f"Theme '{self.name}' colors not available - apply() must be called first.\n"
+                f"Correct usage:\n"
+                f"  theme = ThemeManager.load('{self.name.lower()}')\n"
+                f"  theme.apply(stdscr)  # Initialize colors\n"
+                f"  stdscr.addstr(0, 0, 'text', curses.color_pair(theme.colors.primary))"
             )
         return self._colors
 
@@ -372,15 +444,28 @@ class Theme(ABC):
         This is the primary API matching curses-java Theme interface.
 
         Returns:
-            ComponentColors instance with initialized color pairs
+            ComponentColors instance with initialized color pair numbers.
+            Each attribute (button, border, text_input, etc.) is an integer that
+            must be wrapped with curses.color_pair() when used with curses
+            display functions.
 
         Raises:
             RuntimeError: If apply() has not been called yet
+
+        Example:
+            >>> theme.apply(stdscr)
+            >>> # Correct usage - wrap with curses.color_pair()
+            >>> stdscr.addstr(0, 0, "[OK]", curses.color_pair(theme.components.button))
+            >>> # Wrong - missing wrapper will not display correctly
+            >>> stdscr.addstr(0, 0, "[OK]", theme.components.button)  # DON'T DO THIS
         """
         if self._components is None:
             raise RuntimeError(
-                f"Theme '{self.name}' has not been applied. "
-                "Call theme.apply(stdscr) first."
+                f"Theme '{self.name}' components not available - apply() must be called first.\n"
+                f"Correct usage:\n"
+                f"  theme = ThemeManager.load('{self.name.lower()}')\n"
+                f"  theme.apply(stdscr)  # Initialize components\n"
+                f"  stdscr.addstr(0, 0, 'Button', curses.color_pair(theme.components.button))"
             )
         return self._components
 
@@ -409,6 +494,9 @@ class Theme(ABC):
         Raises:
             ValueError: If box dimensions are too small
         """
+        # Validate window is alive
+        self._validate_stdscr(window, "draw box")
+
         if height < 2 or width < 2:
             raise ValueError(
                 f"Box dimensions too small: {height}x{width}. Minimum is 2x2."
@@ -458,10 +546,13 @@ class Theme(ABC):
                 pass
 
         # Draw title if provided
-        if title and width > len(title) + 4:
-            title_x = x + (width - len(title) - 2) // 2
-            with contextlib.suppress(curses.error):
-                window.addstr(y, title_x, f" {title} ", attr)
+        if title:
+            # Calculate display width accounting for CJK/wide characters
+            title_display_width = _calculate_display_width(title)
+            if width > title_display_width + 4:
+                title_x = x + (width - title_display_width - 2) // 2
+                with contextlib.suppress(curses.error):
+                    window.addstr(y, title_x, f" {title} ", attr)
 
     def __repr__(self) -> str:
         """String representation for debugging."""

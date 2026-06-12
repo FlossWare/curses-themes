@@ -78,7 +78,7 @@ def draw_demo_ui(stdscr, theme):
         stdscr.addstr(y, 6, "⚠ Warning", curses.color_pair(theme.colors.warning))
         y += 1
         stdscr.addstr(y, 6, "ℹ Info", curses.color_pair(theme.colors.info))
-    except Exception:
+    except UnicodeEncodeError:
         # Fallback for terminals without Unicode support
         stdscr.addstr(y, 6, "* Success", curses.color_pair(theme.colors.success))
         y += 1
@@ -131,9 +131,22 @@ def main(stdscr):
     current_idx = 0
 
     while True:
-        # Load and apply current theme
-        theme = ThemeManager.load(theme_names[current_idx])
-        theme.apply(stdscr)
+        # Load and apply current theme with error handling
+        try:
+            theme = ThemeManager.load(theme_names[current_idx])
+            theme.apply(stdscr)
+        except Exception as e:
+            # Fall back to default theme on error
+            stdscr.clear()
+            stdscr.addstr(0, 0, f"Error loading theme '{theme_names[current_idx]}': {e}")
+            stdscr.addstr(1, 0, "Attempting to use default theme...")
+            stdscr.refresh()
+            stdscr.getch()
+            try:
+                theme = ThemeManager.load("default")
+                theme.apply(stdscr)
+            except Exception:
+                return
 
         # Draw the UI
         draw_demo_ui(stdscr, theme)

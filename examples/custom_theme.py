@@ -101,11 +101,19 @@ def main(stdscr):
     curses.curs_set(0)
 
     # Register the custom theme with ThemeManager
+    # Theme lifecycle: 1) Register theme class, 2) Load theme by slug, 3) Apply to window
     ThemeManager.register(SolarizedDarkTheme)
 
     # Load and apply the custom theme
-    theme = ThemeManager.load("solarized-dark")
-    theme.apply(stdscr)
+    try:
+        theme = ThemeManager.load("solarized-dark")
+        theme.apply(stdscr)
+    except RuntimeError as e:
+        # Terminal doesn't support colors or theme init failed
+        stdscr.addstr(0, 0, f"Theme error: {e}")
+        stdscr.refresh()
+        stdscr.getch()
+        return
 
     # Display theme information
     row = 0
@@ -178,11 +186,12 @@ def main(stdscr):
     theme.draw_box(stdscr, box_y, box_x, box_height, box_width, title="Sample Panel")
 
     # Add content inside the box
+    # theme.colors.X returns a color pair NUMBER - must wrap in curses.color_pair()
     stdscr.addstr(
-        box_y + 1, box_x + 2, "This is a themed border box", theme.colors.foreground
+        box_y + 1, box_x + 2, "This is a themed border box", curses.color_pair(theme.colors.foreground)
     )
     stdscr.addstr(
-        box_y + 2, box_x + 2, "with custom Solarized colors", theme.colors.accent
+        box_y + 2, box_x + 2, "with custom Solarized colors", curses.color_pair(theme.colors.accent)
     )
 
     row += box_height + 2

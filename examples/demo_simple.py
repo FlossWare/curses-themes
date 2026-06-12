@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+"""
+Simple curses-themes demonstration.
+
+This example shows a minimal usage of curses-themes with semantic colors
+and themed boxes. Perfect for getting started with the library.
+
+Copyright (C) 2024 FlossWare
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+"""
+
 import curses
 from curses_themes import ThemeManager
 
@@ -10,8 +24,23 @@ def main(stdscr):
         pass
 
     stdscr.clear()
-    theme = ThemeManager.load("dark")
-    theme.apply(stdscr)
+
+    # Load and apply theme with error handling
+    try:
+        theme = ThemeManager.load("dark")
+        theme.apply(stdscr)
+    except RuntimeError as e:
+        # Terminal doesn't support colors or theme init failed
+        stdscr.addstr(0, 0, f"Theme error: {e}")
+        stdscr.refresh()
+        stdscr.getch()
+        return
+    except Exception as e:
+        # Unknown error - display and exit
+        stdscr.addstr(0, 0, f"Error loading theme: {e}")
+        stdscr.refresh()
+        stdscr.getch()
+        return
 
     height, width = stdscr.getmaxyx()
 
@@ -42,7 +71,7 @@ def main(stdscr):
     )
     stdscr.addstr(row + 3, 4, "Theme: dark", curses.color_pair(theme.colors.accent))
 
-    stdscr.addstr(height - 2, 2, "Press any key to exit", curses.A_DIM)
+    stdscr.addstr(height - 2, 2, "Press any key to exit", curses.color_pair(theme.colors.info) | curses.A_DIM)
     stdscr.refresh()
     stdscr.getch()
 

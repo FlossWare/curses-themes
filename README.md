@@ -48,6 +48,8 @@ if __name__ == "__main__":
     curses.wrapper(main)
 ```
 
+**Note**: Theme color attributes return integers that must be wrapped with `curses.color_pair()` when used with curses display functions. See the [API Documentation](API.md#understanding-color-pairs) for details.
+
 ## Installation
 
 ```bash
