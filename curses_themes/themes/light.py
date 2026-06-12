@@ -92,9 +92,9 @@ class LightTheme(Theme):
         Format: top_left, top, top_right, left, right, bottom_left, bottom, bottom_right
 
         Returns:
-            String with 8 characters for double-line Unicode box-drawing: "╔═╗║╚═╝║"
+            String with 8 characters for double-line Unicode box-drawing: "╔═╗║║╚═╝"
         """
-        return "╔═╗║╚═╝║"
+        return "╔═╗║║╚═╝"
 
     def get_color_map(self) -> dict[str, tuple[int, int, int]]:
         """

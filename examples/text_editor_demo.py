@@ -257,11 +257,11 @@ class TextEditor:
         "default",  # F1
         "dark",  # F2
         "light",  # F3
-        "ti994a",  # F4
-        "trs80",  # F5
+        "ti-99-4a",  # F4
+        "trs-80",  # F5
         "dos",  # F6
-        "dbase3",  # F7
-        "dbase4",  # F8
+        "dbase-iii",  # F7
+        "dbase-iv",  # F8
     ]
 
     def __init__(self, stdscr, filename: Optional[str] = None):

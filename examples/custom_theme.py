@@ -127,13 +127,13 @@ def main(stdscr):
     stdscr.addstr(row, 0, "-" * 60)
     row += 1
 
-    stdscr.addstr(row, 0, "Primary: ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Primary: ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row, 10, "Main UI highlights and focus", curses.color_pair(theme.colors.primary)
     )
     row += 1
 
-    stdscr.addstr(row, 0, "Success: ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Success: ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row,
         10,
@@ -142,25 +142,25 @@ def main(stdscr):
     )
     row += 1
 
-    stdscr.addstr(row, 0, "Error:   ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Error:   ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row, 10, "Critical error occurred", curses.color_pair(theme.colors.error)
     )
     row += 1
 
-    stdscr.addstr(row, 0, "Warning: ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Warning: ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row, 10, "Proceed with caution", curses.color_pair(theme.colors.warning)
     )
     row += 1
 
-    stdscr.addstr(row, 0, "Info:    ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Info:    ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row, 10, "Additional information", curses.color_pair(theme.colors.info)
     )
     row += 1
 
-    stdscr.addstr(row, 0, "Accent:  ", theme.colors.foreground)
+    stdscr.addstr(row, 0, "Accent:  ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(
         row, 10, "Secondary highlights", curses.color_pair(theme.colors.accent)
     )
@@ -190,7 +190,7 @@ def main(stdscr):
     # Instructions
     stdscr.addstr(row, 0, "-" * 60)
     row += 1
-    stdscr.addstr(row, 0, "Press any key to exit", theme.colors.info)
+    stdscr.addstr(row, 0, "Press any key to exit", curses.color_pair(theme.colors.info))
 
     # Refresh and wait for input
     stdscr.refresh()

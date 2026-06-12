@@ -152,7 +152,7 @@ def draw_sunken_input(window, theme, y, x, width, label="", value=""):
     # Draw label if provided
     if label:
         try:
-            window.addstr(y, x, label, curses.color_pair(theme.components.foreground))
+            window.addstr(y, x, label, curses.color_pair(theme.colors.foreground))
             y += 1
         except curses.error:
             pass
@@ -190,13 +190,13 @@ def draw_overlapping_windows(stdscr, theme):
                 10,
                 13,
                 "This window is behind",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 11,
                 13,
                 "the front window.",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -209,19 +209,19 @@ def draw_overlapping_windows(stdscr, theme):
                 8,
                 23,
                 "Notice the drop shadow",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 9,
                 23,
                 "effects as windows",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 10,
                 23,
                 "overlap each other.",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -234,25 +234,25 @@ def draw_overlapping_windows(stdscr, theme):
                 6,
                 33,
                 "Multiple overlapping",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 7,
                 33,
                 "windows demonstrate",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 8,
                 33,
                 "the 3D shadow effects",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
             stdscr.addstr(
                 9,
                 33,
                 "of Borland-style UIs.",
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -287,7 +287,7 @@ def draw_demo_screen(stdscr, theme):
     if hasattr(theme, "description") and theme.description:
         desc = theme.description.split("\n")[0][: width - 4]
         try:
-            stdscr.addstr(1, 2, desc, curses.color_pair(theme.components.foreground))
+            stdscr.addstr(1, 2, desc, curses.color_pair(theme.colors.foreground))
         except curses.error:
             pass
 

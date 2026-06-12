@@ -422,7 +422,7 @@ class TableBrowser:
                 0,
                 self.width - len(theme_info) - 2,
                 theme_info,
-                curses.color_pair(self.theme.components.foreground),
+                curses.color_pair(self.theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -533,7 +533,7 @@ class TableBrowser:
                     curses.color_pair(self.theme.components.selection) | curses.A_BOLD
                 )
             elif is_even:
-                attr = curses.color_pair(self.theme.components.foreground)
+                attr = curses.color_pair(self.theme.colors.foreground)
             else:
                 # Use text_input color for alternating rows
                 attr = curses.color_pair(self.theme.components.text_input)
@@ -598,7 +598,7 @@ class TableBrowser:
                 1,
                 2,
                 self.status_message,
-                curses.color_pair(self.theme.components.foreground),
+                curses.color_pair(self.theme.colors.foreground),
             )
             self.status_win.addstr(
                 1,
@@ -703,7 +703,7 @@ class TableBrowser:
                     y,
                     2 + len(col) + 2,
                     value,
-                    curses.color_pair(self.theme.components.foreground),
+                    curses.color_pair(self.theme.colors.foreground),
                 )
             except curses.error:
                 pass

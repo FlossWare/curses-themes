@@ -235,7 +235,7 @@ def show_message_box(stdscr, theme, title, message, dialog_type="info"):
                 2 + i,
                 6,
                 line[: dialog_width - 8],
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -317,7 +317,7 @@ def show_question_dialog(stdscr, theme, title, question):
                 2,
                 6,
                 question[: dialog_width - 8],
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -414,7 +414,7 @@ def show_confirmation_dialog(stdscr, theme, title, message):
                 2,
                 6,
                 message[: dialog_width - 8],
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -518,7 +518,7 @@ def show_input_dialog(stdscr, theme, title, prompt, default_value=""):
         # Draw prompt
         try:
             dialog_win.addstr(
-                2, 3, prompt, curses.color_pair(theme.components.foreground)
+                2, 3, prompt, curses.color_pair(theme.colors.foreground)
             )
         except curses.error:
             pass
@@ -652,7 +652,7 @@ def show_form_dialog(stdscr, theme, title, fields):
                     field_y,
                     3,
                     label + ":",
-                    curses.color_pair(theme.components.foreground),
+                    curses.color_pair(theme.colors.foreground),
                 )
             except curses.error:
                 pass
@@ -786,7 +786,7 @@ def show_progress_dialog(stdscr, theme, title, message):
         # Draw message
         try:
             dialog_win.addstr(
-                2, 3, message, curses.color_pair(theme.components.foreground)
+                2, 3, message, curses.color_pair(theme.colors.foreground)
             )
         except curses.error:
             pass
@@ -821,7 +821,7 @@ def show_progress_dialog(stdscr, theme, title, message):
                 bar_y + 1,
                 bar_x + bar_width - len(percent_text) - 2,
                 percent_text,
-                curses.color_pair(theme.components.foreground) | curses.A_BOLD,
+                curses.color_pair(theme.colors.foreground) | curses.A_BOLD,
             )
         except curses.error:
             pass
@@ -907,7 +907,7 @@ def show_file_picker_dialog(stdscr, theme, title):
                 2,
                 3,
                 dir_text[: dialog_width - 6],
-                curses.color_pair(theme.components.foreground),
+                curses.color_pair(theme.colors.foreground),
             )
         except curses.error:
             pass
@@ -936,7 +936,7 @@ def show_file_picker_dialog(stdscr, theme, title):
                 color = theme.components.selection
                 attrs = curses.color_pair(color) | curses.A_REVERSE
             else:
-                color = theme.components.foreground
+                color = theme.colors.foreground
                 attrs = curses.color_pair(color)
 
             try:
@@ -1071,7 +1071,7 @@ def draw_main_screen(stdscr, theme, last_result=""):
             2,
             (width - len(theme_text)) // 2,
             theme_text,
-            curses.color_pair(theme.components.foreground),
+            curses.color_pair(theme.colors.foreground),
         )
     except curses.error:
         pass
@@ -1115,7 +1115,7 @@ def draw_main_screen(stdscr, theme, last_result=""):
                 )
             else:
                 stdscr.addstr(
-                    start_y + i, 5, item, curses.color_pair(theme.components.foreground)
+                    start_y + i, 5, item, curses.color_pair(theme.colors.foreground)
                 )
         except curses.error:
             pass

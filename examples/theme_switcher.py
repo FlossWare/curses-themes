@@ -76,33 +76,33 @@ def draw_theme_demo(
     y += 2
 
     # Primary
-    stdscr.addstr(y, x_label, "Primary:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Important UI elements", theme.colors.primary)
+    stdscr.addstr(y, x_label, "Primary:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Important UI elements", curses.color_pair(theme.colors.primary))
     y += 1
 
     # Success
-    stdscr.addstr(y, x_label, "Success:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Operation completed successfully", theme.colors.success)
+    stdscr.addstr(y, x_label, "Success:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Operation completed successfully", curses.color_pair(theme.colors.success))
     y += 1
 
     # Error
-    stdscr.addstr(y, x_label, "Error:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Critical error occurred", theme.colors.error)
+    stdscr.addstr(y, x_label, "Error:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Critical error occurred", curses.color_pair(theme.colors.error))
     y += 1
 
     # Warning
-    stdscr.addstr(y, x_label, "Warning:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Caution: proceed carefully", theme.colors.warning)
+    stdscr.addstr(y, x_label, "Warning:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Caution: proceed carefully", curses.color_pair(theme.colors.warning))
     y += 1
 
     # Info
-    stdscr.addstr(y, x_label, "Info:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Helpful information", theme.colors.info)
+    stdscr.addstr(y, x_label, "Info:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Helpful information", curses.color_pair(theme.colors.info))
     y += 1
 
     # Accent
-    stdscr.addstr(y, x_label, "Accent:", theme.colors.foreground)
-    stdscr.addstr(y, x_sample, "Secondary highlights", theme.colors.accent)
+    stdscr.addstr(y, x_label, "Accent:", curses.color_pair(theme.colors.foreground))
+    stdscr.addstr(y, x_sample, "Secondary highlights", curses.color_pair(theme.colors.accent))
     y += 2
 
     # Sample boxes with different colors
@@ -142,7 +142,7 @@ def draw_theme_demo(
         title="Success",
         color_pair=theme.colors.success,
     )
-    stdscr.addstr(y + 2, x_label + 2, "Using success color", theme.colors.success)
+    stdscr.addstr(y + 2, x_label + 2, "Using success color", curses.color_pair(theme.colors.success))
 
     # Box with error color
     theme.draw_box(

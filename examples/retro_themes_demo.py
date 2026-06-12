@@ -34,7 +34,7 @@ def draw_demo_ui(stdscr, theme):
             if len(line) > width - 4:
                 line = line[: width - 7] + "..."
             stdscr.addstr(
-                2 + i, 2, line, curses.color_pair(theme.components.foreground)
+                2 + i, 2, line, curses.color_pair(theme.colors.foreground)
             )
 
     # Sample buttons
@@ -49,7 +49,7 @@ def draw_demo_ui(stdscr, theme):
 
     # Sample text input
     y += 3
-    stdscr.addstr(y, 4, "Text Input: ", curses.color_pair(theme.components.foreground))
+    stdscr.addstr(y, 4, "Text Input: ", curses.color_pair(theme.colors.foreground))
     stdscr.addstr(y, 16, "Type here...", curses.color_pair(theme.components.text_input))
 
     # Sample selection
@@ -61,13 +61,13 @@ def draw_demo_ui(stdscr, theme):
         curses.color_pair(theme.components.selection) | curses.A_BOLD,
     )
     stdscr.addstr(
-        y + 1, 4, "Normal Item", curses.color_pair(theme.components.foreground)
+        y + 1, 4, "Normal Item", curses.color_pair(theme.colors.foreground)
     )
 
     # Semantic colors (if available)
     y += 3
     stdscr.addstr(
-        y, 4, "Semantic Colors:", curses.color_pair(theme.components.foreground)
+        y, 4, "Semantic Colors:", curses.color_pair(theme.colors.foreground)
     )
     y += 1
     try:
@@ -95,7 +95,7 @@ def draw_demo_ui(stdscr, theme):
             height - 6,
             4,
             "Border style:",
-            curses.color_pair(theme.components.foreground),
+            curses.color_pair(theme.colors.foreground),
         )
         border_chars = theme.get_border_chars()
         stdscr.addstr(
@@ -111,7 +111,7 @@ def draw_demo_ui(stdscr, theme):
         height - 2,
         (width - len(instructions)) // 2,
         instructions,
-        curses.color_pair(theme.components.foreground),
+        curses.color_pair(theme.colors.foreground),
     )
 
     stdscr.refresh()
