@@ -105,16 +105,16 @@ class ThemeManager:
         # This is done lazily to avoid circular imports and to defer
         # loading themes until they're actually needed
         try:
+            from .themes.borland3d import Borland3DTheme
             from .themes.dark import DarkTheme
             from .themes.dbase3 import DBase3Theme
             from .themes.dbase4 import DBase4Theme
+            from .themes.dbase4_3d import DBase4_3DTheme
             from .themes.default import DefaultTheme
             from .themes.dos import DOSTheme
             from .themes.light import LightTheme
             from .themes.ti994a import TI994ATheme
             from .themes.trs80 import TRS80Theme
-            from .themes.borland3d import Borland3DTheme
-            from .themes.dbase4_3d import DBase4_3DTheme
 
             # Register each built-in theme
             cls.register(DefaultTheme, "default")
@@ -173,7 +173,7 @@ class ThemeManager:
 
         # Get name from theme instance if not provided
         if name is None:
-            temp_instance = theme_class()
+            temp_instance = theme_class()  # type: ignore[call-arg]
             name = temp_instance.name
 
         normalized_name = cls._normalize_name(name)
@@ -264,7 +264,7 @@ class ThemeManager:
 
         # Create new instance
         theme_class = cls._themes[normalized_name]
-        theme_instance = theme_class()
+        theme_instance = theme_class()  # type: ignore[call-arg]
 
         # Track as current theme
         cls._current_theme = theme_instance
@@ -296,7 +296,7 @@ class ThemeManager:
         result = {}
         for normalized_name, theme_class in sorted(cls._themes.items()):
             # Create temporary instance to get metadata
-            temp_instance = theme_class()
+            temp_instance = theme_class()  # type: ignore[call-arg]
             result[normalized_name] = {
                 "name": temp_instance.name,
                 "description": temp_instance.description,

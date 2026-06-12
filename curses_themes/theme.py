@@ -425,7 +425,7 @@ class Theme(ABC):
             )
 
         # Parse border characters: TL T TR L R BL B BR
-        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = (
+        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = tuple(
             border_chars
         )
 
