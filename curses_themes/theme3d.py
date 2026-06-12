@@ -382,8 +382,8 @@ class Theme3D(Theme):
             )
 
         # Parse border characters: TL T TR L R BL B BR
-        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = tuple(
-            border_chars
+        top_left, top, top_right, left, right, bottom_left, bottom, bottom_right = (
+            tuple(border_chars)
         )
 
         # Draw drop shadow first (behind the box)
