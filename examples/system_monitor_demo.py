@@ -76,6 +76,12 @@ class SystemMonitor:
         self.stdscr = stdscr
         self.running = True
 
+        height, width = stdscr.getmaxyx()
+        if height < 24 or width < 80:
+            raise RuntimeError(
+                f"Terminal too small ({width}x{height}). Minimum 80x24 required."
+            )
+
         # Available themes
         self.themes = [
             "default",
@@ -673,14 +679,8 @@ def main(stdscr):
     Args:
         stdscr: Main curses window from curses.wrapper
     """
-    try:
-        monitor = SystemMonitor(stdscr)
-        monitor.run()
-    except Exception as e:
-        # Clean up curses before showing error
-        curses.endwin()
-        print(f"Error: {e}")
-        raise
+    monitor = SystemMonitor(stdscr)
+    monitor.run()
 
 
 if __name__ == "__main__":

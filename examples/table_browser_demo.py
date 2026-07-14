@@ -457,7 +457,7 @@ class TableBrowser:
         except curses.error:
             pass
 
-        self.header_win.refresh()
+        self.header_win.noutrefresh()
 
     def draw_table(self):
         """Draw the main table with data."""
@@ -556,7 +556,7 @@ class TableBrowser:
                     pass
                 x += width
 
-        self.table_win.refresh()
+        self.table_win.noutrefresh()
 
     def draw_status_bar(self):
         """Draw the status bar with record count, page info, and messages."""
@@ -610,7 +610,7 @@ class TableBrowser:
         except curses.error:
             pass
 
-        self.status_win.refresh()
+        self.status_win.noutrefresh()
 
     def draw_input_line(self):
         """Draw the input line (filter or command mode)."""
@@ -635,7 +635,7 @@ class TableBrowser:
             except curses.error:
                 pass
 
-        self.input_win.refresh()
+        self.input_win.noutrefresh()
 
     def draw_detail_view(self):
         """Draw a popup detail view for the selected record."""
@@ -722,7 +722,7 @@ class TableBrowser:
             pass
 
         panel.update_panels()
-        self.detail_win.refresh()
+        self.detail_win.noutrefresh()
 
     def handle_input(self, key):
         """Handle keyboard input based on current mode."""
