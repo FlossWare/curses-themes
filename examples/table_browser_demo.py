@@ -406,7 +406,7 @@ class TableBrowser:
 
     def draw_header(self):
         """Draw the header with title, tabs, and theme info."""
-        self.header_win.clear()
+        self.header_win.erase()
 
         # Title bar (line 0)
         title = "DATABASE TABLE BROWSER"
@@ -461,7 +461,7 @@ class TableBrowser:
 
     def draw_table(self):
         """Draw the main table with data."""
-        self.table_win.clear()
+        self.table_win.erase()
 
         table = self.get_current_table()
         columns = table["columns"]
@@ -560,7 +560,7 @@ class TableBrowser:
 
     def draw_status_bar(self):
         """Draw the status bar with record count, page info, and messages."""
-        self.status_win.clear()
+        self.status_win.erase()
 
         data = self.get_visible_data()
         total_records = len(data)
@@ -614,7 +614,7 @@ class TableBrowser:
 
     def draw_input_line(self):
         """Draw the input line (filter or command mode)."""
-        self.input_win.clear()
+        self.input_win.erase()
 
         if self.input_mode == "filter":
             prompt = "Filter: "
@@ -662,7 +662,7 @@ class TableBrowser:
             )
             self.detail_panel = panel.new_panel(self.detail_win)
 
-        self.detail_win.clear()
+        self.detail_win.erase()
         self.theme.apply(self.detail_win)
 
         # Draw border

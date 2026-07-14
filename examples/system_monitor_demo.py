@@ -299,8 +299,9 @@ class SystemMonitor:
             height -= 1
 
         # Scale data to fit height
+        visible_data = data[-width:]
         scaled_data = [
-            min(int((val / max_value) * height), height - 1) for val in data[-width:]
+            min(int((val / max_value) * height), height - 1) for val in visible_data
         ]
 
         # Draw graph from bottom to top
@@ -309,7 +310,7 @@ class SystemMonitor:
             for col, val_height in enumerate(scaled_data):
                 if val_height >= row:
                     # Get color based on value
-                    orig_val = data[-(width - col)]
+                    orig_val = visible_data[col]
                     color = self._get_threshold_color(orig_val, 50, 80)
                     try:
                         window.addstr(row_y, x + col, "▀", curses.color_pair(color))
@@ -641,7 +642,7 @@ class SystemMonitor:
         while self.running:
             try:
                 # Clear screen
-                self.stdscr.clear()
+                self.stdscr.erase()
 
                 # Draw all components
                 self._draw_header()
