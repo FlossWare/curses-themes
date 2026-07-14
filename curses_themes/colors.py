@@ -180,20 +180,30 @@ class ColorManager:
         """
         # Check if it's a grayscale color
         if r == g == b:
-            # Use grayscale ramp (232-255)
-            if r < 8:
+            # Use grayscale ramp (232-255), palette values: 8, 18, 28, ..., 238
+            if r < 4:
                 return 16  # Black
-            if r > 247:
+            if r > 246:
                 return 231  # White
-            return 232 + (r - 8) // 10
+            return min(232 + (r - 3) // 10, 255)
 
         # Map to 6x6x6 RGB cube (16-231)
-        # Each component mapped to 0-5
-        r_index = (r * 6) // 256
-        g_index = (g * 6) // 256
-        b_index = (b * 6) // 256
+        # Xterm palette values: 0, 95, 135, 175, 215, 255
+        # Thresholds are midpoints between adjacent values
+        r_index = self._component_to_cube_index(r)
+        g_index = self._component_to_cube_index(g)
+        b_index = self._component_to_cube_index(b)
 
         return 16 + (36 * r_index) + (6 * g_index) + b_index
+
+    @staticmethod
+    def _component_to_cube_index(v: int) -> int:
+        """Map a single RGB component (0-255) to the xterm 6x6x6 cube index (0-5)."""
+        if v < 48:
+            return 0
+        if v < 115:
+            return 1
+        return (v - 35) // 40
 
     def _rgb_to_basic(self, r: int, g: int, b: int) -> int:
         """
@@ -264,7 +274,6 @@ class ColorManager:
             return ColorManager._pair_cache[cache_key]
 
         pair_num = ColorManager._next_pair
-        ColorManager._next_pair += 1
 
         # Ensure we don't exceed curses color pair limit
         if pair_num >= curses.COLOR_PAIRS:
@@ -280,6 +289,9 @@ class ColorManager:
                 f"Failed to initialize color pair {pair_num} "
                 f"(fg={fg_color}, bg={bg_color}): {e}"
             )
+
+        # Only consume the slot after successful init
+        ColorManager._next_pair += 1
 
         # Cache the pair for future reuse
         ColorManager._pair_cache[cache_key] = pair_num
@@ -318,7 +330,7 @@ class ColorManager:
         }
         missing = required_colors - set(color_map.keys())
         if missing:
-            missing_list = ', '.join(sorted(missing))
+            missing_list = ", ".join(sorted(missing))
             raise ValueError(
                 f"Theme '{theme.name}' is incomplete - missing required colors: {missing_list}\n"
                 f"get_color_map() must return all 8 required colors:\n"
@@ -341,7 +353,7 @@ class ColorManager:
         bg_rgb = color_map["background"]
 
         # Initialize color pairs for each semantic color
-        # Background pair uses default background for transparency
+        # Background pair: foreground text on theme background (same as foreground pair)
         background_pair = self.init_color_pair(color_map["foreground"], bg_rgb)
 
         # All other colors use the theme's background
@@ -357,24 +369,13 @@ class ColorManager:
         )
 
         # Initialize component-based color pairs from theme methods
-        # Add null checks for each component method call
-        background_color = (
-            theme.get_background() if hasattr(theme, "get_background") else None
-        )
-        button_color = theme.get_button() if hasattr(theme, "get_button") else None
-        button_focused_color = (
-            theme.get_button_focused() if hasattr(theme, "get_button_focused") else None
-        )
-        text_input_color = (
-            theme.get_text_input() if hasattr(theme, "get_text_input") else None
-        )
-        border_color = theme.get_border() if hasattr(theme, "get_border") else None
-        selection_color = (
-            theme.get_selection() if hasattr(theme, "get_selection") else None
-        )
-        disabled_color = (
-            theme.get_disabled() if hasattr(theme, "get_disabled") else None
-        )
+        background_color = theme.get_background()
+        button_color = theme.get_button()
+        button_focused_color = theme.get_button_focused()
+        text_input_color = theme.get_text_input()
+        border_color = theme.get_border()
+        selection_color = theme.get_selection()
+        disabled_color = theme.get_disabled()
 
         component_colors = ComponentColors(
             background=self._init_color_pair_from_colorpair(background_color),

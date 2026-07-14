@@ -118,8 +118,9 @@ class ThemeManager:
             from .themes.light import LightTheme
             from .themes.ti994a import TI994ATheme
             from .themes.trs80 import TRS80Theme
-
-            # Register each built-in theme
+        except ImportError:
+            pass
+        else:
             cls.register(DefaultTheme, "default")
             cls.register(DarkTheme, "dark")
             cls.register(LightTheme, "light")
@@ -130,11 +131,6 @@ class ThemeManager:
             cls.register(DBase4Theme, "dbase-iv")
             cls.register(Borland3DTheme, "borland-3d")
             cls.register(DBase4_3DTheme, "dbase-iv-3d")
-
-        except ImportError:
-            # If built-in themes aren't available yet, that's okay
-            # They might be added later during development
-            pass
 
         cls._builtin_registered = True
 
@@ -168,6 +164,13 @@ class ThemeManager:
             ThemeManager.register(MyTheme, 'my-custom')
             ```
         """
+        if not isinstance(theme_class, type):
+            raise TypeError(
+                f"Expected a Theme class, got an instance of {type(theme_class).__name__}. "
+                "Pass the class itself, not an instance: "
+                f"ThemeManager.register({type(theme_class).__name__})"
+            )
+
         if not issubclass(theme_class, Theme):
             raise TypeError(
                 f"{theme_class.__name__} is not a Theme subclass. "

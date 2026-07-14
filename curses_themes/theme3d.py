@@ -263,7 +263,7 @@ class Theme3D(Theme):
             lowlight = self.get_lowlight_color()
         except NotImplementedError as e:
             # Extract method name from error message
-            method_name = str(e).split()[-1].rstrip('()')
+            method_name = str(e).split()[-1].rstrip("()")
             raise RuntimeError(
                 f"Theme3D '{self.name}' is incomplete - {method_name}() not implemented.\n"
                 f"Theme3D subclasses must implement these three methods:\n"
@@ -415,18 +415,14 @@ class Theme3D(Theme):
                 for i in range(height):
                     for j in range(self.shadow_offset_x):
                         with contextlib.suppress(curses.error):
-                            window.addch(
-                                shadow_y + i, shadow_x + width + j, " ", shadow_attr
-                            )
+                            window.addch(shadow_y + i, x + width + j, " ", shadow_attr)
 
             # Draw shadow on bottom edge
             if self.shadow_offset_y > 0:
                 for i in range(self.shadow_offset_y):
-                    for j in range(width + self.shadow_offset_x):
+                    for j in range(width):
                         with contextlib.suppress(curses.error):
-                            window.addch(
-                                shadow_y + height + i, shadow_x + j, " ", shadow_attr
-                            )
+                            window.addch(y + height + i, shadow_x + j, " ", shadow_attr)
 
         # Draw main border
         border_attr = curses.color_pair(self.components.border)
@@ -456,55 +452,42 @@ class Theme3D(Theme):
             except curses.error:
                 pass
 
-        # Draw 3D beveled edges
-        if raised:
-            # Raised: highlight on top/left, lowlight on bottom/right
-            highlight_attr = curses.color_pair(self.highlight_color_pair)
-            lowlight_attr = curses.color_pair(self.lowlight_color_pair)
+        # Draw 3D beveled edges (only when interior space exists)
+        if height >= 4 and width >= 4:
+            if raised:
+                top_left_attr = curses.color_pair(self.highlight_color_pair)
+                bottom_right_attr = curses.color_pair(self.lowlight_color_pair)
+            else:
+                top_left_attr = curses.color_pair(self.lowlight_color_pair)
+                bottom_right_attr = curses.color_pair(self.highlight_color_pair)
 
-            # Highlight top edge (just inside the border)
+            # Top edge (just inside the border)
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + 1, x + i, " ", highlight_attr)
+                    window.addch(y + 1, x + i, " ", top_left_attr)
 
-            # Highlight left edge (just inside the border)
+            # Left edge (just inside the border)
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + 1, " ", highlight_attr)
+                    window.addch(y + i, x + 1, " ", top_left_attr)
 
-            # Lowlight bottom edge (just inside the border)
+            # Bottom edge (just inside the border)
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + height - 2, x + i, " ", lowlight_attr)
+                    window.addch(y + height - 2, x + i, " ", bottom_right_attr)
 
-            # Lowlight right edge (just inside the border)
+            # Right edge (just inside the border)
             for i in range(1, height - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + width - 2, " ", lowlight_attr)
-        else:
-            # Sunken: lowlight on top/left, highlight on bottom/right (reversed)
-            highlight_attr = curses.color_pair(self.highlight_color_pair)
-            lowlight_attr = curses.color_pair(self.lowlight_color_pair)
-
-            # Lowlight top edge
+                    window.addch(y + i, x + width - 2, " ", bottom_right_attr)
+        elif height == 3 and width >= 3:
+            if raised:
+                attr = curses.color_pair(self.highlight_color_pair)
+            else:
+                attr = curses.color_pair(self.lowlight_color_pair)
             for i in range(1, width - 1):
                 with contextlib.suppress(curses.error):
-                    window.addch(y + 1, x + i, " ", lowlight_attr)
-
-            # Lowlight left edge
-            for i in range(1, height - 1):
-                with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + 1, " ", lowlight_attr)
-
-            # Highlight bottom edge
-            for i in range(1, width - 1):
-                with contextlib.suppress(curses.error):
-                    window.addch(y + height - 2, x + i, " ", highlight_attr)
-
-            # Highlight right edge
-            for i in range(1, height - 1):
-                with contextlib.suppress(curses.error):
-                    window.addch(y + i, x + width - 2, " ", highlight_attr)
+                    window.addch(y + 1, x + i, " ", attr)
 
         # Draw title if provided
         if title:
