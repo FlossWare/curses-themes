@@ -7,6 +7,8 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Core Concepts](#core-concepts)
+  - [Choosing Between Semantic and Component Colors](#choosing-between-the-two-apis)
+  - [apply() Is Required](#apply-is-required)
 - [Working with Themes](#working-with-themes)
 - [Creating Custom Themes](#creating-custom-themes)
 - [Advanced Usage](#advanced-usage)
@@ -123,6 +125,50 @@ Widget-specific colors matching curses-java API:
 - `border` - Borders and frames
 - `selection` - Selected items
 - `disabled` - Disabled elements
+
+#### Choosing Between the Two APIs
+
+Both `theme.colors` (SemanticColors) and `theme.components` (ComponentColors) are first-class APIs. Neither is legacy or deprecated. Choose based on what you are coloring:
+
+| Use Case | API | Example |
+|----------|-----|---------|
+| Status messages (success, error, warning) | `theme.colors.*` | `curses.color_pair(theme.colors.error)` |
+| Informational highlighting | `theme.colors.*` | `curses.color_pair(theme.colors.info)` |
+| Buttons and interactive controls | `theme.components.*` | `curses.color_pair(theme.components.button)` |
+| Text input fields | `theme.components.*` | `curses.color_pair(theme.components.text_input)` |
+| Borders and frames | `theme.components.*` | `curses.color_pair(theme.components.border)` |
+| Selected/highlighted items | `theme.components.*` | `curses.color_pair(theme.components.selection)` |
+
+**Rule of thumb**: Use semantic colors when communicating *intent* (success, error, warning). Use component colors when styling a specific *widget* (button, input, border).
+
+You can freely mix both APIs in the same application:
+
+```python
+def main(stdscr):
+    theme = ThemeManager.load('dark')
+    theme.apply(stdscr)  # REQUIRED before accessing any colors
+
+    # Semantic: status message
+    stdscr.addstr(0, 0, "File saved", curses.color_pair(theme.colors.success))
+
+    # Component: UI widget
+    stdscr.addstr(2, 0, "[ OK ]", curses.color_pair(theme.components.button))
+```
+
+#### apply() Is Required
+
+You **must** call `theme.apply(stdscr)` before accessing `theme.colors` or `theme.components`. Accessing either property without calling `apply()` first raises a `RuntimeError`:
+
+```python
+# WRONG - raises RuntimeError
+theme = ThemeManager.load('dark')
+stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))
+
+# CORRECT
+theme = ThemeManager.load('dark')
+theme.apply(stdscr)
+stdscr.addstr(0, 0, "Text", curses.color_pair(theme.colors.primary))
+```
 
 ### 2. Terminal Compatibility
 

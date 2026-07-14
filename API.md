@@ -261,7 +261,7 @@ def main(stdscr):
 def colors(self) -> SemanticColors
 ```
 
-Returns semantic color pairs for the theme. This is the legacy API maintained for backward compatibility.
+Returns semantic color pairs for the theme. Use these for general-purpose coloring based on intent (success, error, warning, etc.).
 
 **Returns:**
 - `SemanticColors`: Instance with initialized color pairs
@@ -283,7 +283,7 @@ stdscr.addstr(1, 0, "Error!", curses.color_pair(theme.colors.error))
 def components(self) -> ComponentColors
 ```
 
-Returns component-based color pairs for the theme. **This is the primary API** matching curses-java Theme interface.
+Returns component-based color pairs for the theme. Use these for styling specific UI widgets (buttons, inputs, borders, etc.). Matches the curses-java Theme interface.
 
 **Returns:**
 - `ComponentColors`: Instance with initialized color pairs

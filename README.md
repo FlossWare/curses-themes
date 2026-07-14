@@ -12,7 +12,7 @@ Inspired by [FlossWare curses-java](https://github.com/FlossWare/curses-java), t
 
 ## Features
 
-- 🎨 **8 Built-in Themes**: Modern, classic IDE, and retro computer themes
+- 🎨 **10 Built-in Themes**: Modern, classic IDE, and retro computer themes
 - 🔌 **Pluggable Architecture**: Easy custom theme creation
 - 🎯 **Semantic Colors**: `primary`, `success`, `error`, `warning`, `info`
 - 🔄 **Runtime Theme Switching**: Change themes on-the-fly
@@ -31,15 +31,18 @@ from curses_themes import ThemeManager
 def main(stdscr):
     # Load and apply a theme
     theme = ThemeManager.load('dark')
-    theme.apply(stdscr)
+    theme.apply(stdscr)  # REQUIRED before using colors
     
-    # Use semantic colors
+    # Semantic colors - general-purpose coloring by intent
     stdscr.addstr(0, 0, "Success!", curses.color_pair(theme.colors.success))
     stdscr.addstr(1, 0, "Error!", curses.color_pair(theme.colors.error))
     stdscr.addstr(2, 0, "Warning!", curses.color_pair(theme.colors.warning))
     
+    # Component colors - UI widget styling
+    stdscr.addstr(3, 0, "[ Save ]", curses.color_pair(theme.components.button))
+    
     # Draw themed boxes
-    theme.draw_box(stdscr, 4, 2, 10, 40, title="My Panel")
+    theme.draw_box(stdscr, 5, 2, 10, 40, title="My Panel")
     
     stdscr.refresh()
     stdscr.getch()
@@ -48,7 +51,7 @@ if __name__ == "__main__":
     curses.wrapper(main)
 ```
 
-**Note**: Theme color attributes return integers that must be wrapped with `curses.color_pair()` when used with curses display functions. See the [API Documentation](API.md#understanding-color-pairs) for details.
+**Important**: You must call `theme.apply(stdscr)` before accessing `theme.colors` or `theme.components`, or a `RuntimeError` is raised. Color attributes return integers that must be wrapped with `curses.color_pair()` when used with curses display functions. See the [API Documentation](API.md#understanding-color-pairs) for details.
 
 ## Installation
 
@@ -71,19 +74,19 @@ pip install -e .
 <table>
 <tr>
 <td width="33%" align="center">
-<img src="screenshots/default.png" width="300" alt="Default Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/default.png" width="300" alt="Default Theme - Classic white-on-black terminal aesthetic"><br>
 <strong>Default</strong><br>
 Classic terminal aesthetic<br>
 <em>Timeless</em>
 </td>
 <td width="33%" align="center">
-<img src="screenshots/dark.png" width="300" alt="Dark Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/dark.png" width="300" alt="Dark Theme - Muted colors on dark background, modern dark mode"><br>
 <strong>Dark</strong><br>
 Professional dark mode<br>
 <em>Modern</em>
 </td>
 <td width="33%" align="center">
-<img src="screenshots/light.png" width="300" alt="Light Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/light.png" width="300" alt="Light Theme - Bright background with dark text, high contrast"><br>
 <strong>Light</strong><br>
 High contrast for bright environments<br>
 <em>Modern</em>
@@ -96,13 +99,13 @@ High contrast for bright environments<br>
 <table>
 <tr>
 <td width="50%" align="center">
-<img src="screenshots/ti-99-4a.png" width="300" alt="TI-99/4A Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/ti-99-4a.png" width="300" alt="TI-99/4A Theme - Cyan-on-blue Texas Instruments home computer look"><br>
 <strong>TI-99/4A</strong><br>
 Texas Instruments home computer<br>
 <em>1981-1984</em>
 </td>
 <td width="50%" align="center">
-<img src="screenshots/trs-80.png" width="300" alt="TRS-80 Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/trs-80.png" width="300" alt="TRS-80 Theme - White-on-black Tandy/Radio Shack monochrome display"><br>
 <strong>TRS-80</strong><br>
 Tandy/Radio Shack monochrome<br>
 <em>1980-1983</em>
@@ -115,19 +118,19 @@ Tandy/Radio Shack monochrome<br>
 <table>
 <tr>
 <td width="33%" align="center">
-<img src="screenshots/dos.png" width="300" alt="DOS Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/dos.png" width="300" alt="DOS Theme - Classic MS-DOS white-on-black text mode interface"><br>
 <strong>DOS</strong><br>
 Classic MS-DOS interface<br>
 <em>1981-1995</em>
 </td>
 <td width="33%" align="center">
-<img src="screenshots/dbase-iii.png" width="300" alt="dBASE III Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/dbase-iii.png" width="300" alt="dBASE III Theme - Cyan menus on black, Ashton-Tate database look"><br>
 <strong>dBASE III</strong><br>
 Iconic database software<br>
 <em>1984-1985</em>
 </td>
 <td width="33%" align="center">
-<img src="screenshots/dbase-iv.png" width="300" alt="dBASE IV Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/dbase-iv.png" width="300" alt="dBASE IV Theme - Blue background windowed database interface"><br>
 <strong>dBASE IV</strong><br>
 Windowed database interface<br>
 <em>1988-1993</em>
@@ -140,13 +143,13 @@ Windowed database interface<br>
 <table>
 <tr>
 <td width="50%" align="center">
-<img src="screenshots/borland-3d.png" width="300" alt="Borland 3D Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/borland-3d.png" width="300" alt="Borland 3D Theme - Turbo Vision beveled buttons and drop shadows"><br>
 <strong>Borland 3D</strong><br>
 Turbo Vision 3D look<br>
 <em>1990-1997</em>
 </td>
 <td width="50%" align="center">
-<img src="screenshots/dbase-iv-3d.png" width="300" alt="dBASE IV 3D Theme"><br>
+<img src="https://raw.githubusercontent.com/FlossWare/curses-themes/main/screenshots/dbase-iv-3d.png" width="300" alt="dBASE IV 3D Theme - Blue windowed database UI with 3D depth effects"><br>
 <strong>dBASE IV 3D</strong><br>
 3D windowed database UI<br>
 <em>1988-1993</em>
@@ -239,14 +242,33 @@ curses.wrapper(main)
 
 ### Theme
 
-- `theme.apply(stdscr)` - Apply theme to screen
-- `theme.colors.primary` - Primary color
-- `theme.colors.success` - Success color
-- `theme.colors.error` - Error color
-- `theme.colors.warning` - Warning color
-- `theme.colors.info` - Info color
-- `theme.colors.accent` - Accent color
+- `theme.apply(stdscr)` - Apply theme to screen (must call before using colors)
 - `theme.draw_box(stdscr, y, x, height, width, title="")` - Draw themed box
+
+#### Semantic Colors (`theme.colors.*`)
+
+General-purpose coloring by intent:
+
+- `theme.colors.primary` - Main UI highlights
+- `theme.colors.success` - Positive feedback
+- `theme.colors.error` - Error messages
+- `theme.colors.warning` - Caution messages
+- `theme.colors.info` - Informational messages
+- `theme.colors.accent` - Secondary highlights
+- `theme.colors.background` - Default background
+- `theme.colors.foreground` - Default text
+
+#### Component Colors (`theme.components.*`)
+
+UI widget styling:
+
+- `theme.components.background` - Default background
+- `theme.components.button` - Normal button
+- `theme.components.button_focused` - Focused button
+- `theme.components.text_input` - Input fields
+- `theme.components.border` - Borders and frames
+- `theme.components.selection` - Selected items
+- `theme.components.disabled` - Disabled elements
 
 ## Examples
 
