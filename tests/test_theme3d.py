@@ -62,21 +62,23 @@ class TestTheme3DBoxDrawing:
 
         theme = theme_class()
 
-        # Test component methods exist and return ColorPair or None
-        component_methods = [
-            "get_background",
-            "get_button",
-            "get_button_focused",
-            "get_text_input",
-            "get_border",
-            "get_selection",
-            "get_disabled",
+        # Test get_components() returns dict of ColorPair values
+        components = theme.get_components()
+        assert isinstance(components, dict)
+
+        component_names = [
+            "background",
+            "button",
+            "button_focused",
+            "text_input",
+            "border",
+            "selection",
+            "disabled",
         ]
 
-        for method_name in component_methods:
-            method = getattr(theme, method_name)
-            result = method()
-            assert result is None or isinstance(result, ColorPair)
+        for name in component_names:
+            if name in components:
+                assert isinstance(components[name], ColorPair)
 
 
 class TestBorland3DTheme:
@@ -185,13 +187,13 @@ class TestTheme3DIntegration:
 class TestTheme3DErrorMessages:
     """Test suite for Theme3D API misuse error messages."""
 
-    def test_missing_shadow_color_error(self, mock_curses, mock_stdscr):
-        """Test helpful error when get_shadow_color() calls super()."""
-        from curses_themes import Theme3D, ColorPair
+    def test_missing_3d_colors_error(self, mock_curses, mock_stdscr):
+        """Test helpful error when effects_3d is not provided."""
+        from curses_themes import Theme3D
 
         class Incomplete3DTheme(Theme3D):
             def __init__(self):
-                super().__init__("Incomplete 3D", "Missing methods")
+                super().__init__("Incomplete 3D", "Missing effects_3d")
 
             def get_color_map(self):
                 return {
@@ -205,41 +207,24 @@ class TestTheme3DErrorMessages:
                     "accent": (255, 0, 255),
                 }
 
-            def get_shadow_color(self) -> ColorPair:
-                """Calls super which raises NotImplementedError."""
-                return super().get_shadow_color()
-
-            def get_highlight_color(self) -> ColorPair:
-                """Calls super which raises NotImplementedError."""
-                return super().get_highlight_color()
-
-            def get_lowlight_color(self) -> ColorPair:
-                """Calls super which raises NotImplementedError."""
-                return super().get_lowlight_color()
-
         theme = Incomplete3DTheme()
 
-        with pytest.raises(RuntimeError) as exc_info:
+        with pytest.raises(NotImplementedError) as exc_info:
             theme.apply(mock_stdscr)
 
         error_msg = str(exc_info.value)
-        assert "incomplete" in error_msg.lower() or "not implemented" in error_msg.lower()
-        assert (
-            "shadow" in error_msg.lower()
-            or "highlight" in error_msg.lower()
-            or "lowlight" in error_msg.lower()
-        )
-        assert "ColorPair" in error_msg
+        assert "effects_3d" in error_msg
+        assert "Incomplete 3D" in error_msg
 
 
 class TestTheme3DAbstractMethods:
     """Tests for Theme3D abstract method enforcement."""
 
-    def test_cannot_instantiate_without_all_3d_methods(self):
-        """Test that Theme3D cannot be instantiated without implementing all required methods."""
+    def test_missing_effects_3d_raises_not_implemented(self):
+        """Test that Theme3D without effects_3d raises NotImplementedError on get_3d_colors()."""
         from curses_themes.theme3d import Theme3D
 
-        # Subclass missing all three 3D methods
+        # Subclass missing effects_3d
         class Incomplete3DTheme(Theme3D):
             def get_color_map(self):
                 return {
@@ -253,156 +238,158 @@ class TestTheme3DAbstractMethods:
                     "accent": (200, 0, 200),
                 }
 
-        # Should raise TypeError when trying to instantiate
-        with pytest.raises(TypeError) as exc_info:
-            Incomplete3DTheme("Incomplete", "Missing 3D methods")
+        # Instantiation succeeds, but get_3d_colors() raises NotImplementedError
+        theme = Incomplete3DTheme("Incomplete", "Missing effects_3d")
+        with pytest.raises(NotImplementedError) as exc_info:
+            theme.get_3d_colors()
 
         error_msg = str(exc_info.value)
-        assert "abstract" in error_msg.lower()
+        assert "effects_3d" in error_msg
 
-    def test_missing_shadow_color_raises_error(self):
-        """Test that missing get_shadow_color() raises TypeError."""
-        from curses_themes.theme import ColorPair
+    def test_missing_shadow_in_effects_3d_raises_error(self, mock_curses, mock_stdscr):
+        """Test that missing 'shadow' key in effects_3d raises RuntimeError on apply()."""
         from curses_themes.theme3d import Theme3D
 
-        # Subclass missing only get_shadow_color
+        # Subclass with effects_3d missing 'shadow'
         class MissingShadow(Theme3D):
-            def get_color_map(self):
-                return {
-                    "background": (200, 200, 200),
-                    "foreground": (0, 0, 0),
-                    "primary": (0, 100, 200),
-                    "success": (0, 200, 0),
-                    "error": (200, 0, 0),
-                    "warning": (200, 200, 0),
-                    "info": (0, 200, 200),
-                    "accent": (200, 0, 200),
-                }
+            color_map = {
+                "background": (200, 200, 200),
+                "foreground": (0, 0, 0),
+                "primary": (0, 100, 200),
+                "success": (0, 200, 0),
+                "error": (200, 0, 0),
+                "warning": (200, 200, 0),
+                "info": (0, 200, 200),
+                "accent": (200, 0, 200),
+            }
 
-            def get_highlight_color(self):
-                return ColorPair((255, 255, 255), (200, 200, 200))
+            effects_3d = {
+                "highlight": ((255, 255, 255), (200, 200, 200)),
+                "lowlight": ((64, 64, 64), (200, 200, 200)),
+            }
 
-            def get_lowlight_color(self):
-                return ColorPair((64, 64, 64), (200, 200, 200))
-
-        with pytest.raises(TypeError) as exc_info:
-            MissingShadow("Missing Shadow", "No shadow color")
+        theme = MissingShadow("Missing Shadow", "No shadow color")
+        with pytest.raises(RuntimeError) as exc_info:
+            theme.apply(mock_stdscr)
 
         error_msg = str(exc_info.value)
-        assert "abstract" in error_msg.lower() or "get_shadow_color" in error_msg
+        assert "shadow" in error_msg.lower()
 
-    def test_missing_highlight_color_raises_error(self):
-        """Test that missing get_highlight_color() raises TypeError."""
-        from curses_themes.theme import ColorPair
+    def test_missing_highlight_in_effects_3d_raises_error(
+        self, mock_curses, mock_stdscr
+    ):
+        """Test that missing 'highlight' key in effects_3d raises RuntimeError on apply()."""
         from curses_themes.theme3d import Theme3D
 
-        # Subclass missing only get_highlight_color
+        # Subclass with effects_3d missing 'highlight'
         class MissingHighlight(Theme3D):
-            def get_color_map(self):
-                return {
-                    "background": (200, 200, 200),
-                    "foreground": (0, 0, 0),
-                    "primary": (0, 100, 200),
-                    "success": (0, 200, 0),
-                    "error": (200, 0, 0),
-                    "warning": (200, 200, 0),
-                    "info": (0, 200, 200),
-                    "accent": (200, 0, 200),
-                }
+            color_map = {
+                "background": (200, 200, 200),
+                "foreground": (0, 0, 0),
+                "primary": (0, 100, 200),
+                "success": (0, 200, 0),
+                "error": (200, 0, 0),
+                "warning": (200, 200, 0),
+                "info": (0, 200, 200),
+                "accent": (200, 0, 200),
+            }
 
-            def get_shadow_color(self):
-                return ColorPair((0, 0, 0), (0, 0, 0))
+            effects_3d = {
+                "shadow": ((0, 0, 0), (0, 0, 0)),
+                "lowlight": ((64, 64, 64), (200, 200, 200)),
+            }
 
-            def get_lowlight_color(self):
-                return ColorPair((64, 64, 64), (200, 200, 200))
-
-        with pytest.raises(TypeError) as exc_info:
-            MissingHighlight("Missing Highlight", "No highlight color")
+        theme = MissingHighlight("Missing Highlight", "No highlight color")
+        with pytest.raises(RuntimeError) as exc_info:
+            theme.apply(mock_stdscr)
 
         error_msg = str(exc_info.value)
-        assert "abstract" in error_msg.lower() or "get_highlight_color" in error_msg
+        assert "highlight" in error_msg.lower()
 
-    def test_missing_lowlight_color_raises_error(self):
-        """Test that missing get_lowlight_color() raises TypeError."""
-        from curses_themes.theme import ColorPair
+    def test_missing_lowlight_in_effects_3d_raises_error(
+        self, mock_curses, mock_stdscr
+    ):
+        """Test that missing 'lowlight' key in effects_3d raises RuntimeError on apply()."""
         from curses_themes.theme3d import Theme3D
 
-        # Subclass missing only get_lowlight_color
+        # Subclass with effects_3d missing 'lowlight'
         class MissingLowlight(Theme3D):
-            def get_color_map(self):
-                return {
-                    "background": (200, 200, 200),
-                    "foreground": (0, 0, 0),
-                    "primary": (0, 100, 200),
-                    "success": (0, 200, 0),
-                    "error": (200, 0, 0),
-                    "warning": (200, 200, 0),
-                    "info": (0, 200, 200),
-                    "accent": (200, 0, 200),
-                }
+            color_map = {
+                "background": (200, 200, 200),
+                "foreground": (0, 0, 0),
+                "primary": (0, 100, 200),
+                "success": (0, 200, 0),
+                "error": (200, 0, 0),
+                "warning": (200, 200, 0),
+                "info": (0, 200, 200),
+                "accent": (200, 0, 200),
+            }
 
-            def get_shadow_color(self):
-                return ColorPair((0, 0, 0), (0, 0, 0))
+            effects_3d = {
+                "shadow": ((0, 0, 0), (0, 0, 0)),
+                "highlight": ((255, 255, 255), (200, 200, 200)),
+            }
 
-            def get_highlight_color(self):
-                return ColorPair((255, 255, 255), (200, 200, 200))
-
-        with pytest.raises(TypeError) as exc_info:
-            MissingLowlight("Missing Lowlight", "No lowlight color")
+        theme = MissingLowlight("Missing Lowlight", "No lowlight color")
+        with pytest.raises(RuntimeError) as exc_info:
+            theme.apply(mock_stdscr)
 
         error_msg = str(exc_info.value)
-        assert "abstract" in error_msg.lower() or "get_lowlight_color" in error_msg
+        assert "lowlight" in error_msg.lower()
 
     def test_complete_implementation_succeeds(self):
         """Test that a complete Theme3D implementation can be instantiated."""
         from curses_themes.theme import ColorPair
         from curses_themes.theme3d import Theme3D
 
-        # Complete subclass with all required methods
+        # Complete subclass with effects_3d class attribute
         class Complete3DTheme(Theme3D):
-            def get_color_map(self):
-                return {
-                    "background": (200, 200, 200),
-                    "foreground": (0, 0, 0),
-                    "primary": (0, 100, 200),
-                    "success": (0, 200, 0),
-                    "error": (200, 0, 0),
-                    "warning": (200, 200, 0),
-                    "info": (0, 200, 200),
-                    "accent": (200, 0, 200),
-                }
+            color_map = {
+                "background": (200, 200, 200),
+                "foreground": (0, 0, 0),
+                "primary": (0, 100, 200),
+                "success": (0, 200, 0),
+                "error": (200, 0, 0),
+                "warning": (200, 200, 0),
+                "info": (0, 200, 200),
+                "accent": (200, 0, 200),
+            }
 
-            def get_shadow_color(self):
-                return ColorPair((0, 0, 0), (0, 0, 0))
-
-            def get_highlight_color(self):
-                return ColorPair((255, 255, 255), (200, 200, 200))
-
-            def get_lowlight_color(self):
-                return ColorPair((64, 64, 64), (200, 200, 200))
+            effects_3d = {
+                "shadow": ((0, 0, 0), (0, 0, 0)),
+                "highlight": ((255, 255, 255), (200, 200, 200)),
+                "lowlight": ((64, 64, 64), (200, 200, 200)),
+            }
 
         # Should succeed
-        theme = Complete3DTheme("Complete", "All methods implemented")
+        theme = Complete3DTheme("Complete", "All effects_3d provided")
         assert theme is not None
         assert theme.name == "Complete"
-        assert theme.get_shadow_color() is not None
-        assert theme.get_highlight_color() is not None
-        assert theme.get_lowlight_color() is not None
+        colors_3d = theme.get_3d_colors()
+        assert "shadow" in colors_3d
+        assert "highlight" in colors_3d
+        assert "lowlight" in colors_3d
+        assert isinstance(colors_3d["shadow"], ColorPair)
+        assert isinstance(colors_3d["highlight"], ColorPair)
+        assert isinstance(colors_3d["lowlight"], ColorPair)
 
     def test_existing_themes_still_work(self):
         """Test that existing Theme3D implementations (Borland, dBase) still work."""
+        from curses_themes.theme import ColorPair
         from curses_themes.themes.borland3d import Borland3DTheme
         from curses_themes.themes.dbase4_3d import DBase4_3DTheme
 
         # Both should instantiate successfully
         borland = Borland3DTheme()
         assert borland is not None
-        assert borland.get_shadow_color() is not None
-        assert borland.get_highlight_color() is not None
-        assert borland.get_lowlight_color() is not None
+        borland_3d = borland.get_3d_colors()
+        assert isinstance(borland_3d["shadow"], ColorPair)
+        assert isinstance(borland_3d["highlight"], ColorPair)
+        assert isinstance(borland_3d["lowlight"], ColorPair)
 
         dbase = DBase4_3DTheme()
         assert dbase is not None
-        assert dbase.get_shadow_color() is not None
-        assert dbase.get_highlight_color() is not None
-        assert dbase.get_lowlight_color() is not None
+        dbase_3d = dbase.get_3d_colors()
+        assert isinstance(dbase_3d["shadow"], ColorPair)
+        assert isinstance(dbase_3d["highlight"], ColorPair)
+        assert isinstance(dbase_3d["lowlight"], ColorPair)

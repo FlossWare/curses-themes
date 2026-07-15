@@ -84,24 +84,23 @@ def mock_stdscr():
 class SimpleTheme(Theme):
     """Minimal concrete Theme for testing base class."""
 
+    color_map = {
+        "background": (0, 0, 0),
+        "foreground": (255, 255, 255),
+        "primary": (0, 120, 215),
+        "success": (16, 124, 16),
+        "error": (232, 17, 35),
+        "warning": (193, 156, 0),
+        "info": (0, 120, 212),
+        "accent": (142, 68, 173),
+    }
+
     def __init__(self):
         super().__init__(
             name="Simple Test Theme",
             description="A minimal theme for testing",
             author="Test Suite",
         )
-
-    def get_color_map(self):
-        return {
-            "background": (0, 0, 0),
-            "foreground": (255, 255, 255),
-            "primary": (0, 120, 215),
-            "success": (16, 124, 16),
-            "error": (232, 17, 35),
-            "warning": (193, 156, 0),
-            "info": (0, 120, 212),
-            "accent": (142, 68, 173),
-        }
 
 
 @pytest.fixture
@@ -113,36 +112,31 @@ def simple_theme():
 @pytest.fixture
 def simple_3d_theme():
     """Create a minimal 3D theme for testing."""
-    from curses_themes import ColorPair, Theme3D
+    from curses_themes import Theme3D
 
     class Simple3DTheme(Theme3D):
+        color_map = {
+            "background": (200, 200, 200),
+            "foreground": (0, 0, 0),
+            "primary": (0, 120, 215),
+            "success": (16, 124, 16),
+            "error": (232, 17, 35),
+            "warning": (193, 156, 0),
+            "info": (0, 120, 212),
+            "accent": (142, 68, 173),
+        }
+        effects_3d = {
+            "shadow": ((0, 0, 0), (0, 0, 0)),
+            "highlight": ((255, 255, 255), (200, 200, 200)),
+            "lowlight": ((128, 128, 128), (200, 200, 200)),
+        }
+
         def __init__(self):
             super().__init__(
                 name="Simple 3D Test Theme",
                 description="A minimal 3D theme for testing",
                 author="Test Suite",
             )
-
-        def get_color_map(self):
-            return {
-                "background": (200, 200, 200),
-                "foreground": (0, 0, 0),
-                "primary": (0, 120, 215),
-                "success": (16, 124, 16),
-                "error": (232, 17, 35),
-                "warning": (193, 156, 0),
-                "info": (0, 120, 212),
-                "accent": (142, 68, 173),
-            }
-
-        def get_shadow_color(self):
-            return ColorPair((0, 0, 0), (0, 0, 0))
-
-        def get_highlight_color(self):
-            return ColorPair((255, 255, 255), (200, 200, 200))
-
-        def get_lowlight_color(self):
-            return ColorPair((128, 128, 128), (200, 200, 200))
 
     return Simple3DTheme()
 

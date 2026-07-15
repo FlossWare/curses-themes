@@ -357,23 +357,23 @@ class ColorManager:
             accent=self.init_color_pair(color_map["accent"], bg_rgb),
         )
 
-        # Initialize component-based color pairs from theme methods
-        background_color = theme.get_background()
-        button_color = theme.get_button()
-        button_focused_color = theme.get_button_focused()
-        text_input_color = theme.get_text_input()
-        border_color = theme.get_border()
-        selection_color = theme.get_selection()
-        disabled_color = theme.get_disabled()
+        # Initialize component-based color pairs from theme
+        comp_dict = theme.get_components()
 
         component_colors = ComponentColors(
-            background=self._init_color_pair_from_colorpair(background_color),
-            button=self._init_color_pair_from_colorpair(button_color),
-            button_focused=self._init_color_pair_from_colorpair(button_focused_color),
-            text_input=self._init_color_pair_from_colorpair(text_input_color),
-            border=self._init_color_pair_from_colorpair(border_color),
-            selection=self._init_color_pair_from_colorpair(selection_color),
-            disabled=self._init_color_pair_from_colorpair(disabled_color),
+            background=self._init_color_pair_from_colorpair(
+                comp_dict.get("background")
+            ),
+            button=self._init_color_pair_from_colorpair(comp_dict.get("button")),
+            button_focused=self._init_color_pair_from_colorpair(
+                comp_dict.get("button_focused")
+            ),
+            text_input=self._init_color_pair_from_colorpair(
+                comp_dict.get("text_input")
+            ),
+            border=self._init_color_pair_from_colorpair(comp_dict.get("border")),
+            selection=self._init_color_pair_from_colorpair(comp_dict.get("selection")),
+            disabled=self._init_color_pair_from_colorpair(comp_dict.get("disabled")),
         )
 
         return semantic_colors, component_colors

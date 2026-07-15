@@ -570,16 +570,10 @@ class TestConfigThemeBorderChars:
 class TestConfigThemeComponents:
     """Tests for ConfigTheme component color methods."""
 
-    def test_no_components_returns_none(self):
-        """All component methods return None when not configured."""
+    def test_no_components_returns_empty(self):
+        """get_components() returns empty dict when not configured."""
         theme = ConfigTheme(MINIMAL_CONFIG)
-        assert theme.get_background() is None
-        assert theme.get_button() is None
-        assert theme.get_button_focused() is None
-        assert theme.get_text_input() is None
-        assert theme.get_border() is None
-        assert theme.get_selection() is None
-        assert theme.get_disabled() is None
+        assert theme.get_components() == {}
 
     def test_configured_button_returns_color_pair(self):
         """A configured button component returns ColorPair."""
@@ -589,14 +583,16 @@ class TestConfigThemeComponents:
             }
         )
         theme = ConfigTheme(config)
-        result = theme.get_button()
+        comps = theme.get_components()
+        assert "button" in comps
+        result = comps["button"]
         assert isinstance(result, ColorPair)
         assert result.foreground == (255, 255, 255)
         assert result.background == (0, 120, 215)
 
     def test_all_components_configured(self):
         """Theme with all component colors configured returns correct values."""
-        comps = {
+        comp_defs = {
             "background": _color_pair_dict((200, 200, 200), (0, 0, 0)),
             "button": _color_pair_dict((255, 255, 255), (0, 120, 215)),
             "button_focused": _color_pair_dict((0, 0, 0), (255, 255, 0)),
@@ -605,28 +601,30 @@ class TestConfigThemeComponents:
             "selection": _color_pair_dict((255, 255, 255), (0, 0, 128)),
             "disabled": _color_pair_dict((128, 128, 128), (64, 64, 64)),
         }
-        config = _make_config(components=comps)
+        config = _make_config(components=comp_defs)
         theme = ConfigTheme(config)
+        comps = theme.get_components()
 
-        assert theme.get_background() is not None
-        assert theme.get_button().foreground == (255, 255, 255)
-        assert theme.get_button_focused().foreground == (0, 0, 0)
-        assert theme.get_text_input().background == (255, 255, 255)
-        assert theme.get_border() is not None
-        assert theme.get_selection() is not None
-        assert theme.get_disabled() is not None
+        assert "background" in comps
+        assert comps["button"].foreground == (255, 255, 255)
+        assert comps["button_focused"].foreground == (0, 0, 0)
+        assert comps["text_input"].background == (255, 255, 255)
+        assert "border" in comps
+        assert "selection" in comps
+        assert "disabled" in comps
 
     def test_partial_components(self):
-        """Theme with only some components: configured ones return values, others None."""
+        """Theme with only some components: configured ones present, others absent."""
         config = _make_config(
             components={
                 "button": _color_pair_dict((255, 255, 255), (0, 120, 215)),
             }
         )
         theme = ConfigTheme(config)
-        assert theme.get_button() is not None
-        assert theme.get_button_focused() is None
-        assert theme.get_background() is None
+        comps = theme.get_components()
+        assert "button" in comps
+        assert "button_focused" not in comps
+        assert "background" not in comps
 
 
 class TestConfigThemeApply:
@@ -694,22 +692,25 @@ class TestConfigTheme3DInit:
         assert isinstance(theme, Theme)
 
     def test_3d_color_methods(self):
-        """3D color methods return ColorPair with correct values."""
+        """get_3d_colors() returns ColorPair with correct values."""
         config = _make_config(three_d=_make_3d_section())
         theme = ConfigTheme3D(config)
 
-        shadow = theme.get_shadow_color()
+        colors_3d = theme.get_3d_colors()
+        assert "shadow" in colors_3d
+        assert "highlight" in colors_3d
+        assert "lowlight" in colors_3d
+
+        shadow = colors_3d["shadow"]
         assert isinstance(shadow, ColorPair)
         assert shadow.foreground == (0, 0, 0)
         assert shadow.background == (0, 0, 0)
 
-        highlight = theme.get_highlight_color()
-        assert highlight.foreground == (255, 255, 255)
-        assert highlight.background == (200, 200, 200)
+        assert colors_3d["highlight"].foreground == (255, 255, 255)
+        assert colors_3d["highlight"].background == (200, 200, 200)
 
-        lowlight = theme.get_lowlight_color()
-        assert lowlight.foreground == (64, 64, 64)
-        assert lowlight.background == (200, 200, 200)
+        assert colors_3d["lowlight"].foreground == (64, 64, 64)
+        assert colors_3d["lowlight"].background == (200, 200, 200)
 
     def test_default_shadow_offsets(self):
         """Default shadow offsets are 2 and 1."""
@@ -750,24 +751,19 @@ class TestConfigTheme3DInit:
             three_d=_make_3d_section(),
         )
         theme = ConfigTheme3D(config)
-        assert theme.get_button() is not None
-        assert theme.get_button_focused() is None
+        comps = theme.get_components()
+        assert "button" in comps
+        assert "button_focused" not in comps
 
-    def test_3d_no_components_all_none(self):
-        """A 3D theme with no components returns None for all."""
+    def test_3d_no_components_returns_empty(self):
+        """A 3D theme with no components returns empty dict."""
         config = _make_config(three_d=_make_3d_section())
         theme = ConfigTheme3D(config)
-        assert theme.get_background() is None
-        assert theme.get_button() is None
-        assert theme.get_button_focused() is None
-        assert theme.get_text_input() is None
-        assert theme.get_border() is None
-        assert theme.get_selection() is None
-        assert theme.get_disabled() is None
+        assert theme.get_components() == {}
 
     def test_3d_all_components_configured(self):
         """A 3D theme with all component colors returns correct values."""
-        comps = {
+        comp_defs = {
             "background": _color_pair_dict((200, 200, 200), (0, 0, 0)),
             "button": _color_pair_dict((255, 255, 255), (0, 120, 215)),
             "button_focused": _color_pair_dict((0, 0, 0), (255, 255, 0)),
@@ -776,15 +772,10 @@ class TestConfigTheme3DInit:
             "selection": _color_pair_dict((255, 255, 255), (0, 0, 128)),
             "disabled": _color_pair_dict((128, 128, 128), (64, 64, 64)),
         }
-        config = _make_config(components=comps, three_d=_make_3d_section())
+        config = _make_config(components=comp_defs, three_d=_make_3d_section())
         theme = ConfigTheme3D(config)
-        assert theme.get_background() is not None
-        assert theme.get_button() is not None
-        assert theme.get_button_focused() is not None
-        assert theme.get_text_input() is not None
-        assert theme.get_border() is not None
-        assert theme.get_selection() is not None
-        assert theme.get_disabled() is not None
+        comps = theme.get_components()
+        assert len(comps) == 7
 
     def test_3d_theme_border_chars(self):
         """ConfigTheme3D with custom border characters."""
@@ -889,8 +880,9 @@ class TestJSONParser:
         assert theme.description == "Fully specified JSON theme"
         assert theme.author == "JSON Author"
         assert theme.get_border_chars() == "+-+||+-+"
-        assert theme.get_button() is not None
-        assert theme.get_border() is not None
+        comps = theme.get_components()
+        assert "button" in comps
+        assert "border" in comps
 
     def test_load_json_3d_theme(self, tmp_path):
         """Load a 3D theme from JSON."""
@@ -903,7 +895,7 @@ class TestJSONParser:
 
         theme = load_theme_from_file(str(json_path))
         assert isinstance(theme, ConfigTheme3D)
-        assert theme.get_shadow_color().foreground == (0, 0, 0)
+        assert theme.get_3d_colors()["shadow"].foreground == (0, 0, 0)
 
     def test_load_json_theme3d_key_normalized(self, tmp_path):
         """JSON 'theme3d' key is normalized to '3d'."""
@@ -1048,8 +1040,9 @@ class TestXMLParser:
         </theme>"""
         path = self._write_xml_theme(tmp_path, "comp.xml", xml)
         theme = load_theme_from_file(path)
-        assert theme.get_button() is not None
-        assert theme.get_button().foreground == (255, 255, 255)
+        comps = theme.get_components()
+        assert "button" in comps
+        assert comps["button"].foreground == (255, 255, 255)
 
     def test_load_xml_with_border_chars(self, tmp_path):
         """Load XML with custom border characters."""
@@ -1336,7 +1329,7 @@ class TestYAMLParser:
         yaml_path.write_text(yaml.dump(config), encoding="utf-8")
 
         theme = load_theme_from_file(str(yaml_path))
-        assert theme.get_button() is not None
+        assert "button" in theme.get_components()
 
     def test_yaml_import_error_message(self, tmp_path, monkeypatch):
         """Importing YAML without PyYAML gives a helpful message."""
@@ -1469,13 +1462,8 @@ class TestExampleThemeFiles:
         assert len(color_map) >= 8
 
         # Verify components are loaded
-        assert theme.get_button() is not None
-        assert theme.get_button_focused() is not None
-        assert theme.get_border() is not None
-        assert theme.get_selection() is not None
-        assert theme.get_disabled() is not None
-        assert theme.get_background() is not None
-        assert theme.get_text_input() is not None
+        comps = theme.get_components()
+        assert len(comps) == 7
 
     def test_load_ocean_xml(self, examples_dir):
         """Load the ocean.xml example and verify key properties."""
@@ -1492,8 +1480,9 @@ class TestExampleThemeFiles:
         assert len(color_map) >= 8
 
         # Verify components are loaded
-        assert theme.get_button() is not None
-        assert theme.get_border() is not None
+        comps = theme.get_components()
+        assert "button" in comps
+        assert "border" in comps
 
     def test_load_forest_yaml(self, examples_dir):
         """Load the forest.yaml example (skip if no PyYAML)."""
@@ -1515,8 +1504,9 @@ class TestExampleThemeFiles:
         assert len(color_map) >= 8
 
         # Verify components are loaded
-        assert theme.get_button() is not None
-        assert theme.get_border() is not None
+        comps = theme.get_components()
+        assert "button" in comps
+        assert "border" in comps
 
     def test_solarized_apply(self, examples_dir, mock_curses, mock_stdscr):
         """Load solarized.json, apply it, verify colors initialized."""
@@ -1654,8 +1644,7 @@ class TestEdgeCasesAndErrors:
         """An empty components dict in config is valid."""
         config = _make_config(components={})
         theme = ConfigTheme(config)
-        assert theme.get_button() is None
-        assert theme.get_border() is None
+        assert theme.get_components() == {}
 
     def test_3d_config_missing_highlight_raises(self):
         """3D config missing highlight key raises ValueError."""

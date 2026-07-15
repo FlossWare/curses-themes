@@ -2,6 +2,7 @@
 """Advanced tests for Theme3D - shadow effects and 3D drawing."""
 
 import pytest
+
 from curses_themes.themes.borland3d import Borland3DTheme
 
 
@@ -38,9 +39,7 @@ class TestTheme3DShadowEffects:
         theme.draw_box(mock_stdscr, 1, 1, 20, 70, title="Large Window")
         assert mock_stdscr.addstr.called
 
-    def test_3d_theme_draw_box_at_various_positions(
-        self, mock_curses, mock_stdscr
-    ):
+    def test_3d_theme_draw_box_at_various_positions(self, mock_curses, mock_stdscr):
         """Test 3D boxes at different screen positions."""
         theme = Borland3DTheme()
         theme.apply(mock_stdscr)

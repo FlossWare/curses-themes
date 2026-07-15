@@ -14,11 +14,9 @@ Targets uncovered lines in theme3d.py:
 - Lines 493-498: title drawing in 3D box
 """
 
-from unittest.mock import call
-
 import pytest
 
-from curses_themes import ColorPair, Theme3D
+from curses_themes import Theme3D
 
 
 class TestShadowOffsetValidation:
@@ -210,14 +208,11 @@ class TestDrawBox3DInvalidBorderChars:
                     "accent": (142, 68, 173),
                 }
 
-            def get_shadow_color(self):
-                return ColorPair((0, 0, 0), (0, 0, 0))
-
-            def get_highlight_color(self):
-                return ColorPair((255, 255, 255), (200, 200, 200))
-
-            def get_lowlight_color(self):
-                return ColorPair((128, 128, 128), (200, 200, 200))
+            effects_3d = {
+                "shadow": ((0, 0, 0), (0, 0, 0)),
+                "highlight": ((255, 255, 255), (200, 200, 200)),
+                "lowlight": ((128, 128, 128), (200, 200, 200)),
+            }
 
             def get_border_chars(self):
                 return "ABC"  # Only 3 chars, need 8
@@ -341,9 +336,7 @@ class TestDrawBox3DBorderDrawing:
         assert (y + h - 1, x) in positions, "Bottom-left corner not drawn"
         assert (y + h - 1, x + w - 1) in positions, "Bottom-right corner not drawn"
 
-    def test_horizontal_borders_drawn(
-        self, mock_curses, mock_stdscr, simple_3d_theme
-    ):
+    def test_horizontal_borders_drawn(self, mock_curses, mock_stdscr, simple_3d_theme):
         """draw_box_3d must draw top and bottom horizontal borders."""
         simple_3d_theme.apply(mock_stdscr)
         y, x, h, w = 5, 10, 6, 20
@@ -521,9 +514,7 @@ class TestDrawBox3DTitle:
         simple_3d_theme.apply(mock_stdscr)
 
         # Title "ABCDEFGH" has display width 8, needs > 12 width. Box width = 10.
-        simple_3d_theme.draw_box_3d(
-            mock_stdscr, 5, 10, 6, 10, title="ABCDEFGH"
-        )
+        simple_3d_theme.draw_box_3d(mock_stdscr, 5, 10, 6, 10, title="ABCDEFGH")
 
         addstr_calls = mock_stdscr.addstr.call_args_list
         title_calls = [c for c in addstr_calls if "ABCDEFGH" in str(c[0][2])]

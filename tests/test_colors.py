@@ -2,7 +2,7 @@
 """Tests for ColorManager class - RGB conversion and color pair management."""
 
 import pytest
-from unittest.mock import Mock, patch
+
 from curses_themes.colors import ColorManager
 
 

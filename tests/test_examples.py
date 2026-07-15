@@ -8,7 +8,6 @@ MIT License - see LICENSE file for details.
 """
 
 import ast
-import os
 import sys
 from pathlib import Path
 
@@ -23,7 +22,7 @@ def get_example_files():
 
 def parse_file(filepath):
     """Parse a Python file and return the AST."""
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         return ast.parse(f.read(), filename=str(filepath))
 
 
@@ -115,7 +114,10 @@ def find_missing_color_pair_wrappers(tree):
 def test_no_bare_excepts(example_file):
     """Test that examples don't use bare except: clauses."""
     # Skip certain files that are known to use specific patterns
-    if example_file.name in ["generate_screenshots.py", "generate_screenshots_headless.py"]:
+    if example_file.name in [
+        "generate_screenshots.py",
+        "generate_screenshots_headless.py",
+    ]:
         pytest.skip("Screenshot generators may use different patterns")
 
     tree = parse_file(example_file)
@@ -124,7 +126,7 @@ def test_no_bare_excepts(example_file):
     # Some files might legitimately use bare except for specific reasons
     # We check for comments explaining why
     if bare_excepts:
-        with open(example_file, "r") as f:
+        with open(example_file) as f:
             lines = f.readlines()
 
         unexplained = []
@@ -148,9 +150,9 @@ def test_no_bare_excepts(example_file):
                 ):
                     unexplained.append((lineno, issue))
 
-        assert (
-            not unexplained
-        ), f"Found bare except clauses in {example_file.name}: {unexplained}"
+        assert not unexplained, (
+            f"Found bare except clauses in {example_file.name}: {unexplained}"
+        )
 
 
 @pytest.mark.parametrize("example_file", get_example_files())
@@ -180,7 +182,10 @@ def test_all_examples_import(example_file):
 def test_theme_load_has_error_handling(example_file):
     """Test that ThemeManager.load() calls have error handling."""
     # Skip files that might have different patterns
-    if example_file.name in ["generate_screenshots.py", "generate_screenshots_headless.py"]:
+    if example_file.name in [
+        "generate_screenshots.py",
+        "generate_screenshots_headless.py",
+    ]:
         pytest.skip("Screenshot generators may have different patterns")
 
     tree = parse_file(example_file)
@@ -227,7 +232,7 @@ def test_examples_directory_exists():
 def test_all_examples_have_docstrings():
     """Test that all example files have module docstrings."""
     for example_file in get_example_files():
-        with open(example_file, "r") as f:
+        with open(example_file) as f:
             content = f.read()
 
         tree = ast.parse(content)
@@ -240,9 +245,7 @@ def test_all_examples_have_docstrings():
             and isinstance(tree.body[0].value.value, str)
         )
 
-        assert (
-            has_docstring
-        ), f"{example_file.name} is missing a module-level docstring"
+        assert has_docstring, f"{example_file.name} is missing a module-level docstring"
 
 
 def test_examples_use_curses_wrapper():
@@ -252,15 +255,15 @@ def test_examples_use_curses_wrapper():
         if example_file.name.startswith("generate_"):
             continue
 
-        with open(example_file, "r") as f:
+        with open(example_file) as f:
             content = f.read()
 
         # Check if file has if __name__ == "__main__":
         if '__name__ == "__main__"' in content or "__name__ == '__main__'" in content:
             # Should use curses.wrapper()
-            assert (
-                "curses.wrapper" in content
-            ), f"{example_file.name} should use curses.wrapper() for proper cleanup"
+            assert "curses.wrapper" in content, (
+                f"{example_file.name} should use curses.wrapper() for proper cleanup"
+            )
 
 
 if __name__ == "__main__":

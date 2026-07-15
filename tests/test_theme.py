@@ -2,8 +2,8 @@
 """Tests for Theme base class - metadata, color access, and component methods."""
 
 import pytest
-from curses_themes import Theme, ColorPair
-from curses_themes.colors import ColorManager
+
+from curses_themes import Theme
 
 
 class TestThemeMetadata:
@@ -21,21 +21,17 @@ class TestThemeMetadata:
         assert "Simple Test Theme" in repr_str
         assert "Test Suite" in repr_str
 
-    def test_abstract_get_color_map_enforcement(self):
-        """Test that Theme requires get_color_map() implementation."""
+    def test_get_color_map_without_data_raises(self):
+        """Test that Theme raises NotImplementedError when no color_map is provided."""
 
         class IncompleteTheme(Theme):
             def __init__(self):
                 super().__init__("Incomplete", "No color map")
 
-            def get_color_map(self):
-                """Return empty color map."""
-                return {}
-
         theme = IncompleteTheme()
-        # Base Theme is abstract, concrete themes must implement get_color_map()
-        color_map = theme.get_color_map()
-        assert isinstance(color_map, dict)
+        # Theme with no color_map data raises NotImplementedError
+        with pytest.raises(NotImplementedError):
+            theme.get_color_map()
 
 
 class TestThemeColorAccess:
@@ -43,17 +39,19 @@ class TestThemeColorAccess:
 
     def test_colors_property_before_apply_raises_error(self, simple_theme):
         """Test accessing colors property before apply() raises RuntimeError."""
-        with pytest.raises(RuntimeError, match="colors not available|has not been applied"):
+        with pytest.raises(
+            RuntimeError, match="colors not available|has not been applied"
+        ):
             _ = simple_theme.colors
 
     def test_components_property_before_apply_raises_error(self, simple_theme):
         """Test accessing components property before apply() raises RuntimeError."""
-        with pytest.raises(RuntimeError, match="components not available|has not been applied"):
+        with pytest.raises(
+            RuntimeError, match="components not available|has not been applied"
+        ):
             _ = simple_theme.components
 
-    def test_colors_property_after_apply(
-        self, mock_curses, mock_stdscr, simple_theme
-    ):
+    def test_colors_property_after_apply(self, mock_curses, mock_stdscr, simple_theme):
         """Test accessing colors property after apply() succeeds."""
         simple_theme.apply(mock_stdscr)
 
@@ -77,40 +75,40 @@ class TestThemeColorAccess:
 class TestThemeComponentMethods:
     """Test suite for Theme component color methods."""
 
-    def test_default_get_background_returns_none(self, simple_theme):
-        """Test default get_background() returns None."""
-        result = simple_theme.get_background()
-        assert result is None
+    def test_default_get_components_returns_empty_dict(self, simple_theme):
+        """Test default get_components() returns empty dict."""
+        result = simple_theme.get_components()
+        assert result == {}
 
-    def test_default_get_button_returns_none(self, simple_theme):
-        """Test default get_button() returns None."""
-        result = simple_theme.get_button()
-        assert result is None
+    def test_default_get_components_missing_button(self, simple_theme):
+        """Test default get_components() has no button key."""
+        result = simple_theme.get_components()
+        assert "button" not in result
 
-    def test_default_get_button_focused_returns_none(self, simple_theme):
-        """Test default get_button_focused() returns None."""
-        result = simple_theme.get_button_focused()
-        assert result is None
+    def test_default_get_components_missing_button_focused(self, simple_theme):
+        """Test default get_components() has no button_focused key."""
+        result = simple_theme.get_components()
+        assert "button_focused" not in result
 
-    def test_default_get_text_input_returns_none(self, simple_theme):
-        """Test default get_text_input() returns None."""
-        result = simple_theme.get_text_input()
-        assert result is None
+    def test_default_get_components_missing_text_input(self, simple_theme):
+        """Test default get_components() has no text_input key."""
+        result = simple_theme.get_components()
+        assert "text_input" not in result
 
-    def test_default_get_border_returns_none(self, simple_theme):
-        """Test default get_border() returns None."""
-        result = simple_theme.get_border()
-        assert result is None
+    def test_default_get_components_missing_border(self, simple_theme):
+        """Test default get_components() has no border key."""
+        result = simple_theme.get_components()
+        assert "border" not in result
 
-    def test_default_get_selection_returns_none(self, simple_theme):
-        """Test default get_selection() returns None."""
-        result = simple_theme.get_selection()
-        assert result is None
+    def test_default_get_components_missing_selection(self, simple_theme):
+        """Test default get_components() has no selection key."""
+        result = simple_theme.get_components()
+        assert "selection" not in result
 
-    def test_default_get_disabled_returns_none(self, simple_theme):
-        """Test default get_disabled() returns None."""
-        result = simple_theme.get_disabled()
-        assert result is None
+    def test_default_get_components_missing_disabled(self, simple_theme):
+        """Test default get_components() has no disabled key."""
+        result = simple_theme.get_components()
+        assert "disabled" not in result
 
 
 class TestThemeBorderDrawing:
@@ -158,9 +156,7 @@ class TestThemeBorderDrawing:
         with pytest.raises(ValueError, match="too small|minimum"):
             simple_theme.draw_box(mock_stdscr, 0, 0, 1, 1)
 
-    def test_draw_box_custom_border_chars(
-        self, mock_curses, mock_stdscr, simple_theme
-    ):
+    def test_draw_box_custom_border_chars(self, mock_curses, mock_stdscr, simple_theme):
         """Test box drawing uses custom border characters."""
         simple_theme.apply(mock_stdscr)
 
@@ -197,9 +193,7 @@ class TestThemeApplyMechanism:
         assert simple_theme.colors.primary > 0
         assert simple_theme.colors.success > 0
 
-    def test_apply_initializes_components(
-        self, mock_curses, mock_stdscr, simple_theme
-    ):
+    def test_apply_initializes_components(self, mock_curses, mock_stdscr, simple_theme):
         """Test apply() initializes component colors."""
         simple_theme.apply(mock_stdscr)
 
@@ -208,9 +202,7 @@ class TestThemeApplyMechanism:
         # SimpleTheme returns None for all components, so they'll be 0
         assert simple_theme.components.background == 0
 
-    def test_apply_sets_screen_background(
-        self, mock_curses, mock_stdscr, simple_theme
-    ):
+    def test_apply_sets_screen_background(self, mock_curses, mock_stdscr, simple_theme):
         """Test apply() sets screen background color."""
         simple_theme.apply(mock_stdscr)
 
@@ -250,29 +242,26 @@ class TestThemeWithComponentColors:
     """Test suite for themes that implement component colors."""
 
     def test_theme_with_component_colors(self, mock_curses, mock_stdscr):
-        """Test theme that implements component color methods."""
+        """Test theme that provides component colors via class attribute."""
 
         class ComponentTheme(Theme):
+            color_map = {
+                "background": (0, 0, 0),
+                "foreground": (255, 255, 255),
+                "primary": (0, 120, 215),
+                "success": (16, 124, 16),
+                "error": (232, 17, 35),
+                "warning": (193, 156, 0),
+                "info": (0, 120, 212),
+                "accent": (142, 68, 173),
+            }
+            component_colors = {
+                "button": ((255, 255, 255), (0, 120, 215)),
+                "button_focused": ((0, 0, 0), (0, 255, 255)),
+            }
+
             def __init__(self):
                 super().__init__("Component Theme", "Has components")
-
-            def get_color_map(self):
-                return {
-                    "background": (0, 0, 0),
-                    "foreground": (255, 255, 255),
-                    "primary": (0, 120, 215),
-                    "success": (16, 124, 16),
-                    "error": (232, 17, 35),
-                    "warning": (193, 156, 0),
-                    "info": (0, 120, 212),
-                    "accent": (142, 68, 173),
-                }
-
-            def get_button(self) -> ColorPair:
-                return ColorPair((255, 255, 255), (0, 120, 215))
-
-            def get_button_focused(self) -> ColorPair:
-                return ColorPair((0, 0, 0), (0, 255, 255))
 
         theme = ComponentTheme()
         theme.apply(mock_stdscr)

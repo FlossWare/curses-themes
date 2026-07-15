@@ -2,7 +2,8 @@
 """Integration tests for curses-themes - end-to-end workflows."""
 
 import pytest
-from curses_themes import ThemeManager, Theme, ColorPair
+
+from curses_themes import Theme, ThemeManager
 
 
 class TestCompleteThemeLifecycle:
@@ -51,7 +52,6 @@ class TestCompleteThemeLifecycle:
 
     def test_theme_switching(self, mock_curses, mock_stdscr, simple_theme):
         """Test switching between themes in same session."""
-        from curses_themes.themes.dark import DarkTheme
 
         # Load and apply first theme
         ThemeManager.register(simple_theme.__class__, "simple")
@@ -90,8 +90,9 @@ class TestCompleteThemeLifecycle:
                     "accent": (200, 100, 255),
                 }
 
-            def get_button(self) -> ColorPair:
-                return ColorPair((255, 255, 255), (100, 150, 255))
+            component_colors = {
+                "button": ((255, 255, 255), (100, 150, 255)),
+            }
 
             def get_border_chars(self) -> str:
                 return "╔═╗║║╚═╝"
@@ -114,8 +115,6 @@ class TestMultiThemeScenarios:
 
     def test_multiple_themes_in_same_session(self, mock_curses, mock_stdscr):
         """Test loading multiple different themes."""
-        from curses_themes.themes.dark import DarkTheme
-        from curses_themes.themes.light import LightTheme
 
         dark = ThemeManager.load("dark")
         light = ThemeManager.load("light")

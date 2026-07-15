@@ -11,6 +11,7 @@ border characters that are suitable for terminal rendering. It ensures:
 """
 
 import pytest
+
 from curses_themes import ThemeManager
 from curses_themes.theme3d import Theme3D
 
@@ -30,7 +31,7 @@ class TestBorderCharsLength:
             border_chars = theme.get_border_chars()
             assert len(border_chars) == 8, (
                 f"Theme '{theme_name}' border_chars length is {len(border_chars)}, "
-                f"expected 8. Got: {repr(border_chars)}"
+                f"expected 8. Got: {border_chars!r}"
             )
 
     def test_all_themes_border_chars_type(self, all_theme_names):
@@ -66,7 +67,7 @@ class TestBorderCharsFormat:
                 is_printable = char_code >= 32 and char_code != 127
                 assert is_printable, (
                     f"Theme '{theme_name}' border character at position {i} "
-                    f"is not printable: {repr(char)} (ord={char_code})"
+                    f"is not printable: {char!r} (ord={char_code})"
                 )
 
     def test_border_chars_are_single_characters(self, all_theme_names):
@@ -85,7 +86,7 @@ class TestBorderCharsFormat:
             for i, char in enumerate(chars_list):
                 assert len(char) == 1, (
                     f"Theme '{theme_name}' border character at position {i} "
-                    f"is not a single character: {repr(char)}"
+                    f"is not a single character: {char!r}"
                 )
 
     def test_border_chars_valid_encoding(self, all_theme_names):
@@ -96,16 +97,16 @@ class TestBorderCharsFormat:
 
             # Should be able to encode and decode without errors
             try:
-                encoded = border_chars.encode('utf-8')
-                decoded = encoded.decode('utf-8')
+                encoded = border_chars.encode("utf-8")
+                decoded = encoded.decode("utf-8")
                 assert decoded == border_chars, (
                     f"Theme '{theme_name}' border_chars encoding/decoding "
-                    f"mismatch: {repr(border_chars)} != {repr(decoded)}"
+                    f"mismatch: {border_chars!r} != {decoded!r}"
                 )
             except (UnicodeEncodeError, UnicodeDecodeError) as e:
                 pytest.fail(
                     f"Theme '{theme_name}' border_chars cannot be encoded/decoded "
-                    f"as UTF-8: {repr(border_chars)} - {e}"
+                    f"as UTF-8: {border_chars!r} - {e}"
                 )
 
 
@@ -165,7 +166,7 @@ class TestBorderCharsConsistency:
             except ValueError as e:
                 pytest.fail(
                     f"Theme '{theme_name}' border_chars cannot be unpacked into "
-                    f"8 components: {repr(border_chars)} - {e}"
+                    f"8 components: {border_chars!r} - {e}"
                 )
 
             # Each unpacked value should be a single character
@@ -182,7 +183,7 @@ class TestBorderCharsConsistency:
             for i, char in enumerate(components):
                 assert len(char) == 1, (
                     f"Theme '{theme_name}' border component {i} is not a single "
-                    f"character: {repr(char)}"
+                    f"character: {char!r}"
                 )
 
 
@@ -209,7 +210,7 @@ class TestTheme3DDoubleBorderChars:
 
         for theme_name in theme_3d_names:
             theme = ThemeManager.load(theme_name)
-            assert hasattr(theme, 'get_double_border_chars'), (
+            assert hasattr(theme, "get_double_border_chars"), (
                 f"3D theme '{theme_name}' does not have get_double_border_chars() "
                 "method"
             )
@@ -225,7 +226,7 @@ class TestTheme3DDoubleBorderChars:
             assert len(double_border_chars) == 8, (
                 f"3D theme '{theme_name}' double_border_chars length is "
                 f"{len(double_border_chars)}, expected 8. "
-                f"Got: {repr(double_border_chars)}"
+                f"Got: {double_border_chars!r}"
             )
 
     def test_3d_themes_double_border_chars_type(self, theme_3d_names):
@@ -255,7 +256,7 @@ class TestTheme3DDoubleBorderChars:
                 is_printable = char_code >= 32 and char_code != 127
                 assert is_printable, (
                     f"3D theme '{theme_name}' double border character at "
-                    f"position {i} is not printable: {repr(char)} "
+                    f"position {i} is not printable: {char!r} "
                     f"(ord={char_code})"
                 )
 
@@ -294,9 +295,16 @@ class TestBorderCharsExpectedFormat:
 
                 # Just verify we got 8 values
                 assert all(
-                    isinstance(c, str) for c in [
-                        top_left, top, top_right, left, right,
-                        bottom_left, bottom, bottom_right
+                    isinstance(c, str)
+                    for c in [
+                        top_left,
+                        top,
+                        top_right,
+                        left,
+                        right,
+                        bottom_left,
+                        bottom,
+                        bottom_right,
                     ]
                 ), (
                     f"Theme '{theme_name}' border_chars unpacked values are not "
@@ -315,7 +323,7 @@ class TestBorderCharsExpectedFormat:
             border_chars = theme.get_border_chars()
 
             for i, char in enumerate(border_chars):
-                assert char not in ['\n', '\r', '\t', '\v', '\f'], (
+                assert char not in ["\n", "\r", "\t", "\v", "\f"], (
                     f"Theme '{theme_name}' border character at position {i} "
-                    f"contains whitespace control character: {repr(char)}"
+                    f"contains whitespace control character: {char!r}"
                 )

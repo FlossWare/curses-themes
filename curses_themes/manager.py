@@ -10,7 +10,7 @@ Copyright (C) 2024 FlossWare
 MIT License - see LICENSE file for details.
 """
 
-from typing import Optional
+from typing import Callable, Optional
 
 from .theme import Theme
 
@@ -43,8 +43,8 @@ class ThemeManager:
         on shared state. Do not instantiate this class.
     """
 
-    # Registry of theme classes by normalized name
-    _themes: dict[str, type[Theme]] = {}
+    # Registry of theme factories by normalized name (classes or callables)
+    _themes: dict[str, Callable[[], Theme]] = {}
 
     # Cache of theme metadata (name, description, author) by normalized name
     _theme_metadata: dict[str, dict[str, str]] = {}
@@ -195,11 +195,11 @@ class ThemeManager:
             existing = cls._themes[normalized_name]
             if existing != theme_class:
                 raise ValueError(
-                    f"Theme '{normalized_name}' is already registered "
-                    f"({existing.__name__}). Use a different name or "
+                    f"Theme '{normalized_name}' is already registered. "
+                    f"Use a different name or "
                     f"unregister the existing theme first."
                 )
-            # Same class already registered, silently ignore
+            # Same factory already registered, silently ignore
             return
 
         cls._themes[normalized_name] = theme_class
@@ -228,16 +228,16 @@ class ThemeManager:
                 f"Available themes: {', '.join(cls._themes.keys())}"
             )
 
-        # Get the theme class before deletion
-        theme_class = cls._themes[normalized_name]
+        factory = cls._themes[normalized_name]
         del cls._themes[normalized_name]
 
-        # Also remove cached metadata
         if normalized_name in cls._theme_metadata:
             del cls._theme_metadata[normalized_name]
 
-        # Clear current theme if it was an instance of the unregistered theme
-        if cls._current_theme and isinstance(cls._current_theme, theme_class):
+        if cls._current_theme is not None and (
+            (isinstance(factory, type) and isinstance(cls._current_theme, factory))
+            or cls._normalize_name(cls._current_theme.name) == normalized_name
+        ):
             cls._current_theme = None
 
     @classmethod
@@ -278,9 +278,9 @@ class ThemeManager:
                 f"Theme '{normalized_name}' not found. Available themes: {available}"
             )
 
-        # Create new instance
-        theme_class = cls._themes[normalized_name]
-        theme_instance = theme_class()  # type: ignore[call-arg]
+        # Create new instance from factory (class or callable)
+        factory = cls._themes[normalized_name]
+        theme_instance = factory()  # type: ignore[call-arg]
 
         # Track as current theme
         cls._current_theme = theme_instance
@@ -342,6 +342,108 @@ class ThemeManager:
         # Track as current theme
         cls._current_theme = theme
 
+        return theme
+
+    @classmethod
+    def create(
+        cls,
+        name: str,
+        color_map: dict[str, tuple[int, int, int]],
+        *,
+        component_colors: Optional[
+            dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]]
+        ] = None,
+        border_chars: Optional[str] = None,
+        description: str = "",
+        author: str = "",
+        effects_3d: Optional[
+            dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]]
+        ] = None,
+        double_border_chars: Optional[str] = None,
+        register: bool = True,
+    ) -> Theme:
+        """
+        Create a theme from data and optionally register it.
+
+        A convenience factory that creates a Theme (or Theme3D if effects_3d
+        is provided) without writing a subclass.
+
+        Args:
+            name: Human-readable theme name
+            color_map: Dict mapping semantic color names to (R, G, B) tuples
+            component_colors: Optional dict of component -> (fg_rgb, bg_rgb)
+            border_chars: Optional 8-character border string
+            description: Theme description
+            author: Theme author
+            effects_3d: If provided, creates a Theme3D with these 3D colors
+            double_border_chars: Double-line border chars (Theme3D only)
+            register: Whether to register the theme (default True)
+
+        Returns:
+            The created Theme or Theme3D instance
+
+        Example:
+            ```python
+            theme = ThemeManager.create(
+                "My Theme",
+                color_map={
+                    'background': (0, 0, 0), 'foreground': (255, 255, 255),
+                    'primary': (0, 120, 215), 'success': (16, 124, 16),
+                    'error': (232, 17, 35), 'warning': (193, 156, 0),
+                    'info': (0, 120, 212), 'accent': (142, 68, 173),
+                },
+            )
+            theme.apply(stdscr)
+            ```
+        """
+        if effects_3d is not None:
+            from .theme3d import Theme3D
+
+            theme = Theme3D(
+                name,
+                description,
+                author,
+                color_map=color_map,
+                component_colors=component_colors,
+                border_chars=border_chars,
+                effects_3d=effects_3d,
+                double_border_chars=double_border_chars,
+            )
+        else:
+            theme = Theme(
+                name,
+                description,
+                author,
+                color_map=color_map,
+                component_colors=component_colors,
+                border_chars=border_chars,
+            )
+
+        if register:
+            normalized = cls._normalize_name(name)
+            cls._theme_metadata[normalized] = {
+                "name": name,
+                "description": description,
+                "author": author,
+            }
+            cls._themes[normalized] = lambda: type(theme)(
+                name,
+                description,
+                author,
+                color_map=color_map,
+                component_colors=component_colors,
+                border_chars=border_chars,
+                **(
+                    {
+                        "effects_3d": effects_3d,
+                        "double_border_chars": double_border_chars,
+                    }
+                    if effects_3d is not None
+                    else {}
+                ),
+            )
+
+        cls._current_theme = theme
         return theme
 
     @classmethod

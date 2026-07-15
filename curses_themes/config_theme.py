@@ -47,14 +47,14 @@ MIT License - see LICENSE file for details.
 import json
 import pathlib
 import xml.etree.ElementTree as ET
-from typing import Optional, Union
+from typing import Union
 
 try:
     import defusedxml.ElementTree as _safe_ET
 except ImportError:
     _safe_ET = None
 
-from .theme import ColorPair, Theme
+from .theme import Theme
 from .theme3d import Theme3D
 
 # ---------------------------------------------------------------------------
@@ -396,75 +396,24 @@ class ConfigTheme(Theme):
                 invalid values
         """
         validate_config(config)
+
+        color_map = {key: _parse_rgb(value) for key, value in config["colors"].items()}
+
+        component_colors = None
+        if "components" in config:
+            component_colors = {
+                name: (_parse_rgb(c["foreground"]), _parse_rgb(c["background"]))
+                for name, c in config["components"].items()
+            }
+
         super().__init__(
             name=config["name"],
             description=config.get("description", ""),
             author=config.get("author", ""),
+            color_map=color_map,
+            component_colors=component_colors,
+            border_chars=config.get("border_chars"),
         )
-        self._config = config
-
-    def get_color_map(self) -> dict[str, tuple[int, int, int]]:
-        """
-        Get RGB color definitions from the configuration.
-
-        Returns:
-            Dictionary mapping semantic color names to (R, G, B) tuples
-        """
-        return {key: _parse_rgb(value) for key, value in self._config["colors"].items()}
-
-    def get_border_chars(self) -> str:
-        """
-        Get border characters from config, or ASCII default.
-
-        Returns:
-            String with 8 border characters. Defaults to ``"+-+||+-+"``
-            if not specified in the configuration.
-        """
-        return self._config.get("border_chars", "+-+||+-+")
-
-    def _get_component(self, name: str) -> Optional[ColorPair]:
-        """
-        Extract a component ColorPair from the config.
-
-        Args:
-            name: Component name (e.g. ``"button"``, ``"border"``)
-
-        Returns:
-            ColorPair if the component is defined in config, None otherwise
-        """
-        components = self._config.get("components", {})
-        if name not in components:
-            return None
-        c = components[name]
-        return ColorPair(_parse_rgb(c["foreground"]), _parse_rgb(c["background"]))
-
-    def get_background(self) -> Optional[ColorPair]:
-        """Get background color pair from config, or None."""
-        return self._get_component("background")
-
-    def get_button(self) -> Optional[ColorPair]:
-        """Get button color pair from config, or None."""
-        return self._get_component("button")
-
-    def get_button_focused(self) -> Optional[ColorPair]:
-        """Get focused button color pair from config, or None."""
-        return self._get_component("button_focused")
-
-    def get_text_input(self) -> Optional[ColorPair]:
-        """Get text input color pair from config, or None."""
-        return self._get_component("text_input")
-
-    def get_border(self) -> Optional[ColorPair]:
-        """Get border color pair from config, or None."""
-        return self._get_component("border")
-
-    def get_selection(self) -> Optional[ColorPair]:
-        """Get selection color pair from config, or None."""
-        return self._get_component("selection")
-
-    def get_disabled(self) -> Optional[ColorPair]:
-        """Get disabled color pair from config, or None."""
-        return self._get_component("disabled")
 
     def __repr__(self) -> str:
         """String representation for debugging."""
@@ -541,134 +490,38 @@ class ConfigTheme3D(Theme3D):
                 "  }"
             )
         validate_config(config)
+
+        color_map = {key: _parse_rgb(value) for key, value in config["colors"].items()}
+
+        component_colors = None
+        if "components" in config:
+            component_colors = {
+                name: (_parse_rgb(c["foreground"]), _parse_rgb(c["background"]))
+                for name, c in config["components"].items()
+            }
+
+        td = config["3d"]
+        effects_3d = {
+            key: (_parse_rgb(td[key]["foreground"]), _parse_rgb(td[key]["background"]))
+            for key in ("shadow", "highlight", "lowlight")
+            if key in td
+        }
+
         super().__init__(
             name=config["name"],
             description=config.get("description", ""),
             author=config.get("author", ""),
+            color_map=color_map,
+            component_colors=component_colors,
+            border_chars=config.get("border_chars"),
+            effects_3d=effects_3d,
+            double_border_chars=td.get("double_border_chars"),
         )
-        self._config = config
 
-        # Override shadow offsets from config (Theme3D sets defaults in __init__)
-        td = config["3d"]
         if "shadow_offset_x" in td:
             self.shadow_offset_x = td["shadow_offset_x"]
         if "shadow_offset_y" in td:
             self.shadow_offset_y = td["shadow_offset_y"]
-
-    def get_color_map(self) -> dict[str, tuple[int, int, int]]:
-        """
-        Get RGB color definitions from the configuration.
-
-        Returns:
-            Dictionary mapping semantic color names to (R, G, B) tuples
-        """
-        return {key: _parse_rgb(value) for key, value in self._config["colors"].items()}
-
-    def get_border_chars(self) -> str:
-        """
-        Get border characters from config, or ASCII default.
-
-        Returns:
-            String with 8 border characters. Defaults to ``"+-+||+-+"``
-            if not specified in the configuration.
-        """
-        return self._config.get("border_chars", "+-+||+-+")
-
-    def _get_component(self, name: str) -> Optional[ColorPair]:
-        """
-        Extract a component ColorPair from the config.
-
-        Args:
-            name: Component name (e.g. ``"button"``, ``"border"``)
-
-        Returns:
-            ColorPair if the component is defined in config, None otherwise
-        """
-        components = self._config.get("components", {})
-        if name not in components:
-            return None
-        c = components[name]
-        return ColorPair(_parse_rgb(c["foreground"]), _parse_rgb(c["background"]))
-
-    def get_background(self) -> Optional[ColorPair]:
-        """Get background color pair from config, or None."""
-        return self._get_component("background")
-
-    def get_button(self) -> Optional[ColorPair]:
-        """Get button color pair from config, or None."""
-        return self._get_component("button")
-
-    def get_button_focused(self) -> Optional[ColorPair]:
-        """Get focused button color pair from config, or None."""
-        return self._get_component("button_focused")
-
-    def get_text_input(self) -> Optional[ColorPair]:
-        """Get text input color pair from config, or None."""
-        return self._get_component("text_input")
-
-    def get_border(self) -> Optional[ColorPair]:
-        """Get border color pair from config, or None."""
-        return self._get_component("border")
-
-    def get_selection(self) -> Optional[ColorPair]:
-        """Get selection color pair from config, or None."""
-        return self._get_component("selection")
-
-    def get_disabled(self) -> Optional[ColorPair]:
-        """Get disabled color pair from config, or None."""
-        return self._get_component("disabled")
-
-    def _get_3d_color_pair(self, name: str) -> ColorPair:
-        """
-        Extract a 3D color pair from the config.
-
-        Args:
-            name: 3D color pair name (``"shadow"``, ``"highlight"``,
-                or ``"lowlight"``)
-
-        Returns:
-            ColorPair for the requested 3D effect
-        """
-        c = self._config["3d"][name]
-        return ColorPair(_parse_rgb(c["foreground"]), _parse_rgb(c["background"]))
-
-    def get_shadow_color(self) -> ColorPair:
-        """
-        Get shadow color pair from config.
-
-        Returns:
-            ColorPair for drop shadow rendering
-        """
-        return self._get_3d_color_pair("shadow")
-
-    def get_highlight_color(self) -> ColorPair:
-        """
-        Get highlight color pair from config.
-
-        Returns:
-            ColorPair for raised edge highlights (top/left)
-        """
-        return self._get_3d_color_pair("highlight")
-
-    def get_lowlight_color(self) -> ColorPair:
-        """
-        Get lowlight color pair from config.
-
-        Returns:
-            ColorPair for shaded edge lowlights (bottom/right)
-        """
-        return self._get_3d_color_pair("lowlight")
-
-    def get_double_border_chars(self) -> str:
-        """
-        Get double-line border characters from config, or default.
-
-        Returns:
-            String with 8 double-line box-drawing characters.
-            Defaults to ``"\\u2554\\u2550\\u2557\\u2551\\u2551\\u255a\\u2550\\u255d"``
-            if not specified.
-        """
-        return self._config["3d"].get("double_border_chars", "╔═╗║║╚═╝")
 
     def __repr__(self) -> str:
         """String representation for debugging."""

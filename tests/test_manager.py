@@ -2,8 +2,9 @@
 """Tests for ThemeManager - theme registration and loading."""
 
 import pytest
-from curses_themes.manager import ThemeManager
+
 from curses_themes import Theme
+from curses_themes.manager import ThemeManager
 
 
 class TestThemeManagerSingleton:
@@ -56,9 +57,7 @@ class TestThemeRegistration:
     def test_register_duplicate_same_class(self, simple_theme):
         """Test registering same theme class twice is silently ignored."""
         ThemeManager.register(simple_theme.__class__, "test-theme")
-        ThemeManager.register(
-            simple_theme.__class__, "test-theme"
-        )  # Should not raise
+        ThemeManager.register(simple_theme.__class__, "test-theme")  # Should not raise
 
         assert "test-theme" in ThemeManager._themes
 
@@ -159,7 +158,9 @@ class TestThemeUnregistration:
         with pytest.raises(KeyError, match="not registered"):
             ThemeManager.unregister("nonexistent-theme")
 
-    def test_unregister_clears_current_if_matched(self, mock_curses, mock_stdscr, simple_theme):
+    def test_unregister_clears_current_if_matched(
+        self, mock_curses, mock_stdscr, simple_theme
+    ):
         """Test unregister() clears current theme if it matches."""
         ThemeManager.register(simple_theme.__class__, "test-theme")
         theme = ThemeManager.load("test-theme")

@@ -2,15 +2,15 @@
 """Smoke tests for all built-in themes."""
 
 import pytest
-from curses_themes.themes.default import DefaultTheme
+
 from curses_themes.themes.dark import DarkTheme
-from curses_themes.themes.light import LightTheme
-from curses_themes.themes.dos import DOSTheme
 from curses_themes.themes.dbase3 import DBase3Theme
 from curses_themes.themes.dbase4 import DBase4Theme
+from curses_themes.themes.default import DefaultTheme
+from curses_themes.themes.dos import DOSTheme
+from curses_themes.themes.light import LightTheme
 from curses_themes.themes.ti994a import TI994ATheme
 from curses_themes.themes.trs80 import TRS80Theme
-
 
 # Parametrized test for all lazy-registered built-in themes
 # Note: 3D themes (Borland3DTheme, DBase4_3DTheme) are registered at module load
@@ -56,15 +56,15 @@ class TestBuiltinThemeColorMaps:
         color_map = theme.get_color_map()
 
         for color_name, (r, g, b) in color_map.items():
-            assert (
-                isinstance(r, int) and 0 <= r <= 255
-            ), f"{theme_class.__name__} {color_name} red out of range: {r}"
-            assert (
-                isinstance(g, int) and 0 <= g <= 255
-            ), f"{theme_class.__name__} {color_name} green out of range: {g}"
-            assert (
-                isinstance(b, int) and 0 <= b <= 255
-            ), f"{theme_class.__name__} {color_name} blue out of range: {b}"
+            assert isinstance(r, int) and 0 <= r <= 255, (
+                f"{theme_class.__name__} {color_name} red out of range: {r}"
+            )
+            assert isinstance(g, int) and 0 <= g <= 255, (
+                f"{theme_class.__name__} {color_name} green out of range: {g}"
+            )
+            assert isinstance(b, int) and 0 <= b <= 255, (
+                f"{theme_class.__name__} {color_name} blue out of range: {b}"
+            )
 
 
 class TestBuiltinThemeMetadata:
@@ -97,29 +97,37 @@ class TestBuiltinThemeMetadata:
 class TestBuiltinThemeComponentColors:
     """Test that built-in themes handle component colors correctly."""
 
+    VALID_COMPONENT_KEYS = {
+        "background",
+        "button",
+        "button_focused",
+        "text_input",
+        "border",
+        "selection",
+        "disabled",
+    }
+
     @pytest.mark.parametrize("theme_class", ALL_BUILTIN_THEMES)
-    def test_theme_component_methods_return_colorpair_or_none(self, theme_class):
-        """Test component methods return ColorPair or None."""
+    def test_theme_get_components_returns_valid_colorpairs(self, theme_class):
+        """Test get_components() returns dict of ColorPair values with valid keys."""
         from curses_themes.theme import ColorPair
 
         theme = theme_class()
+        components = theme.get_components()
 
-        component_methods = [
-            "get_background",
-            "get_button",
-            "get_button_focused",
-            "get_text_input",
-            "get_border",
-            "get_selection",
-            "get_disabled",
-        ]
+        assert isinstance(components, dict), (
+            f"{theme_class.__name__}.get_components() returned {type(components)}, expected dict"
+        )
 
-        for method_name in component_methods:
-            method = getattr(theme, method_name)
-            result = method()
-            assert result is None or isinstance(
-                result, ColorPair
-            ), f"{theme_class.__name__}.{method_name}() returned invalid type: {type(result)}"
+        assert components.keys() <= self.VALID_COMPONENT_KEYS, (
+            f"{theme_class.__name__}.get_components() has unexpected keys: "
+            f"{components.keys() - self.VALID_COMPONENT_KEYS}"
+        )
+
+        for key, value in components.items():
+            assert isinstance(value, ColorPair), (
+                f"{theme_class.__name__}.get_components()['{key}'] is {type(value)}, expected ColorPair"
+            )
 
 
 class TestBuiltinThemeBorderChars:
@@ -130,27 +138,25 @@ class TestBuiltinThemeBorderChars:
         """Test border chars have exactly 8 characters."""
         theme = theme_class()
         border_chars = theme.get_border_chars()
-        assert (
-            len(border_chars) == 8
-        ), f"{theme_class.__name__} border_chars length is {len(border_chars)}, expected 8"
+        assert len(border_chars) == 8, (
+            f"{theme_class.__name__} border_chars length is {len(border_chars)}, expected 8"
+        )
 
     @pytest.mark.parametrize("theme_class", ALL_BUILTIN_THEMES)
     def test_theme_border_chars_type(self, theme_class):
         """Test border chars are a string."""
         theme = theme_class()
         border_chars = theme.get_border_chars()
-        assert isinstance(
-            border_chars, str
-        ), f"{theme_class.__name__} border_chars is not a string"
+        assert isinstance(border_chars, str), (
+            f"{theme_class.__name__} border_chars is not a string"
+        )
 
 
 class TestBuiltinThemeApplication:
     """Test that built-in themes can be applied to a window."""
 
     @pytest.mark.parametrize("theme_class", ALL_BUILTIN_THEMES)
-    def test_theme_applies_without_error(
-        self, mock_curses, mock_stdscr, theme_class
-    ):
+    def test_theme_applies_without_error(self, mock_curses, mock_stdscr, theme_class):
         """Test theme can be applied to stdscr."""
         theme = theme_class()
 
@@ -228,6 +234,6 @@ class TestThemeColorContrast:
         # At least one should differ from the others
         # (Some themes may use similar colors, but not all identical)
         all_same = success == error == warning
-        assert (
-            not all_same
-        ), f"{theme_class.__name__} success/error/warning are all identical"
+        assert not all_same, (
+            f"{theme_class.__name__} success/error/warning are all identical"
+        )
