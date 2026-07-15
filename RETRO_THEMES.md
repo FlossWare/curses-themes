@@ -197,4 +197,4 @@ Python port: FlossWare (2024)
 
 ## License
 
-GPL-3.0 - Same as the main curses-themes library.
+MIT - Same as the main curses-themes library.

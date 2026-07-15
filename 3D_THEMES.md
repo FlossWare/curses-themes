@@ -1058,7 +1058,7 @@ for i in range(100):
 
 ## License
 
-The curses-themes 3D theme system is released under GPL-3.0.
+The curses-themes 3D theme system is released under the MIT License.
 
 Borland3DTheme and DBase4_3DTheme are clean-room implementations based on visual observation of historical software and publicly available screenshots. These implementations do not use any proprietary Borland or Ashton-Tate code.
 

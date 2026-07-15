@@ -2,7 +2,7 @@
 
 **Lightweight theme support for Python curses applications**
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![codecov](https://codecov.io/gh/FlossWare/curses-themes/branch/main/graph/badge.svg)](https://codecov.io/gh/FlossWare/curses-themes)
 [![Code Quality](https://github.com/FlossWare/curses-themes/workflows/Code%20Quality/badge.svg)](https://github.com/FlossWare/curses-themes/actions/workflows/quality.yml)
@@ -299,7 +299,7 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-GPL-3.0 - See [LICENSE](LICENSE) file for details.
+MIT - See [LICENSE](LICENSE) file for details.
 
 ## Author
 

@@ -2,7 +2,7 @@
 
 **Created:** June 10, 2026  
 **Repository:** https://github.com/FlossWare/curses-themes  
-**License:** GPL-3.0
+**License:** MIT
 
 ## Current State: Core Library Complete ✅
 
@@ -15,7 +15,7 @@
 - ✅ SemanticColors API (primary, success, error, warning, info)
 - ✅ Package exports (`curses_themes/__init__.py`)
 - ✅ Comprehensive README.md
-- ✅ GPL-3.0 LICENSE
+- ✅ MIT LICENSE
 - ✅ .gitignore for Python projects
 - ✅ Initial commit pushed to GitHub
 
@@ -92,7 +92,7 @@ curses-themes/
 ├── tests/                 # Test suite (PENDING - Issue #3)
 ├── docs/                  # Documentation (PENDING - Issue #6)
 ├── README.md              # Main documentation (COMPLETE)
-├── LICENSE                # GPL-3.0 (COMPLETE)
+├── LICENSE                # MIT (COMPLETE)
 └── .gitignore             # Python ignores (COMPLETE)
 ```
 

@@ -912,7 +912,7 @@ theme = ThemeManager.load('my-theme')
 
 ## License
 
-All examples are licensed under the GNU General Public License v3.0 or later.  
+All examples are licensed under the MIT License.  
 See [LICENSE](../LICENSE) for details.
 
 ---

@@ -5,7 +5,7 @@
 `curses-themes` is a lightweight theme support library for Python curses applications. It provides professional theming capabilities with zero external dependencies, inspired by the FlossWare curses-java library.
 
 **Version:** 0.1.0  
-**License:** GPL-3.0  
+**License:** MIT  
 **Author:** FlossWare
 
 ## Installation
@@ -1286,10 +1286,8 @@ ThemeManager.load('DARK')
 
 ## License
 
-This library is licensed under the GNU General Public License v3.0.
+This library is licensed under the MIT License.
 
-Copyright (C) 2024 FlossWare
+Copyright (c) 2024 FlossWare
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-See <https://www.gnu.org/licenses/> for details.
+See [LICENSE](LICENSE) for details.

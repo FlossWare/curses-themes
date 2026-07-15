@@ -515,7 +515,7 @@ Historical themes should include era information and authentic color choices. Mo
 
 ## License
 
-All themes are licensed under GPL-3.0. See [LICENSE](LICENSE) for details.
+All themes are licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 Copyright (C) 2024 FlossWare
 

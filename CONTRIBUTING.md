@@ -163,12 +163,8 @@ MyTheme implementation.
 
 Brief description of your theme, its inspiration, and design goals.
 
-Copyright (C) 2024 Your Name
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Copyright (c) 2024 Your Name
+MIT License - see LICENSE file for details.
 """
 
 from typing import Dict, Tuple
@@ -622,10 +618,7 @@ Longer description if needed, including examples.
 
 Copyright (C) 2024 Author Name
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+MIT License - see LICENSE file for details.
 """
 
 # Standard library imports
@@ -1186,26 +1179,14 @@ If you have questions about contributing:
 
 ## License
 
-By contributing to curses-themes, you agree that your contributions will be licensed under the GNU General Public License v3.0 (GPL-3.0).
+By contributing to curses-themes, you agree that your contributions will be licensed under the MIT License.
 
-All contributions must include the GPL-3.0 license header:
+All contributions should include a copyright notice in the module docstring:
 
 ```python
 """
-Copyright (C) 2024 Your Name
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Copyright (c) 2024 Your Name
+MIT License - see LICENSE file for details.
 """
 ```
 

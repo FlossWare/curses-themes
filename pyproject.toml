@@ -7,7 +7,7 @@ name = "curses-themes"
 version = "0.4"
 description = "Lightweight theme support for Python curses applications"
 readme = "README.md"
-license = {text = "GPL-3.0"}
+license = {text = "MIT"}
 authors = [
     {name = "FlossWare", email = "scot.floess@gmail.com"}
 ]
@@ -18,7 +18,7 @@ keywords = ["curses", "themes", "terminal", "tui", "ui"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",

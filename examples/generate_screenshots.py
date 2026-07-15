@@ -22,7 +22,7 @@ Usage:
     python3 generate_screenshots.py [--output-dir DIR]
 
 Copyright (C) 2024 FlossWare
-License: GPL-3.0
+License: MIT
 """
 
 import argparse
