@@ -91,7 +91,7 @@ from .themes import (
     TRS80Theme,
 )
 
-__version__ = "0.3"
+__version__ = "0.4"
 __author__ = "FlossWare"
 __license__ = "GPL-3.0"
 
