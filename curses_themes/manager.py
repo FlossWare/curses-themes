@@ -299,6 +299,63 @@ class ThemeManager:
         return theme_instance
 
     @classmethod
+    def load_from_file(cls, path: str, name: Optional[str] = None) -> Theme:
+        """
+        Load a theme from a configuration file and register it.
+
+        Supports JSON, XML, and YAML formats (detected by file extension).
+        JSON and XML use only the Python standard library. YAML requires
+        the optional PyYAML package.
+
+        Args:
+            path: Path to the theme configuration file (.json, .xml, or .yaml/.yml)
+            name: Optional registration name. If not provided, uses the name
+                 defined in the configuration file.
+
+        Returns:
+            Theme instance loaded from the file
+
+        Raises:
+            FileNotFoundError: If the file does not exist
+            ValueError: If the file format is unsupported or content is invalid
+            ImportError: If YAML format is used but PyYAML is not installed
+
+        Example:
+            ```python
+            # Load a JSON theme file
+            theme = ThemeManager.load_from_file('my_theme.json')
+            theme.apply(stdscr)
+
+            # Load with a custom registration name
+            theme = ThemeManager.load_from_file('theme.yaml', name='my-yaml-theme')
+
+            # The theme is automatically registered and can be loaded by name
+            theme = ThemeManager.load('my-yaml-theme')
+            ```
+        """
+        from .config_theme import load_theme_from_file
+
+        theme = load_theme_from_file(path)
+
+        registration_name = name if name is not None else theme.name
+        normalized = cls._normalize_name(registration_name)
+
+        # Cache metadata from the loaded instance
+        cls._theme_metadata[normalized] = {
+            "name": theme.name,
+            "description": theme.description,
+            "author": theme.author,
+        }
+
+        # Store the theme's class so it can be re-loaded by name
+        cls._themes[normalized] = type(theme)
+
+        # Track as current theme
+        cls._current_theme = theme
+
+        return theme
+
+    @classmethod
     def list_themes(cls) -> dict[str, dict[str, str]]:
         """
         List all registered themes with metadata.

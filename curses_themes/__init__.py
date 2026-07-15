@@ -74,6 +74,7 @@ Example:
 """
 
 from .colors import ColorManager
+from .config_theme import ConfigTheme, ConfigTheme3D, load_theme_from_file
 from .manager import ThemeManager
 from .theme import ColorPair, ComponentColors, SemanticColors, Theme
 from .theme3d import Theme3D
@@ -99,6 +100,8 @@ __all__ = [
     "ColorManager",
     "ColorPair",
     "ComponentColors",
+    "ConfigTheme",
+    "ConfigTheme3D",
     "DBase3Theme",
     "DBase4Theme",
     "DBase4_3DTheme",
@@ -113,4 +116,5 @@ __all__ = [
     "Theme3D",
     "ThemeManager",
     "__version__",
+    "load_theme_from_file",
 ]

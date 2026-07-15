@@ -1,0 +1,45 @@
+# Forest theme: earthy greens and browns evoking a woodland canopy.
+# Requires PyYAML (pip install pyyaml) to load at runtime.
+
+version: 1
+type: basic
+name: Forest
+description: >-
+  Earthy forest-green theme with warm bark-brown accents,
+  inspired by sunlight filtering through a woodland canopy.
+author: FlossWare
+
+colors:
+  background:  [20, 30, 18]
+  foreground:  [190, 210, 170]
+  primary:     [60, 150, 70]
+  success:     [100, 190, 80]
+  error:       [200, 55, 40]
+  warning:     [210, 170, 50]
+  info:        [110, 180, 140]
+  accent:      [170, 120, 60]
+
+components:
+  background:
+    foreground: [190, 210, 170]
+    background: [20, 30, 18]
+  button:
+    foreground: [60, 150, 70]
+    background: [35, 50, 30]
+  button_focused:
+    foreground: [240, 245, 230]
+    background: [60, 150, 70]
+  text_input:
+    foreground: [210, 225, 195]
+    background: [35, 50, 30]
+  border:
+    foreground: [110, 180, 140]
+    background: [20, 30, 18]
+  selection:
+    foreground: [240, 245, 230]
+    background: [60, 150, 70]
+  disabled:
+    foreground: [90, 110, 80]
+    background: [20, 30, 18]
+
+border_chars: "┌─┐││└─┘"

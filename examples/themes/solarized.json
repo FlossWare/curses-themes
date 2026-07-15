@@ -1,0 +1,31 @@
+{
+  "$schema": "https://curses-themes.flossware.org/schema/v1/theme.json",
+  "version": 1,
+  "type": "basic",
+  "name": "Solarized Dark",
+  "description": "Ethan Schoonover's Solarized Dark palette, optimized for reduced eye strain and balanced contrast.",
+  "author": "FlossWare",
+
+  "colors": {
+    "background":  [0, 43, 54],
+    "foreground":  [131, 148, 150],
+    "primary":     [38, 139, 210],
+    "success":     [133, 153, 0],
+    "error":       [220, 50, 47],
+    "warning":     [181, 137, 0],
+    "info":        [42, 161, 152],
+    "accent":      [108, 113, 196]
+  },
+
+  "components": {
+    "background":      { "foreground": [131, 148, 150], "background": [0, 43, 54] },
+    "button":          { "foreground": [38, 139, 210],  "background": [7, 54, 66] },
+    "button_focused":  { "foreground": [253, 246, 227], "background": [38, 139, 210] },
+    "text_input":      { "foreground": [131, 148, 150], "background": [7, 54, 66] },
+    "border":          { "foreground": [88, 110, 117],  "background": [0, 43, 54] },
+    "selection":       { "foreground": [253, 246, 227], "background": [38, 139, 210] },
+    "disabled":        { "foreground": [88, 110, 117],  "background": [0, 43, 54] }
+  },
+
+  "border_chars": "┌─┐││└─┘"
+}

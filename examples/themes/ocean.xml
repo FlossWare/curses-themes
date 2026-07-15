@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme type="basic">
+    <!--
+        Ocean theme: a calming deep-blue palette inspired by open water.
+        Uses navy and teal tones with warm sandy accents for contrast.
+    -->
+    <meta>
+        <name>Ocean</name>
+        <description>Deep ocean-blue theme with teal accents and warm sand highlights.</description>
+        <author>FlossWare</author>
+    </meta>
+
+    <!--
+        Required: 8 semantic colors, each with r/g/b attributes (0-255).
+        Maps directly to Theme.get_color_map() return value.
+    -->
+    <colors>
+        <background r="10" g="25" b="47" />
+        <foreground r="176" g="210" b="224" />
+        <primary r="30" g="120" b="180" />
+        <success r="46" g="174" b="120" />
+        <error r="210" g="60" b="70" />
+        <warning r="224" g="175" b="50" />
+        <info r="64" g="190" b="200" />
+        <accent r="120" g="85" b="195" />
+    </colors>
+
+    <!--
+        Optional: component color overrides. Each has a foreground and
+        background child with r/g/b attributes. Omitted components return
+        None (defaults derived from the color_map by ColorManager).
+    -->
+    <components>
+        <background>
+            <foreground r="176" g="210" b="224" />
+            <background r="10" g="25" b="47" />
+        </background>
+        <button>
+            <foreground r="30" g="120" b="180" />
+            <background r="18" g="40" b="70" />
+        </button>
+        <button_focused>
+            <foreground r="240" g="248" b="255" />
+            <background r="30" g="120" b="180" />
+        </button_focused>
+        <text_input>
+            <foreground r="200" g="225" b="235" />
+            <background r="18" g="40" b="70" />
+        </text_input>
+        <border>
+            <foreground r="64" g="190" b="200" />
+            <background r="10" g="25" b="47" />
+        </border>
+        <selection>
+            <foreground r="240" g="248" b="255" />
+            <background r="30" g="120" b="180" />
+        </selection>
+        <disabled>
+            <foreground r="80" g="110" b="130" />
+            <background r="10" g="25" b="47" />
+        </disabled>
+    </components>
+
+    <!--
+        Optional: 8 characters for box-drawing borders.
+        Order: top-left, top, top-right, left, right,
+               bottom-left, bottom, bottom-right.
+    -->
+    <border_chars>&#x2552;&#x2550;&#x2555;&#x2502;&#x2502;&#x2558;&#x2550;&#x255B;</border_chars>
+</theme>
