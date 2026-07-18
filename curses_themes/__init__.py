@@ -109,7 +109,7 @@ except ImportError as e:
         ) from e
     raise
 
-__version__ = "0.7"
+__version__ = "0.8"
 __author__ = "FlossWare"
 __license__ = "MIT"
 
