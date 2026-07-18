@@ -109,7 +109,7 @@ pytest
 pytest --cov=curses_themes --cov-report=html
 
 # Run specific test file
-pytest tests/test_themes/test_dark.py
+pytest tests/themes/test_builtin_themes.py
 
 # Run tests matching a pattern
 pytest -k "test_color_map"
@@ -142,7 +142,7 @@ Contributing a new theme is one of the most valuable contributions! Here's the c
 - [ ] Created theme class in `curses_themes/themes/your_theme_name.py`
 - [ ] Defined `color_map` and `component_colors` class attributes
 - [ ] Optionally defined `border_chars` class attribute for custom borders
-- [ ] Added comprehensive tests in `tests/test_themes/test_your_theme_name.py`
+- [ ] Added comprehensive tests in `tests/themes/test_your_theme_name.py`
 - [ ] Registered theme in `curses_themes/__init__.py`
 - [ ] Registered theme in `curses_themes/manager.py`
 - [ ] Updated `README.md` to list your theme
@@ -231,7 +231,7 @@ class MyTheme(Theme):
         )
 ```
 
-**2. Create comprehensive tests:** `tests/test_themes/test_my_theme.py`
+**2. Create comprehensive tests:** `tests/themes/test_my_theme.py`
 
 ```python
 #!/usr/bin/env python3
@@ -350,17 +350,17 @@ __all__ = [
 
 **4. Register the theme in `curses_themes/manager.py`:**
 
-Add the import at the top:
+Add your import and registration inside the `_register_builtin_themes()` method:
 ```python
-from .themes import (
-    # ... existing imports ...
-    MyTheme,
-)
-```
-
-Register at the bottom:
-```python
-ThemeManager.register(MyTheme, 'my-theme')
+def _register_builtin_themes(cls) -> None:
+    try:
+        # ... existing imports ...
+        from .themes.my_theme import MyTheme
+    except ImportError:
+        pass
+    else:
+        # ... existing registrations ...
+        cls.register(MyTheme, "my-theme")
 ```
 
 **5. Update `README.md`:** Add your theme to the appropriate section with a brief description.
@@ -381,10 +381,10 @@ def main(stdscr):
     theme.apply(stdscr)
     
     # Demonstrate the theme's features
-    stdscr.addstr(0, 0, f"Theme: {theme.name}", theme.colors.primary)
-    stdscr.addstr(2, 0, "Success message", theme.colors.success)
-    stdscr.addstr(3, 0, "Error message", theme.colors.error)
-    stdscr.addstr(4, 0, "Warning message", theme.colors.warning)
+    stdscr.addstr(0, 0, f"Theme: {theme.name}", curses.color_pair(theme.colors.primary))
+    stdscr.addstr(2, 0, "Success message", curses.color_pair(theme.colors.success))
+    stdscr.addstr(3, 0, "Error message", curses.color_pair(theme.colors.error))
+    stdscr.addstr(4, 0, "Warning message", curses.color_pair(theme.colors.warning))
     
     theme.draw_box(stdscr, 6, 2, 8, 50, title="Sample Box")
     
@@ -707,10 +707,9 @@ if normalized_name not in self._themes:
 tests/
 ├── test_theme_manager.py        # ThemeManager tests
 ├── test_color_manager.py        # Color initialization tests
-└── test_themes/
+└── themes/
     ├── __init__.py
-    ├── test_default.py          # DefaultTheme tests
-    ├── test_dark.py             # DarkTheme tests
+    ├── test_builtin_themes.py   # Built-in theme tests
     └── test_my_theme.py         # Your theme tests
 ```
 
@@ -757,10 +756,10 @@ pytest
 pytest --cov=curses_themes --cov-report=html --cov-report=term
 
 # Run specific test file
-pytest tests/test_themes/test_my_theme.py
+pytest tests/themes/test_my_theme.py
 
 # Run specific test
-pytest tests/test_themes/test_my_theme.py::TestMyThemeMetadata::test_theme_name
+pytest tests/themes/test_my_theme.py::TestMyThemeMetadata::test_theme_name
 
 # Run tests matching pattern
 pytest -k "color_map"
@@ -850,7 +849,7 @@ class MyTheme(Theme):
         ```python
         theme = MyTheme()
         theme.apply(stdscr)
-        stdscr.addstr(0, 0, "Hello", theme.colors.primary)
+        stdscr.addstr(0, 0, "Hello", curses.color_pair(theme.colors.primary))
         ```
     """
 ```
@@ -1103,7 +1102,7 @@ from curses_themes import ThemeManager
 def main(stdscr):
     theme = ThemeManager.load('dark')
     theme.apply(stdscr)
-    stdscr.addstr(0, 0, "Test", theme.colors.primary)
+    stdscr.addstr(0, 0, "Test", curses.color_pair(theme.colors.primary))
     stdscr.refresh()
     stdscr.getch()
 

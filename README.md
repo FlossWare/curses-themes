@@ -6,7 +6,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![codecov](https://codecov.io/gh/FlossWare/curses-themes/branch/main/graph/badge.svg)](https://codecov.io/gh/FlossWare/curses-themes)
 [![Code Quality](https://github.com/FlossWare/curses-themes/workflows/Code%20Quality/badge.svg)](https://github.com/FlossWare/curses-themes/actions/workflows/quality.yml)
-[![Coverage](https://github.com/FlossWare/curses-themes/workflows/Coverage/badge.svg)](https://github.com/FlossWare/curses-themes/actions/workflows/coverage.yml)
+
 
 Inspired by [FlossWare curses-java](https://github.com/FlossWare/curses-java), this library brings professional theme support to Python's standard `curses` module with zero external dependencies.
 

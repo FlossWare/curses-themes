@@ -4,7 +4,7 @@
 
 `curses-themes` is a lightweight theme support library for Python curses applications. It provides professional theming capabilities with zero external dependencies, inspired by the FlossWare curses-java library.
 
-**Version:** 0.4  
+**Version:** 0.8  
 **License:** MIT  
 **Author:** FlossWare
 
@@ -513,6 +513,34 @@ theme = ThemeManager.load_from_file('theme.yaml', name='my-yaml-theme')
 
 # The theme is automatically registered and can be loaded by name later
 theme = ThemeManager.load('my-yaml-theme')
+```
+
+##### load_themes_from_directory()
+
+```python
+@classmethod
+def load_themes_from_directory(cls, directory: str, pattern: str = "*.json") -> int
+```
+
+Loads all matching theme files from a directory and registers them. Files that fail to load (invalid format, missing required fields, etc.) are silently skipped. `schema.json` is always skipped to match the Java API behaviour.
+
+**Parameters:**
+- `directory` (str): Path to the directory containing theme files
+- `pattern` (str, optional): Glob pattern for theme files (default `"*.json"`)
+
+**Returns:**
+- `int`: Number of themes successfully loaded
+
+**Example:**
+```python
+# Load all JSON themes from a directory
+count = ThemeManager.load_themes_from_directory('/path/to/themes')
+print(f"Loaded {count} themes")
+
+# Load only YAML themes
+count = ThemeManager.load_themes_from_directory(
+    '/path/to/themes', pattern='*.yaml'
+)
 ```
 
 ##### list_themes()

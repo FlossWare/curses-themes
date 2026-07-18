@@ -59,11 +59,11 @@ less default.txt
 
 ## Generation
 
-These screenshots were generated using the enhanced `generate_screenshots_enhanced.py`
+These screenshots were generated using the `generate_screenshots_headless.py`
 script in the `examples/` directory. To regenerate:
 
 ```bash
-python3 examples/generate_screenshots_enhanced.py --output-dir screenshots_ascii/
+python3 examples/generate_screenshots_headless.py --output-dir screenshots_ascii/
 ```
 
 ## Displaying in Documentation
