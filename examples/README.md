@@ -911,6 +911,25 @@ theme = ThemeManager.load('my-theme')
 
 ---
 
+## Cross-Language Examples
+
+The [curses-java](https://github.com/FlossWare/curses-java) project provides a Java implementation of the same curses component library. Several examples have equivalents in both languages, demonstrating identical UI patterns. Both libraries can load the same JSON theme files from `curses-java/themes/`.
+
+### Matched Pairs
+
+| Python Example | Java Equivalent | Description |
+|---|---|---|
+| `system_monitor_demo.py` | `SystemDashboard.java` | Real-time system monitoring dashboard with progress bars, gauges, and semantic color thresholds |
+| `table_browser_demo.py` | `TableTest.java` | Database-style table interface with column navigation, sorting, and selection |
+
+### Python-Only Examples (no Java equivalent yet)
+
+- `theme_switcher.py` -- runtime theme cycling
+- `dialog_system_demo.py` -- modal dialog patterns and 3D effects
+- `3d_themes_demo.py` -- Borland-style raised/sunken windows
+
+---
+
 ## License
 
 All examples are licensed under the MIT License.  
