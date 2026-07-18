@@ -185,8 +185,8 @@ class Theme3D(Theme):
     highlight and shadow colors.
     
     Subclasses must define:
-    - effects_3d: dict mapping 'shadow', 'highlight', and optionally
-      'lowlight' to (fg_rgb_tuple, bg_rgb_tuple) pairs
+    - effects_3d: dict mapping 'shadow', 'highlight', and 'lowlight'
+      to (fg_rgb_tuple, bg_rgb_tuple) pairs (all three required)
     - __init__: call super().__init__(name=...) with at least a name
     """
 ```
@@ -195,7 +195,7 @@ class Theme3D(Theme):
 
 #### `effects_3d`
 
-A dict mapping effect names to `(fg_rgb_tuple, bg_rgb_tuple)` pairs. Required keys are `'shadow'` and `'highlight'`; `'lowlight'` is optional.
+A dict mapping effect names to `(fg_rgb_tuple, bg_rgb_tuple)` pairs. All three keys are required: `'shadow'`, `'highlight'`, and `'lowlight'`. A `RuntimeError` is raised if any key is missing.
 
 ### Required `__init__`
 
@@ -226,9 +226,9 @@ shadow_pair = colors_3d['shadow']
 
 ### 3D Drawing Methods
 
-#### `draw_box_3d(window, y, x, height, width, title="", raised=True)`
+#### `draw_box_3d(window, y, x, height, width, raised=True, title="")`
 
-Draws a 3D box with highlight and shadow edges.
+Draws a 3D box with highlight and shadow edges, including a drop shadow.
 
 **Parameters:**
 - `window`: Curses window to draw on
@@ -236,11 +236,11 @@ Draws a 3D box with highlight and shadow edges.
 - `x` (int): Top-left X coordinate
 - `height` (int): Box height in characters
 - `width` (int): Box width in characters
-- `title` (str): Optional title centered in top border
 - `raised` (bool): If True, renders raised (button-like); if False, renders sunken (input-like)
+- `title` (str): Optional title centered in top border
 
 **Raises:**
-- `ValueError`: If box dimensions are too small (minimum 3x3 for 3D effects)
+- `ValueError`: If box dimensions are too small (minimum 2x2)
 - `RuntimeError`: If theme has not been applied with `theme.apply(stdscr)`
 
 **Example:**
@@ -268,43 +268,15 @@ Sunken box (input):
 └───────────┘  ← Highlight color (bright)
 ```
 
-#### `draw_window_with_shadow(window, y, x, height, width, title="")`
-
-Draws a window with a drop shadow (L-shaped shadow offset to right and bottom).
-
-**Parameters:**
-- `window`: Curses window to draw on
-- `y` (int): Top-left Y coordinate  
-- `x` (int): Top-left X coordinate
-- `height` (int): Window height in characters
-- `width` (int): Window width in characters
-- `title` (str): Optional title centered in top border
-
-**Shadow offset:** 1 character right, 1 character down
-
-**Example:**
-```python
-# Draw a floating dialog with shadow
-theme.draw_window_with_shadow(stdscr, 5, 10, 12, 50, title="Settings")
-```
-
-**Rendering:**
-```
-┌──────────────┐
-│   Window     │▓  ← Shadow (right edge)
-│              │▓
-│  [ OK ]      │▓
-└──────────────┘▓
- ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  ← Shadow (bottom edge)
-```
-
 ### Properties
 
 After calling `theme.apply(stdscr)`, the following properties are available:
 
-- `theme.components.highlight`: Color pair number for highlight edges
-- `theme.components.shadow`: Color pair number for shadow edges  
-- `theme.components.deep_shadow`: Color pair number for drop shadows (if implemented)
+- `theme.highlight_color_pair`: Color pair number for highlight edges
+- `theme.shadow_color_pair`: Color pair number for shadow edges
+- `theme.lowlight_color_pair`: Color pair number for lowlight edges
+- `theme.shadow_offset_x`: Horizontal shadow offset in characters (default 2)
+- `theme.shadow_offset_y`: Vertical shadow offset in characters (default 1)
 
 ---
 
@@ -393,7 +365,7 @@ def main(stdscr):
     theme.apply(stdscr)
     
     # Use 3D components
-    theme.draw_window_with_shadow(stdscr, 2, 5, 15, 60, title="Turbo Pascal")
+    theme.draw_box_3d(stdscr, 2, 5, 15, 60, title="Turbo Pascal", raised=True)
     theme.draw_box_3d(stdscr, 5, 10, 3, 12, title="OK", raised=True)
     theme.draw_box_3d(stdscr, 10, 10, 3, 40, raised=False)
     
@@ -407,9 +379,8 @@ curses.wrapper(main)
 
 Uses Unicode box-drawing characters for authentic Borland appearance:
 
-**Standard borders:** `┌─┐││└─┘` (single-line)  
-**Raised elements:** `╔═╗║╚═╝` (double-line for emphasis)  
-**Fallback (ASCII):** `+-+||+-+` (when Unicode unavailable)
+**Standard borders:** `╭─╮││╰─╯` (rounded corners)  
+**Double borders:** `╔═╗║║╚═╝` (double-line for emphasis)  
 
 ---
 
@@ -523,9 +494,6 @@ def main(stdscr):
     # Draw input field
     theme.draw_box_3d(stdscr, 13, 10, 3, 40, raised=False)
     
-    # Draw window with shadow
-    theme.draw_window_with_shadow(stdscr, 6, 15, 12, 50, title="Edit Record")
-    
     stdscr.refresh()
     stdscr.getch()
 
@@ -537,8 +505,7 @@ curses.wrapper(main)
 Uses Unicode box-drawing characters matching the Control Center style:
 
 **Window frames:** `┌─┐││└─┘` (single-line)  
-**Panel borders:** `╔═╗║╚═╝` (double-line for catalog panels)  
-**Fallback (ASCII):** `+-+||+-+` (maximum compatibility)
+**Panel borders:** `╔═╗║║╚═╝` (double-line for catalog panels)
 
 ---
 
@@ -599,8 +566,8 @@ def main(stdscr):
     theme = ThemeManager.load('dbase-iv-3d')
     theme.apply(stdscr)
     
-    # Draw dialog window with shadow
-    theme.draw_window_with_shadow(stdscr, 5, 15, 12, 50, title="Confirmation")
+    # Draw dialog panel
+    theme.draw_box_3d(stdscr, 5, 15, 12, 50, title="Confirmation", raised=True)
     
     # Add message
     stdscr.addstr(8, 20, "Save changes before closing?",
@@ -637,8 +604,8 @@ def main(stdscr):
     theme = ThemeManager.load('borland-3d')
     theme.apply(stdscr)
     
-    # Draw form window
-    theme.draw_window_with_shadow(stdscr, 3, 10, 18, 60, title="User Registration")
+    # Draw form panel
+    theme.draw_box_3d(stdscr, 3, 10, 18, 60, title="User Registration", raised=True)
     
     # Define form fields
     fields = [
@@ -694,8 +661,8 @@ def main(stdscr):
     for y, x, h, w, title in panels:
         theme.draw_box_3d(stdscr, y, x, h, w, title=title, raised=True)
     
-    # Overlapping window (floating on top)
-    theme.draw_window_with_shadow(stdscr, 8, 25, 14, 45, title="Database Properties")
+    # Overlapping panel (floating on top)
+    theme.draw_box_3d(stdscr, 8, 25, 14, 45, title="Database Properties", raised=True)
     
     # Add content to floating window
     stdscr.addstr(10, 28, "Database: CUSTOMER.DBF",
@@ -772,7 +739,7 @@ def main(stdscr):
     theme = ThemeManager.load('custom-3d-purple')
     theme.apply(stdscr)
     
-    theme.draw_window_with_shadow(stdscr, 5, 10, 12, 50, title="Custom Theme")
+    theme.draw_box_3d(stdscr, 5, 10, 12, 50, title="Custom Theme", raised=True)
     theme.draw_box_3d(stdscr, 8, 20, 3, 15, title="OK", raised=True)
     
     stdscr.refresh()
@@ -799,8 +766,7 @@ curses.wrapper(main)
 | **Deep Shadow** | Black | Black |
 | **Selection** | Black on cyan | Blue on white |
 | **Disabled** | Light gray on teal | Blue on blue (subtle) |
-| **Border Style** | Unicode ┌─┐, ╔═╗ | Unicode ┌─┐, ╔═╗ |
-| **ASCII Fallback** | +-+\|\|+-+ | +-+\|\|+-+ |
+| **Border Style** | Unicode ╭─╮, ╔═╗ | Unicode ┌─┐, ╔═╗ |
 | **Primary Use** | IDEs, development tools | Database applications |
 | **Visual Style** | Professional, technical | Business-oriented |
 | **Contrast** | High (white on teal) | Very high (white on blue) |
@@ -853,19 +819,19 @@ Both themes have similar performance characteristics:
 
 **Fallback to ASCII:**
 
-If Unicode is unavailable, themes automatically fall back to ASCII:
+If Unicode is unavailable, themes can use ASCII border characters. The
+`border_chars` class attribute (or `get_border_chars()` method) controls
+which characters are used:
 
 ```python
-def get_border_chars(self) -> str:
-    """
-    Returns Unicode if supported, ASCII otherwise.
-    
-    Unicode: "┌─┐││└─┘" or "╔═╗║╚═╝"
-    ASCII:   "+-+||+-+"
-    """
-    if self.unicode_supported():
-        return "┌─┐││└─┘"  # Single-line
-    return "+-+||+-+"       # ASCII fallback
+# Unicode single-line (default for many 3D themes):
+border_chars = "┌─┐││└─┘"
+
+# Unicode rounded (Borland 3D):
+border_chars = "╭─╮││╰─╯"
+
+# ASCII fallback:
+border_chars = "+-+||+-+"
 ```
 
 ### Color Support Requirements
@@ -940,13 +906,15 @@ The 3D themes handle limited terminal capabilities gracefully:
 
 ### Customizing Shadow Offset
 
-Default shadow offset is 1 character right and 1 down. You can customize:
+Default shadow offset is 2 characters right and 1 down. You can customize
+via the `shadow_offset_x` and `shadow_offset_y` properties:
 
 ```python
 class CustomShadowTheme(Theme3D):
-    def get_shadow_offset(self) -> Tuple[int, int]:
-        """Returns (x_offset, y_offset) for drop shadows."""
-        return (2, 1)  # 2 chars right, 1 char down
+    def __init__(self):
+        super().__init__(name="Custom Shadow")
+        self.shadow_offset_x = 3  # 3 chars right
+        self.shadow_offset_y = 2  # 2 chars down
 ```
 
 ### Double vs Single Borders
@@ -971,8 +939,8 @@ def get_border_chars(self) -> str:
 Creating depth hierarchy with multiple shadow levels:
 
 ```python
-# Background window (deepest)
-theme.draw_window_with_shadow(stdscr, 2, 2, 20, 70, title="Main")
+# Background panel (deepest)
+theme.draw_box_3d(stdscr, 2, 2, 20, 70, title="Main", raised=True)
 
 # Mid-level panel (raised)
 theme.draw_box_3d(stdscr, 5, 5, 10, 30, title="Panel", raised=True)
@@ -989,8 +957,8 @@ For applications with many 3D elements:
 # Cache color pairs after theme.apply()
 bg_pair = theme.components.background
 border_pair = theme.components.border
-highlight_pair = theme.components.highlight
-shadow_pair = theme.components.shadow
+highlight_pair = theme.highlight_color_pair
+shadow_pair = theme.shadow_color_pair
 
 # Reuse in tight loops
 for i in range(100):
@@ -1038,6 +1006,6 @@ All theme implementations are original works by FlossWare, created for historica
 ---
 
 **Documentation Version:** 1.0  
-**Last Updated:** June 2026  
+**Last Updated:** July 2026  
 **Author:** FlossWare  
 **Project:** [curses-themes](https://github.com/FlossWare/curses-themes)
