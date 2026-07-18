@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Tests for ThemeManager - theme registration and loading."""
 
+import json
+import os
+import tempfile
+
 import pytest
 
 from curses_themes import Theme
@@ -307,3 +311,114 @@ class TestMetadataCaching:
         assert "name" in default_meta
         assert "description" in default_meta
         assert "author" in default_meta
+
+
+def _make_theme_json(name):
+    """Helper to create a minimal valid theme dict."""
+    return {
+        "name": name,
+        "colors": {
+            "background": [0, 0, 0],
+            "foreground": [255, 255, 255],
+            "primary": [0, 120, 215],
+            "success": [16, 124, 16],
+            "error": [232, 17, 35],
+            "warning": [193, 156, 0],
+            "info": [0, 120, 212],
+            "accent": [142, 68, 173],
+        },
+        "components": {
+            "background": {
+                "foreground": [255, 255, 255],
+                "background": [0, 0, 0],
+            },
+            "button": {
+                "foreground": [0, 120, 215],
+                "background": [0, 0, 0],
+            },
+        },
+        "border_chars": "+-+||+-+",
+    }
+
+
+class TestLoadThemesFromDirectory:
+    """Tests for ThemeManager.load_themes_from_directory()."""
+
+    def test_loads_valid_theme_files(self, tmp_path):
+        """Test loading multiple valid JSON theme files from a directory."""
+        for name in ("alpha", "beta", "gamma"):
+            theme_file = tmp_path / f"{name}.json"
+            theme_file.write_text(json.dumps(_make_theme_json(f"Theme {name}")))
+
+        count = ThemeManager.load_themes_from_directory(str(tmp_path))
+
+        assert count == 3
+
+    def test_loaded_themes_accessible_via_load(self, tmp_path):
+        """Test that loaded themes can be retrieved by name."""
+        (tmp_path / "ocean.json").write_text(
+            json.dumps(_make_theme_json("Ocean"))
+        )
+        (tmp_path / "forest.json").write_text(
+            json.dumps(_make_theme_json("Forest"))
+        )
+
+        ThemeManager.load_themes_from_directory(str(tmp_path))
+
+        ocean = ThemeManager.load("ocean")
+        assert ocean.name == "Ocean"
+
+        forest = ThemeManager.load("forest")
+        assert forest.name == "Forest"
+
+    def test_skips_schema_json(self, tmp_path):
+        """Test that schema.json is skipped (matching Java behaviour)."""
+        (tmp_path / "valid.json").write_text(
+            json.dumps(_make_theme_json("Valid"))
+        )
+        (tmp_path / "schema.json").write_text(
+            json.dumps({"type": "object", "properties": {}})
+        )
+
+        count = ThemeManager.load_themes_from_directory(str(tmp_path))
+
+        assert count == 1
+        # Verify "schema" was not registered
+        with pytest.raises(KeyError):
+            ThemeManager.load("schema")
+
+    def test_skips_invalid_files(self, tmp_path):
+        """Test that invalid files are silently skipped."""
+        (tmp_path / "good.json").write_text(
+            json.dumps(_make_theme_json("Good"))
+        )
+        (tmp_path / "bad.json").write_text("not valid json {{{")
+        (tmp_path / "empty.json").write_text("{}")
+
+        count = ThemeManager.load_themes_from_directory(str(tmp_path))
+
+        assert count == 1
+
+    def test_returns_zero_for_empty_directory(self, tmp_path):
+        """Test that an empty directory returns zero."""
+        count = ThemeManager.load_themes_from_directory(str(tmp_path))
+        assert count == 0
+
+    def test_custom_glob_pattern(self, tmp_path):
+        """Test using a custom glob pattern (e.g., *.yaml placeholder)."""
+        (tmp_path / "theme.json").write_text(
+            json.dumps(_make_theme_json("Json Theme"))
+        )
+        (tmp_path / "theme.txt").write_text("not a theme")
+
+        # Only *.json should match (default)
+        count = ThemeManager.load_themes_from_directory(str(tmp_path))
+        assert count == 1
+
+        ThemeManager.reset()
+
+        # *.txt should match but fail to parse
+        count = ThemeManager.load_themes_from_directory(
+            str(tmp_path), pattern="*.txt"
+        )
+        assert count == 0

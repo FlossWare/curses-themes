@@ -10,6 +10,7 @@ Copyright (C) 2024 FlossWare
 MIT License - see LICENSE file for details.
 """
 
+from pathlib import Path
 from typing import Callable, Optional
 
 from .theme import Theme
@@ -336,13 +337,60 @@ class ThemeManager:
             "author": theme.author,
         }
 
-        # Store the theme's class so it can be re-loaded by name
-        cls._themes[normalized] = type(theme)
+        # Store a factory that re-loads from the same file so ConfigTheme
+        # (which requires a config dict) can be re-created by load().
+        _path = path  # capture for closure
+        cls._themes[normalized] = lambda: load_theme_from_file(_path)
 
         # Track as current theme
         cls._current_theme = theme
 
         return theme
+
+    @classmethod
+    def load_themes_from_directory(
+        cls, directory: str, pattern: str = "*.json"
+    ) -> int:
+        """
+        Load all matching theme files from a directory.
+
+        Scans the given directory for files matching the glob pattern, loads
+        each as a theme, and registers it. Files that fail to load (invalid
+        format, missing required fields, etc.) are silently skipped.
+        ``schema.json`` is always skipped to match the Java API behaviour.
+
+        Args:
+            directory: Path to the directory containing theme files
+            pattern: Glob pattern for theme files (default ``"*.json"``)
+
+        Returns:
+            Number of themes successfully loaded
+
+        Example:
+            ```python
+            count = ThemeManager.load_themes_from_directory('/path/to/themes')
+            print(f"Loaded {count} themes")
+
+            # Load only YAML themes
+            count = ThemeManager.load_themes_from_directory(
+                '/path/to/themes', pattern='*.yaml'
+            )
+            ```
+        """
+        dir_path = Path(directory)
+        count = 0
+
+        for path in sorted(dir_path.glob(pattern)):
+            if path.name == "schema.json":
+                continue
+            try:
+                cls.load_from_file(str(path))
+                count += 1
+            except Exception:
+                # Silently skip files that fail to load
+                pass
+
+        return count
 
     @classmethod
     def create(
