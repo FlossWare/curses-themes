@@ -38,3 +38,30 @@ jobs:
 
       - name: Run tests
         run: pytest --tb=short -q
+
+  validate-themes:
+    name: Validate Java themes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout curses-themes
+        uses: actions/checkout@v4
+
+      - name: Checkout curses-java themes (sibling directory)
+        uses: actions/checkout@v4
+        with:
+          repository: FlossWare/curses-java
+          path: ../curses-java
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Validate Java JSON themes load correctly
+        run: pytest tests/test_config_theme.py -k "Java" -v --tb=short
