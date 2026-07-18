@@ -20,7 +20,7 @@
 
 ## Installation
 
-### From PyPI (when published)
+### From PyPI
 
 ```bash
 pip install curses-themes
@@ -96,6 +96,8 @@ for name, info in themes.items():
 # dos: Classic MS-DOS and PC-DOS theme
 # dbase-iii: Ashton-Tate dBASE III theme
 # dbase-iv: Ashton-Tate/Borland dBASE IV theme
+# borland-3d: Borland Turbo Vision 3D theme with beveled buttons and drop shadows
+# dbase-iv-3d: Ashton-Tate/Borland dBASE IV 3D windowed Control Center
 ```
 
 ---
@@ -352,7 +354,7 @@ def main(stdscr):
 
 ```python
 def main(stdscr):
-    theme = ThemeManager.load('borland')
+    theme = ThemeManager.load('borland-3d')
     theme.apply(stdscr)
     
     # Draw a bordered panel
@@ -367,7 +369,7 @@ def main(stdscr):
     
     # Content inside the box
     stdscr.addstr(3, 7, "Volume: 75%", 
-                 curses.color_pair(theme.components.foreground))
+                 curses.color_pair(theme.components.background))
 ```
 
 ### Runtime Theme Switching
@@ -457,13 +459,13 @@ theme = ThemeManager.load('my-theme')
 ```python
 class UnicodeTheme(Theme):
     # 8 characters: TL, T, TR, L, R, BL, B, BR
-    border_chars = "┌─┐│└─┘│"  # Unicode single-line box
+    border_chars = "┌─┐││└─┘"  # Unicode single-line box
 
     # Or double-line box:
-    # border_chars = "╔═╗║╚═╝║"
+    # border_chars = "╔═╗║║╚═╝"
 
     # Or rounded corners:
-    # border_chars = "╭─╮│╰─╯│"
+    # border_chars = "╭─╮││╰─╯"
 
     # Or ASCII for compatibility:
     # border_chars = "+-+||+-+"
@@ -495,7 +497,7 @@ def draw_layout(stdscr, theme):
     # Footer
     theme.draw_box(stdscr, height - 3, 0, 3, width)
     stdscr.addstr(height - 2, 2, "Press 'q' to quit", 
-                 curses.color_pair(theme.components.foreground))
+                 curses.color_pair(theme.components.background))
 ```
 
 ### Theme-Aware Widgets
