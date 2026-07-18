@@ -91,6 +91,18 @@ VALID_COMPONENT_KEYS = frozenset(
 #: Required keys when a ``3d`` section is present.
 REQUIRED_3D_KEYS = frozenset({"shadow", "highlight", "lowlight"})
 
+#: Standard ncurses color names mapped to full-brightness RGB tuples.
+NCURSES_COLOR_MAP: dict[str, tuple[int, int, int]] = {
+    "BLACK": (0, 0, 0),
+    "RED": (255, 0, 0),
+    "GREEN": (0, 255, 0),
+    "YELLOW": (255, 255, 0),
+    "BLUE": (0, 0, 255),
+    "MAGENTA": (255, 0, 255),
+    "CYAN": (0, 255, 255),
+    "WHITE": (255, 255, 255),
+}
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -589,6 +601,137 @@ def _xml_extract_color_pair(element: ET.Element) -> dict[str, list[int]]:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Java curses-java format adapter
+# ---------------------------------------------------------------------------
+
+
+def _resolve_color(value) -> tuple[int, int, int]:
+    """Resolve a color from an ncurses name string or RGB value to ``(r, g, b)``.
+
+    Accepts ncurses color names (case-insensitive), RGB lists/tuples, or
+    comma-separated RGB strings. Falls back to :func:`_parse_rgb` for
+    non-name values.
+    """
+    if isinstance(value, str):
+        upper = value.upper()
+        if upper in NCURSES_COLOR_MAP:
+            return NCURSES_COLOR_MAP[upper]
+    return _parse_rgb(value)
+
+
+def _is_java_format(data: dict) -> bool:
+    """Detect if a parsed JSON dict uses the Java curses-java theme format.
+
+    Java format has ``colors`` values as ``{"fg": "...", "bg": "..."}`` dicts,
+    while Python format has ``colors`` values as ``[r, g, b]`` arrays.
+    """
+    if "colors" not in data or not isinstance(data["colors"], dict):
+        return False
+    for value in data["colors"].values():
+        if isinstance(value, dict) and "fg" in value:
+            return True
+    return False
+
+
+def _convert_java_border_chars(java_chars: str) -> str:
+    """Reorder border characters from Java to Python ordering.
+
+    Java: TL, T, TR, L, BL, B, BR, R  (positions 0-7)
+    Python: TL, T, TR, L, R, BL, B, BR  (positions 0-7)
+    """
+    if len(java_chars) != 8:
+        return java_chars
+    return java_chars[0:4] + java_chars[7] + java_chars[4:7]
+
+
+def _derive_semantic_colors(components: dict) -> dict:
+    """Derive 8 Python semantic colors from Java component color pairs.
+
+    Three colors are derived directly from components (100% consistent
+    across all built-in themes). The remaining five use standard defaults.
+    """
+    bg_comp = components.get("background", {})
+    btn_comp = components.get("button", {})
+
+    background = list(bg_comp.get("background", [0, 0, 0]))
+    foreground = list(bg_comp.get("foreground", [255, 255, 255]))
+    primary = list(btn_comp.get("foreground", foreground))
+
+    return {
+        "background": background,
+        "foreground": foreground,
+        "primary": primary,
+        "success": [0, 255, 0],
+        "error": [255, 0, 0],
+        "warning": [255, 255, 0],
+        "info": list(foreground),
+        "accent": list(foreground),
+    }
+
+
+def _convert_java_to_python(data: dict) -> dict:
+    """Convert a Java curses-java theme dict to Python canonical format."""
+    result = {}
+
+    result["name"] = data.get("name", "Unnamed")
+    if "description" in data:
+        result["description"] = data["description"]
+    if isinstance(data.get("metadata"), dict) and "author" in data["metadata"]:
+        result["author"] = data["metadata"]["author"]
+
+    java_colors = data.get("colors", {})
+    components = {}
+    for comp_name, pair in java_colors.items():
+        if isinstance(pair, dict) and "fg" in pair:
+            fg_rgb = _resolve_color(pair["fg"])
+            bg_rgb = _resolve_color(pair["bg"])
+            components[comp_name] = {
+                "foreground": list(fg_rgb),
+                "background": list(bg_rgb),
+            }
+
+    if components:
+        result["components"] = components
+
+    result["colors"] = _derive_semantic_colors(components)
+
+    borders = data.get("borders", {})
+    if "single" in borders:
+        result["border_chars"] = _convert_java_border_chars(borders["single"])
+
+    if "3d" in data:
+        java_3d = data["3d"]
+        python_3d = {}
+
+        key_map = {
+            "shadow_color": "shadow",
+            "highlight_color": "highlight",
+            "lowlight_color": "lowlight",
+        }
+        for java_key, python_key in key_map.items():
+            if java_key in java_3d:
+                pair = java_3d[java_key]
+                python_3d[python_key] = {
+                    "foreground": list(_resolve_color(pair["fg"])),
+                    "background": list(_resolve_color(pair["bg"])),
+                }
+
+        if "shadow_offset" in java_3d:
+            offset = java_3d["shadow_offset"]
+            python_3d["shadow_offset_x"] = offset.get("x", 2)
+            python_3d["shadow_offset_y"] = offset.get("y", 1)
+
+        if "double" in borders:
+            python_3d["double_border_chars"] = _convert_java_border_chars(
+                borders["double"]
+            )
+
+        result["3d"] = python_3d
+
+    return result
+
+
 def load_json(path: Union[str, pathlib.Path]) -> dict:
     """
     Load a theme configuration from a JSON file.
@@ -614,6 +757,10 @@ def load_json(path: Union[str, pathlib.Path]) -> dict:
     path = pathlib.Path(path)
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
+
+    # Auto-detect and convert Java curses-java format
+    if _is_java_format(data):
+        data = _convert_java_to_python(data)
 
     # Normalize JSON-specific key to canonical form
     if "theme3d" in data:

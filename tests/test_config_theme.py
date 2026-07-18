@@ -20,9 +20,15 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from curses_themes.config_theme import (
+    NCURSES_COLOR_MAP,
     ConfigTheme,
     ConfigTheme3D,
+    _convert_java_border_chars,
+    _convert_java_to_python,
+    _derive_semantic_colors,
+    _is_java_format,
     _parse_rgb,
+    _resolve_color,
     _validate_color_pair_dict,
     _xml_extract_color_pair,
     _xml_extract_rgb,
@@ -1707,3 +1713,306 @@ class TestEdgeCasesAndErrors:
 
         theme.draw_box_3d(mock_stdscr, 1, 1, 5, 20, raised=True)
         assert mock_stdscr.addstr.called
+
+
+# ---------------------------------------------------------------------------
+# Java curses-java format support
+# ---------------------------------------------------------------------------
+
+JAVA_THEMES_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "..", "curses-java", "themes"
+)
+
+
+class TestNcursesColorResolution:
+    """Tests for _resolve_color() ncurses name -> RGB conversion."""
+
+    @pytest.mark.parametrize(
+        "name,expected",
+        [
+            ("BLACK", (0, 0, 0)),
+            ("RED", (255, 0, 0)),
+            ("GREEN", (0, 255, 0)),
+            ("YELLOW", (255, 255, 0)),
+            ("BLUE", (0, 0, 255)),
+            ("MAGENTA", (255, 0, 255)),
+            ("CYAN", (0, 255, 255)),
+            ("WHITE", (255, 255, 255)),
+        ],
+    )
+    def test_resolve_all_eight_ncurses_colors(self, name, expected):
+        assert _resolve_color(name) == expected
+
+    def test_resolve_color_case_insensitive(self):
+        assert _resolve_color("cyan") == (0, 255, 255)
+        assert _resolve_color("Cyan") == (0, 255, 255)
+        assert _resolve_color("cYaN") == (0, 255, 255)
+
+    def test_resolve_color_rgb_list_passthrough(self):
+        assert _resolve_color([128, 64, 32]) == (128, 64, 32)
+
+    def test_resolve_color_rgb_tuple_passthrough(self):
+        assert _resolve_color((128, 64, 32)) == (128, 64, 32)
+
+    def test_resolve_color_unknown_name_raises(self):
+        with pytest.raises(ValueError):
+            _resolve_color("PURPLE")
+
+
+class TestJavaFormatDetection:
+    """Tests for _is_java_format() auto-detection."""
+
+    def test_detects_java_format(self):
+        data = {
+            "colors": {
+                "background": {"fg": "CYAN", "bg": "BLACK"},
+                "button": {"fg": "BLUE", "bg": "BLACK"},
+            }
+        }
+        assert _is_java_format(data) is True
+
+    def test_detects_python_format(self):
+        data = {"colors": {"background": [0, 0, 0], "foreground": [255, 255, 255]}}
+        assert _is_java_format(data) is False
+
+    def test_no_colors_key(self):
+        assert _is_java_format({"name": "test"}) is False
+
+    def test_empty_colors(self):
+        assert _is_java_format({"colors": {}}) is False
+
+
+class TestJavaBorderConversion:
+    """Tests for _convert_java_border_chars() reordering."""
+
+    def test_unicode_border_reorder(self):
+        java = "┌─┐│└─┘│"
+        python = "┌─┐││└─┘"
+        assert _convert_java_border_chars(java) == python
+
+    def test_ascii_border_reorder(self):
+        java = "+-+|+-+|"
+        python = "+-+||+-+"
+        assert _convert_java_border_chars(java) == python
+
+    def test_distinguishable_chars_reorder(self):
+        java = "ABCDEFGH"
+        result = _convert_java_border_chars(java)
+        assert result == "ABCDHEFG"
+
+    def test_short_string_passthrough(self):
+        assert _convert_java_border_chars("abc") == "abc"
+
+
+class TestSemanticColorDerivation:
+    """Tests for _derive_semantic_colors() from component pairs."""
+
+    def test_derives_background_from_component_bg(self):
+        components = {
+            "background": {"foreground": [0, 255, 255], "background": [0, 0, 0]},
+            "button": {"foreground": [0, 0, 255], "background": [0, 0, 0]},
+        }
+        colors = _derive_semantic_colors(components)
+        assert colors["background"] == [0, 0, 0]
+
+    def test_derives_foreground_from_component_fg(self):
+        components = {
+            "background": {"foreground": [0, 255, 255], "background": [0, 0, 0]},
+            "button": {"foreground": [0, 0, 255], "background": [0, 0, 0]},
+        }
+        colors = _derive_semantic_colors(components)
+        assert colors["foreground"] == [0, 255, 255]
+
+    def test_derives_primary_from_button_fg(self):
+        components = {
+            "background": {"foreground": [0, 255, 255], "background": [0, 0, 0]},
+            "button": {"foreground": [0, 0, 255], "background": [0, 0, 0]},
+        }
+        colors = _derive_semantic_colors(components)
+        assert colors["primary"] == [0, 0, 255]
+
+    def test_default_status_colors(self):
+        components = {
+            "background": {"foreground": [255, 255, 255], "background": [0, 0, 0]},
+            "button": {"foreground": [0, 0, 255], "background": [0, 0, 0]},
+        }
+        colors = _derive_semantic_colors(components)
+        assert colors["success"] == [0, 255, 0]
+        assert colors["error"] == [255, 0, 0]
+        assert colors["warning"] == [255, 255, 0]
+
+    def test_has_all_eight_keys(self):
+        components = {
+            "background": {"foreground": [255, 255, 255], "background": [0, 0, 0]},
+            "button": {"foreground": [0, 0, 255], "background": [0, 0, 0]},
+        }
+        colors = _derive_semantic_colors(components)
+        required = {"background", "foreground", "primary", "success", "error",
+                    "warning", "info", "accent"}
+        assert set(colors.keys()) == required
+
+
+class TestJavaFormatConversion:
+    """Tests for _convert_java_to_python() full conversion."""
+
+    def test_convert_minimal_java_theme(self):
+        java = {
+            "name": "Test",
+            "version": "1.0",
+            "colors": {
+                "background": {"fg": "WHITE", "bg": "BLACK"},
+                "button": {"fg": "CYAN", "bg": "BLACK"},
+                "button_focused": {"fg": "BLACK", "bg": "CYAN"},
+                "text_input": {"fg": "GREEN", "bg": "BLACK"},
+                "border": {"fg": "WHITE", "bg": "BLACK"},
+                "selection": {"fg": "BLACK", "bg": "WHITE"},
+                "disabled": {"fg": "WHITE", "bg": "BLACK"},
+            },
+            "borders": {"single": "+-+|+-+|"},
+        }
+        result = _convert_java_to_python(java)
+
+        assert result["name"] == "Test"
+        assert "components" in result
+        assert "colors" in result
+        assert len(result["colors"]) == 8
+        assert result["components"]["button"]["foreground"] == [0, 255, 255]
+        assert result["components"]["button"]["background"] == [0, 0, 0]
+        assert result["border_chars"] == "+-+||+-+"
+
+    def test_convert_preserves_description(self):
+        java = {
+            "name": "Test",
+            "description": "A test theme",
+            "colors": {"background": {"fg": "WHITE", "bg": "BLACK"}},
+        }
+        result = _convert_java_to_python(java)
+        assert result["description"] == "A test theme"
+
+    def test_convert_extracts_author_from_metadata(self):
+        java = {
+            "name": "Test",
+            "metadata": {"author": "Tester"},
+            "colors": {"background": {"fg": "WHITE", "bg": "BLACK"}},
+        }
+        result = _convert_java_to_python(java)
+        assert result["author"] == "Tester"
+
+    def test_convert_3d_theme(self):
+        java = {
+            "name": "3D Test",
+            "colors": {
+                "background": {"fg": "YELLOW", "bg": "BLUE"},
+                "button": {"fg": "WHITE", "bg": "BLUE"},
+                "button_focused": {"fg": "BLUE", "bg": "WHITE"},
+                "text_input": {"fg": "CYAN", "bg": "BLUE"},
+                "border": {"fg": "WHITE", "bg": "BLUE"},
+                "selection": {"fg": "BLUE", "bg": "CYAN"},
+                "disabled": {"fg": "BLUE", "bg": "BLUE"},
+            },
+            "borders": {"single": "┌─┐│└─┘│", "double": "╔═╗║╚═╝║"},
+            "3d": {
+                "shadow_color": {"fg": "BLACK", "bg": "BLACK"},
+                "highlight_color": {"fg": "WHITE", "bg": "CYAN"},
+                "lowlight_color": {"fg": "BLACK", "bg": "CYAN"},
+                "shadow_offset": {"x": 2, "y": 1},
+                "rendering_style": "RAISED",
+            },
+        }
+        result = _convert_java_to_python(java)
+
+        assert "3d" in result
+        assert result["3d"]["shadow"]["foreground"] == [0, 0, 0]
+        assert result["3d"]["shadow"]["background"] == [0, 0, 0]
+        assert result["3d"]["highlight"]["foreground"] == [255, 255, 255]
+        assert result["3d"]["highlight"]["background"] == [0, 255, 255]
+        assert result["3d"]["lowlight"]["foreground"] == [0, 0, 0]
+        assert result["3d"]["lowlight"]["background"] == [0, 255, 255]
+        assert result["3d"]["shadow_offset_x"] == 2
+        assert result["3d"]["shadow_offset_y"] == 1
+        assert result["3d"]["double_border_chars"] == "╔═╗║║╚═╝"
+
+
+@pytest.mark.skipif(
+    not os.path.isdir(JAVA_THEMES_DIR),
+    reason="curses-java themes directory not found",
+)
+class TestLoadJavaJsonFiles:
+    """Tests loading actual Java curses-java JSON theme files."""
+
+    def test_load_java_dark_json(self):
+        theme = load_theme_from_file(os.path.join(JAVA_THEMES_DIR, "dark.json"))
+        assert theme.name == "Dark"
+        assert isinstance(theme, ConfigTheme)
+
+    def test_dark_components_match_python(self):
+        from curses_themes.themes.dark import DarkTheme
+
+        java_theme = load_theme_from_file(
+            os.path.join(JAVA_THEMES_DIR, "dark.json")
+        )
+        py_theme = DarkTheme()
+
+        java_comps = java_theme.get_components()
+        for comp in ("background", "button", "button_focused", "text_input",
+                      "border", "selection", "disabled"):
+            java_pair = java_comps.get(comp)
+            py_comp = py_theme.component_colors.get(comp)
+            if java_pair and py_comp:
+                assert java_pair.foreground == py_comp[0], f"{comp} fg mismatch"
+                assert java_pair.background == py_comp[1], f"{comp} bg mismatch"
+
+    def test_load_java_borland3d_json(self):
+        theme = load_theme_from_file(
+            os.path.join(JAVA_THEMES_DIR, "borland3d.json")
+        )
+        assert theme.name == "Borland 3D"
+        assert isinstance(theme, ConfigTheme3D)
+        assert theme.shadow_offset_x == 2
+        assert theme.shadow_offset_y == 1
+
+    def test_load_java_default_json(self):
+        theme = load_theme_from_file(
+            os.path.join(JAVA_THEMES_DIR, "default.json")
+        )
+        assert theme.name == "Default"
+
+    def test_load_java_trs80_json(self):
+        theme = load_theme_from_file(os.path.join(JAVA_THEMES_DIR, "trs80.json"))
+        assert theme.name == "TRS-80"
+
+    @pytest.mark.parametrize(
+        "filename",
+        [
+            "dark.json", "default.json", "light.json", "modern.json",
+            "borland.json", "borland3d.json", "dos.json",
+            "dbase3.json", "dbase4.json", "dbase4-3d.json",
+            "ti994a.json", "trs80.json",
+        ],
+    )
+    def test_all_java_themes_load(self, filename):
+        path = os.path.join(JAVA_THEMES_DIR, filename)
+        if not os.path.isfile(path):
+            pytest.skip(f"{filename} not found")
+        theme = load_theme_from_file(path)
+        assert theme.name
+        assert theme.get_border_chars()
+        assert len(theme.get_border_chars()) == 8
+
+    def test_java_theme_apply_succeeds(self, mock_curses, mock_stdscr):
+        theme = load_theme_from_file(
+            os.path.join(JAVA_THEMES_DIR, "dark.json")
+        )
+        theme.apply(mock_stdscr)
+
+    def test_backward_compatible_python_json(self, tmp_path):
+        config = {
+            "name": "PyNative",
+            "colors": dict(MINIMAL_COLORS),
+            "border_chars": "+-+||+-+",
+        }
+        path = tmp_path / "native.json"
+        path.write_text(json.dumps(config), encoding="utf-8")
+        theme = load_theme_from_file(str(path))
+        assert theme.name == "PyNative"
+        assert theme.get_border_chars() == "+-+||+-+"
