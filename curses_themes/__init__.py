@@ -80,7 +80,7 @@ from .themes import (
     TRS80Theme,
 )
 
-__version__ = "0.4"
+__version__ = "0.5"
 __author__ = "FlossWare"
 __license__ = "MIT"
 
