@@ -404,58 +404,45 @@ def main(stdscr):
 ### Basic Custom Theme
 
 ```python
-from curses_themes import Theme, ColorPair
-from typing import Dict, Tuple
+from curses_themes import Theme
 
 class MyTheme(Theme):
     """My custom terminal theme"""
-    
-    def __init__(self):
-        super().__init__(
-            name="My Theme",
-            description="A personalized color scheme",
-            author="Your Name"
-        )
     
     # Define RGB colors (0-255)
     BG = (20, 20, 30)       # Dark blue-gray
     FG = (220, 220, 220)    # Light gray
     PRIMARY = (100, 180, 255)  # Sky blue
-    
-    # Component color pairs
-    def get_background(self) -> ColorPair:
-        return ColorPair(self.FG, self.BG)
-    
-    def get_button(self) -> ColorPair:
-        return ColorPair(self.PRIMARY, self.BG)
-    
-    def get_button_focused(self) -> ColorPair:
-        return ColorPair(self.BG, self.PRIMARY)
-    
-    def get_text_input(self) -> ColorPair:
-        return ColorPair((150, 255, 150), self.BG)  # Light green
-    
-    def get_border(self) -> ColorPair:
-        return ColorPair(self.FG, self.BG)
-    
-    def get_selection(self) -> ColorPair:
-        return ColorPair(self.BG, self.FG)
-    
-    def get_disabled(self) -> ColorPair:
-        return ColorPair((100, 100, 100), self.BG)  # Dark gray
-    
+
     # Semantic color map
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
-        return {
-            'background': self.BG,
-            'foreground': self.FG,
-            'primary': self.PRIMARY,
-            'success': (80, 200, 80),    # Green
-            'error': (255, 80, 80),      # Red
-            'warning': (255, 200, 80),   # Orange
-            'info': (100, 180, 255),     # Blue
-            'accent': (200, 100, 255),   # Purple
-        }
+    color_map = {
+        'background': BG,
+        'foreground': FG,
+        'primary': PRIMARY,
+        'success': (80, 200, 80),
+        'error': (255, 80, 80),
+        'warning': (255, 200, 80),
+        'info': (100, 180, 255),
+        'accent': (200, 100, 255),
+    }
+
+    # Component color pairs: name -> (fg_rgb, bg_rgb)
+    component_colors = {
+        'background': (FG, BG),
+        'button': (PRIMARY, BG),
+        'button_focused': (BG, PRIMARY),
+        'text_input': ((150, 255, 150), BG),
+        'border': (FG, BG),
+        'selection': (BG, FG),
+        'disabled': ((100, 100, 100), BG),
+    }
+
+    def __init__(self):
+        super().__init__(
+            name="My Theme",
+            description="A personalized color scheme",
+            author="Your Name",
+        )
 
 # Register and use
 from curses_themes import ThemeManager
@@ -469,23 +456,17 @@ theme = ThemeManager.load('my-theme')
 
 ```python
 class UnicodeTheme(Theme):
-    # ... other methods ...
-    
-    def get_border_chars(self) -> str:
-        """
-        Returns 8 characters: TL, T, TR, L, R, BL, B, BR
-        """
-        # Unicode single-line box
-        return "┌─┐│└─┘│"
-        
-        # Or double-line box
-        # return "╔═╗║╚═╝║"
-        
-        # Or rounded corners
-        # return "╭─╮│╰─╯│"
-        
-        # Or ASCII for compatibility
-        # return "+-+||+-+"
+    # 8 characters: TL, T, TR, L, R, BL, B, BR
+    border_chars = "┌─┐│└─┘│"  # Unicode single-line box
+
+    # Or double-line box:
+    # border_chars = "╔═╗║╚═╝║"
+
+    # Or rounded corners:
+    # border_chars = "╭─╮│╰─╯│"
+
+    # Or ASCII for compatibility:
+    # border_chars = "+-+||+-+"
 ```
 
 ---
@@ -603,12 +584,10 @@ def main(stdscr):
 ### Installation
 
 ```bash
-# Install windows-curses first
-pip install windows-curses
-
-# Then install curses-themes
-pip install curses-themes
+pip install curses-themes[windows]
 ```
+
+The `[windows]` optional dependency automatically installs `windows-curses` for you.
 
 ### Terminal Recommendations
 
@@ -682,7 +661,7 @@ pip install windows-curses
 **Problem**: Box borders show as `?` or garbage characters
 
 **Solutions**:
-1. Use ASCII borders: create theme with `get_border_chars() -> "+-+||+-+"`
+1. Use ASCII borders: create theme with `border_chars = "+-+||+-+"` class attribute
 2. Ensure UTF-8 encoding: `export LANG=en_US.UTF-8`
 3. Use a Unicode-compatible terminal
 

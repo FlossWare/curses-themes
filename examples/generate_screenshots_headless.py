@@ -165,23 +165,25 @@ def generate_theme_sample(theme_name, width=80, height=30):
     lines.append("")
     lines.append("  Color Components:")
 
-    bg = theme.get_background()
+    components = theme.get_components()
+
+    bg = components.get("background")
     if bg:
         lines.append(f"    Background:    fg={bg.foreground} bg={bg.background}")
 
-    border = theme.get_border()
+    border = components.get("border")
     if border:
         lines.append(
             f"    Border:        fg={border.foreground} bg={border.background}"
         )
 
-    button = theme.get_button()
+    button = components.get("button")
     if button:
         lines.append(
             f"    Button:        fg={button.foreground} bg={button.background}"
         )
 
-    button_f = theme.get_button_focused()
+    button_f = components.get("button_focused")
     if button_f:
         lines.append(
             f"    Button Focus:  fg={button_f.foreground} bg={button_f.background}"

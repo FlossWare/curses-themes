@@ -140,8 +140,8 @@ Contributing a new theme is one of the most valuable contributions! Here's the c
 #### Theme Contribution Checklist
 
 - [ ] Created theme class in `curses_themes/themes/your_theme_name.py`
-- [ ] Implemented all required methods (`get_color_map()`, component methods)
-- [ ] Optionally implemented `get_border_chars()` for custom borders
+- [ ] Defined `color_map` and `component_colors` class attributes
+- [ ] Optionally defined `border_chars` class attribute for custom borders
 - [ ] Added comprehensive tests in `tests/test_themes/test_your_theme_name.py`
 - [ ] Registered theme in `curses_themes/__init__.py`
 - [ ] Registered theme in `curses_themes/manager.py`
@@ -167,8 +167,7 @@ Copyright (c) 2024 Your Name
 MIT License - see LICENSE file for details.
 """
 
-from typing import Dict, Tuple
-from ..theme import Theme, ColorPair
+from ..theme import Theme
 
 
 class MyTheme(Theme):
@@ -195,6 +194,33 @@ class MyTheme(Theme):
     WARNING = (193, 156, 0)
     INFO = (0, 120, 212)
     ACCENT = (142, 68, 173)
+
+    # Semantic color map: name -> RGB tuple
+    color_map = {
+        'background': BLACK,
+        'foreground': WHITE,
+        'primary': PRIMARY,
+        'success': SUCCESS,
+        'error': ERROR,
+        'warning': WARNING,
+        'info': INFO,
+        'accent': ACCENT,
+    }
+
+    # Component color pairs: name -> (fg_rgb, bg_rgb)
+    component_colors = {
+        'background': (WHITE, BLACK),
+        'button': (PRIMARY, BLACK),
+        'button_focused': (BLACK, PRIMARY),
+        'text_input': (WHITE, BLACK),
+        'border': (PRIMARY, BLACK),
+        'selection': (BLACK, ACCENT),
+        'disabled': (WHITE, BLACK),
+    }
+
+    # Border characters: TL, T, TR, L, R, BL, B, BR
+    # Options: "+-+||+-+" (ASCII), "╔═╗║║╚═╝" (double line)
+    border_chars = "┌─┐││└─┘"  # Unicode box drawing (recommended for modern themes)
     
     def __init__(self):
         """Initialize the theme with metadata."""
@@ -203,66 +229,6 @@ class MyTheme(Theme):
             description="A brief, compelling description of your theme",
             author="Your Name"
         )
-    
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
-        """
-        Get RGB color definitions for semantic colors.
-        
-        Returns:
-            Dictionary mapping semantic color names to RGB tuples (0-255)
-        """
-        return {
-            'background': self.BLACK,
-            'foreground': self.WHITE,
-            'primary': self.PRIMARY,
-            'success': self.SUCCESS,
-            'error': self.ERROR,
-            'warning': self.WARNING,
-            'info': self.INFO,
-            'accent': self.ACCENT,
-        }
-    
-    def get_background(self) -> ColorPair:
-        """Get background color pair for normal components."""
-        return ColorPair(self.WHITE, self.BLACK)
-    
-    def get_button(self) -> ColorPair:
-        """Get color pair for buttons in normal state."""
-        return ColorPair(self.PRIMARY, self.BLACK)
-    
-    def get_button_focused(self) -> ColorPair:
-        """Get color pair for buttons when focused."""
-        return ColorPair(self.BLACK, self.PRIMARY)
-    
-    def get_text_input(self) -> ColorPair:
-        """Get color pair for text input fields."""
-        return ColorPair(self.WHITE, self.BLACK)
-    
-    def get_border(self) -> ColorPair:
-        """Get color pair for borders and frames."""
-        return ColorPair(self.PRIMARY, self.BLACK)
-    
-    def get_selection(self) -> ColorPair:
-        """Get color pair for selected/highlighted items."""
-        return ColorPair(self.BLACK, self.ACCENT)
-    
-    def get_disabled(self) -> ColorPair:
-        """Get color pair for disabled components."""
-        return ColorPair(self.WHITE, self.BLACK)
-    
-    def get_border_chars(self) -> str:
-        """
-        Get border characters for drawing boxes.
-        
-        Returns:
-            String with 8 characters: TL, T, TR, L, R, BL, B, BR
-            
-        Examples:
-            ASCII box: "+-+||+-+"
-            Unicode box: "┌─┐││└─┘"
-            Double line: "╔═╗║║╚═╝"
-        """
-        return "┌─┐││└─┘"  # Unicode box drawing (recommended for modern themes)
 ```
 
 **2. Create comprehensive tests:** `tests/test_themes/test_my_theme.py`
@@ -277,7 +243,6 @@ Copyright (C) 2024 Your Name
 
 import pytest
 from curses_themes.themes.my_theme import MyTheme
-from curses_themes.theme import ColorPair
 
 
 class TestMyThemeMetadata:
@@ -305,23 +270,21 @@ class TestMyThemeColorMap:
     """Test suite for MyTheme color map."""
     
     def test_color_map_has_all_required_keys(self):
-        """Test that color map contains all required semantic color keys."""
+        """Test that color_map class attribute contains all required semantic color keys."""
         theme = MyTheme()
-        color_map = theme.get_color_map()
         
         required_keys = {
             'background', 'foreground', 'primary', 'success',
             'error', 'warning', 'info', 'accent'
         }
         
-        assert set(color_map.keys()) == required_keys
+        assert set(theme.color_map.keys()) == required_keys
     
     def test_rgb_values_are_valid(self):
         """Test that all RGB values are in valid range (0-255)."""
         theme = MyTheme()
-        color_map = theme.get_color_map()
         
-        for key, (r, g, b) in color_map.items():
+        for key, (r, g, b) in theme.color_map.items():
             assert isinstance(r, int), f"{key} red component is not an integer"
             assert isinstance(g, int), f"{key} green component is not an integer"
             assert isinstance(b, int), f"{key} blue component is not an integer"
@@ -331,39 +294,37 @@ class TestMyThemeColorMap:
             assert 0 <= b <= 255, f"{key} blue value {b} out of range"
 
 
-class TestMyThemeComponentMethods:
-    """Test suite for MyTheme component color methods."""
+class TestMyThemeComponentColors:
+    """Test suite for MyTheme component_colors class attribute."""
     
-    def test_all_component_methods_return_colorpairs(self):
-        """Test that all component methods return ColorPair objects."""
+    def test_has_all_required_components(self):
+        """Test that component_colors contains all required keys."""
         theme = MyTheme()
         
-        component_methods = [
-            'get_background',
-            'get_button',
-            'get_button_focused',
-            'get_text_input',
-            'get_border',
-            'get_selection',
-            'get_disabled'
+        required_components = [
+            'background',
+            'button',
+            'button_focused',
+            'text_input',
+            'border',
+            'selection',
+            'disabled'
         ]
         
-        for method_name in component_methods:
-            method = getattr(theme, method_name)
-            result = method()
-            assert isinstance(result, ColorPair), f"{method_name} did not return ColorPair"
-            assert hasattr(result, 'foreground'), f"{method_name} ColorPair missing foreground"
-            assert hasattr(result, 'background'), f"{method_name} ColorPair missing background"
+        for name in required_components:
+            assert name in theme.component_colors, f"Missing component: {name}"
+            fg, bg = theme.component_colors[name]
+            assert len(fg) == 3, f"{name} fg is not an RGB tuple"
+            assert len(bg) == 3, f"{name} bg is not an RGB tuple"
 
 
 class TestMyThemeBorderChars:
     """Test suite for MyTheme border characters."""
     
     def test_border_chars_length(self):
-        """Test that border chars string has exactly 8 characters."""
+        """Test that border_chars class attribute has exactly 8 characters."""
         theme = MyTheme()
-        border_chars = theme.get_border_chars()
-        assert len(border_chars) == 8
+        assert len(theme.border_chars) == 8
 ```
 
 **3. Register the theme in `curses_themes/__init__.py`:**
@@ -603,7 +564,7 @@ We follow Python community standards with some project-specific guidelines.
 - **Imports:** Group in order: standard library, third-party, local
 - **Naming:**
   - Classes: `PascalCase` (e.g., `DarkTheme`)
-  - Functions/methods: `snake_case` (e.g., `get_color_map`)
+  - Functions/methods: `snake_case` (e.g., `load_theme`)
   - Constants: `UPPER_CASE` (e.g., `DEFAULT_THEME`)
   - Private members: `_leading_underscore` (e.g., `_themes`)
 
@@ -629,7 +590,7 @@ from typing import Dict, Tuple
 # (This project has zero dependencies!)
 
 # Local imports
-from ..theme import Theme, ColorPair
+from ..theme import Theme
 
 
 class YourClass:
@@ -701,15 +662,19 @@ def draw_box(self, window, y: int, x: int, height: int, width: int,
 Use type hints for better code clarity:
 
 ```python
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple
 
-def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
-    """Return color definitions."""
-    return {...}
+# Class attributes with type annotations
+color_map: Dict[str, Tuple[int, int, int]] = {
+    'background': (0, 0, 0),
+    'foreground': (255, 255, 255),
+    # ...
+}
 
-def get_background(self) -> Optional[ColorPair]:
-    """Return background color pair or None."""
-    return ColorPair(...)
+component_colors: Dict[str, Tuple[Tuple[int, int, int], Tuple[int, int, int]]] = {
+    'background': ((255, 255, 255), (0, 0, 0)),
+    # ...
+}
 ```
 
 ### Error Handling
@@ -774,11 +739,11 @@ class TestMyThemeColorMap:
         pass
 
 
-class TestMyThemeComponentMethods:
-    """Test suite for component color methods."""
+class TestMyThemeComponentColors:
+    """Test suite for component_colors class attribute."""
     
-    def test_get_background_returns_colorpair(self):
-        """Test background method returns ColorPair."""
+    def test_has_all_required_components(self):
+        """Test component_colors has all required keys."""
         pass
 ```
 
@@ -823,9 +788,8 @@ pytest -v
 def test_rgb_values_are_valid(self):
     """Test that all RGB values are in valid range (0-255)."""
     theme = MyTheme()
-    color_map = theme.get_color_map()
     
-    for key, (r, g, b) in color_map.items():
+    for key, (r, g, b) in theme.color_map.items():
         assert 0 <= r <= 255, f"{key} red value {r} out of range"
         assert 0 <= g <= 255, f"{key} green value {g} out of range"
         assert 0 <= b <= 255, f"{key} blue value {b} out of range"
@@ -997,24 +961,21 @@ Choose appropriate border characters for your theme:
 
 **ASCII (universal compatibility):**
 ```python
-def get_border_chars(self) -> str:
-    return "+-+||+-+"  # TL T TR L R BL B BR
+border_chars = "+-+||+-+"  # TL T TR L R BL B BR
 ```
 
 **Unicode box-drawing (modern terminals):**
 ```python
-def get_border_chars(self) -> str:
-    return "┌─┐││└─┘"  # Light box
-    # or
-    return "╔═╗║║╚═╝"  # Double box
+border_chars = "┌─┐││└─┘"  # Light box
+# or
+border_chars = "╔═╗║║╚═╝"  # Double box
 ```
 
 **Retro/simple:**
 ```python
-def get_border_chars(self) -> str:
-    return "        "  # Spaces (for minimal themes)
-    # or
-    return "########"  # Hash marks (DOS-style)
+border_chars = "        "  # Spaces (for minimal themes)
+# or
+border_chars = "########"  # Hash marks (DOS-style)
 ```
 
 ## Examples of Good Contributions
@@ -1031,7 +992,7 @@ The **DarkTheme** is an excellent example of a modern theme:
 - Comprehensive test coverage (100%)
 - Unicode border characters for modern terminals
 - Good contrast ratios for accessibility
-- Implements all required methods
+- Defines all required class attributes (`color_map`, `component_colors`)
 - Matches curses-java API for consistency
 
 **Code highlights:**

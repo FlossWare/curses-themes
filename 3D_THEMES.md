@@ -180,60 +180,43 @@ class Theme3D(Theme):
     """
     Base class for themes with 3D shadow and highlight effects.
     
-    Extends the standard Theme class with methods for rendering
+    Extends the standard Theme class with 3D rendering support for
     raised buttons, sunken input fields, and drop shadows using
     highlight and shadow colors.
     
-    Subclasses must implement:
-    - get_highlight(): ColorPair for bright edges
-    - get_shadow(): ColorPair for dark edges
-    - get_deep_shadow(): ColorPair for drop shadows (optional)
+    Subclasses must define:
+    - effects_3d: dict mapping 'shadow', 'highlight', and optionally
+      'lowlight' to (fg_rgb_tuple, bg_rgb_tuple) pairs
     """
 ```
 
-### Required Methods
+### Required Class Attribute
 
-#### `get_highlight() -> ColorPair`
+#### `effects_3d`
 
-Returns the color pair for highlight edges (top and left borders of raised elements).
-
-**Returns:** `ColorPair` with bright foreground color (typically white or bright yellow)
+A dict mapping effect names to `(fg_rgb_tuple, bg_rgb_tuple)` pairs. Required keys are `'shadow'` and `'highlight'`; `'lowlight'` is optional.
 
 **Example:**
 ```python
-def get_highlight(self) -> ColorPair:
-    """Bright white highlight for top/left edges."""
-    return ColorPair(self.WHITE, self.TEAL)
+class MyTheme(Theme3D):
+    effects_3d = {
+        'shadow': ((0, 0, 0), (64, 64, 64)),
+        'highlight': ((255, 255, 255), (0, 128, 128)),
+        'lowlight': ((64, 64, 64), (0, 128, 128)),
+    }
 ```
 
-#### `get_shadow() -> ColorPair`
+### Method
 
-Returns the color pair for shadow edges (bottom and right borders of raised elements).
+#### `get_3d_colors() -> dict[str, ColorPair]`
 
-**Returns:** `ColorPair` with dark foreground color (typically dark gray or black)
-
-**Example:**
-```python
-def get_shadow(self) -> ColorPair:
-    """Dark gray shadow for bottom/right edges."""
-    return ColorPair(self.DARK_GRAY, self.TEAL)
-```
-
-### Optional Methods
-
-#### `get_deep_shadow() -> ColorPair`
-
-Returns the color pair for drop shadows (offset shadow behind windows and dialogs).
-
-**Returns:** `ColorPair` with very dark or black foreground color
-
-**Default:** Returns same as `get_shadow()` if not overridden
+Returns the resolved 3D effect colors as a dict of `str -> ColorPair`. The keys match the `effects_3d` class attribute (`'shadow'`, `'highlight'`, `'lowlight'`).
 
 **Example:**
 ```python
-def get_deep_shadow(self) -> ColorPair:
-    """Black drop shadow for floating windows."""
-    return ColorPair(self.BLACK, self.DARK_GRAY)
+colors_3d = theme.get_3d_colors()
+highlight_pair = colors_3d['highlight']
+shadow_pair = colors_3d['shadow']
 ```
 
 ### 3D Drawing Methods
@@ -731,71 +714,47 @@ curses.wrapper(main)
 Extending Theme3D for your own color scheme:
 
 ```python
-from curses_themes import Theme3D, ThemeManager, ColorPair
-from typing import Dict, Tuple
+from curses_themes import Theme3D, ThemeManager
 
 class Custom3DTheme(Theme3D):
     """Custom 3D theme with purple color scheme."""
-    
-    # Custom palette
-    PURPLE = (128, 0, 128)
-    LAVENDER = (230, 230, 250)
-    WHITE = (255, 255, 255)
-    DARK_PURPLE = (64, 0, 64)
-    BLACK = (0, 0, 0)
-    DARK_GRAY = (96, 96, 96)
-    
+
+    color_map = {
+        'background': (128, 0, 128),
+        'foreground': (255, 255, 255),
+        'primary': (230, 230, 250),
+        'success': (0, 255, 0),
+        'error': (255, 0, 0),
+        'warning': (255, 255, 0),
+        'info': (0, 255, 255),
+        'accent': (230, 230, 250),
+    }
+
+    component_colors = {
+        'background': ((255, 255, 255), (128, 0, 128)),
+        'button': ((230, 230, 250), (128, 0, 128)),
+        'button_focused': ((128, 0, 128), (230, 230, 250)),
+        'text_input': ((255, 255, 255), (64, 0, 64)),
+        'border': ((255, 255, 255), (128, 0, 128)),
+        'selection': ((128, 0, 128), (230, 230, 250)),
+        'disabled': ((96, 96, 96), (128, 0, 128)),
+    }
+
+    effects_3d = {
+        'shadow': ((96, 96, 96), (128, 0, 128)),
+        'highlight': ((255, 255, 255), (128, 0, 128)),
+        'lowlight': ((0, 0, 0), (96, 96, 96)),
+    }
+
+    border_chars = "┌─┐││└─┘"
+    double_border_chars = "╔═╗║║╚═╝"
+
     def __init__(self):
         super().__init__(
             name="Custom 3D Purple",
             description="Purple 3D theme with lavender accents",
             author="Your Name"
         )
-    
-    def get_background(self) -> ColorPair:
-        return ColorPair(self.WHITE, self.PURPLE)
-    
-    def get_button(self) -> ColorPair:
-        return ColorPair(self.LAVENDER, self.PURPLE)
-    
-    def get_button_focused(self) -> ColorPair:
-        return ColorPair(self.PURPLE, self.LAVENDER)
-    
-    def get_text_input(self) -> ColorPair:
-        return ColorPair(self.WHITE, self.DARK_PURPLE)
-    
-    def get_border(self) -> ColorPair:
-        return ColorPair(self.WHITE, self.PURPLE)
-    
-    def get_selection(self) -> ColorPair:
-        return ColorPair(self.PURPLE, self.LAVENDER)
-    
-    def get_disabled(self) -> ColorPair:
-        return ColorPair(self.DARK_GRAY, self.PURPLE)
-    
-    def get_highlight(self) -> ColorPair:
-        """Bright edges (top/left)."""
-        return ColorPair(self.WHITE, self.PURPLE)
-    
-    def get_shadow(self) -> ColorPair:
-        """Dark edges (bottom/right)."""
-        return ColorPair(self.DARK_GRAY, self.PURPLE)
-    
-    def get_deep_shadow(self) -> ColorPair:
-        """Drop shadow behind windows."""
-        return ColorPair(self.BLACK, self.DARK_GRAY)
-    
-    def get_color_map(self) -> Dict[str, Tuple[int, int, int]]:
-        return {
-            'background': self.PURPLE,
-            'foreground': self.WHITE,
-            'primary': self.LAVENDER,
-            'success': (0, 255, 0),
-            'error': (255, 0, 0),
-            'warning': (255, 255, 0),
-            'info': (0, 255, 255),
-            'accent': self.LAVENDER,
-        }
 
 # Register and use custom theme
 ThemeManager.register(Custom3DTheme)

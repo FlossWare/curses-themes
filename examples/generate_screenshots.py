@@ -239,9 +239,10 @@ def render_theme(theme_name: str) -> str:
     if is_3d:
         canvas.put(19, 1, "3D Effects: ENABLED")
         try:
-            shadow = theme.get_shadow_color()
-            highlight = theme.get_highlight_color()
-            lowlight = theme.get_lowlight_color()
+            colors_3d = theme.get_3d_colors()
+            shadow = colors_3d["shadow"]
+            highlight = colors_3d["highlight"]
+            lowlight = colors_3d["lowlight"]
             canvas.put(
                 20,
                 3,

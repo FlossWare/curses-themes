@@ -154,8 +154,8 @@ Press any key to cycle through themes, 'q' to quit.
 
 Each theme provides both:
 1. **Component-based colors** (matching curses-java API):
-   - `get_background()`, `get_button()`, `get_button_focused()`
-   - `get_text_input()`, `get_border()`, `get_selection()`, `get_disabled()`
+   - `component_colors` class attribute: dict mapping component names (`'background'`, `'button'`, `'button_focused'`, `'text_input'`, `'border'`, `'selection'`, `'disabled'`) to `(fg_rgb_tuple, bg_rgb_tuple)` pairs
+   - `get_components()` method: returns resolved `dict[str, ColorPair]`
 
 2. **Semantic colors** (Python extension):
    - `primary`, `success`, `error`, `warning`, `info`, `accent`

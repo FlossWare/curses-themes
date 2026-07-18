@@ -4,26 +4,26 @@
   light mode aesthetic.
 
   ╔════════════════════════════════════════════════════╗
-  ║ Sample Panel                                       ╚
-  ║════════════════════════════════════════════════════╚
-  ║                                                    ╚
-  ║  [ Normal Button ]                                 ╚
-  ║  [ Focused Button ] <--                            ╚
-  ║                                                    ╚
-  ║  Input: [Type here...             ]                ╚
-  ║                                                    ╚
-  ║  List Items:                                       ╚
-  ║    > Selected Item (highlighted)                   ╚
-  ║      Normal Item                                   ╚
-  ║      Another Item                                  ╚
-  ║                                                    ╚
-  ║  Status Messages:                                  ╚
-  ║    [OK] Success: Operation completed               ╚
-  ║    [!!] Error: Something went wrong                ╚
-  ║    [/!\] Warning: Check this carefully             ╚
-  ║    [i] Info: Additional details here               ╚
-  ║                                                    ╚
-  ═╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝╝║
+  ║ Sample Panel                                       ║
+  ║════════════════════════════════════════════════════║
+  ║                                                    ║
+  ║  [ Normal Button ]                                 ║
+  ║  [ Focused Button ] <--                            ║
+  ║                                                    ║
+  ║  Input: [Type here...             ]                ║
+  ║                                                    ║
+  ║  List Items:                                       ║
+  ║    > Selected Item (highlighted)                   ║
+  ║      Normal Item                                   ║
+  ║      Another Item                                  ║
+  ║                                                    ║
+  ║  Status Messages:                                  ║
+  ║    [OK] Success: Operation completed               ║
+  ║    [!!] Error: Something went wrong                ║
+  ║    [/!\] Warning: Check this carefully             ║
+  ║    [i] Info: Additional details here               ║
+  ║                                                    ║
+  ╚════════════════════════════════════════════════════╝
 
   Theme Details:
   --------------------------------------------------

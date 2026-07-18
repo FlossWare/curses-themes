@@ -4,7 +4,7 @@ Example demonstrating how to create a custom theme.
 
 This example shows how to:
 - Define a custom theme class (SolarizedDarkTheme)
-- Implement get_color_map() with Solarized color palette
+- Use color_map and component_colors class attributes
 - Register the theme with ThemeManager
 - Load and apply the custom theme
 - Display sample text using theme colors
@@ -31,6 +31,40 @@ class SolarizedDarkTheme(Theme):
     See: https://ethanschoonover.com/solarized/
     """
 
+    # Solarized base colors
+    _base03 = (0, 43, 54)  # Dark background
+    _base02 = (7, 54, 66)  # Darker background highlights
+    _base0 = (131, 148, 150)  # Primary content
+
+    # Solarized accent colors
+    _yellow = (181, 137, 0)
+    _red = (220, 50, 47)
+    _violet = (108, 113, 196)
+    _blue = (38, 139, 210)
+    _cyan = (42, 161, 152)
+    _green = (133, 153, 0)
+
+    color_map = {
+        "background": _base03,  # Dark background
+        "foreground": _base0,  # Primary text
+        "primary": _blue,  # Main UI highlights
+        "success": _green,  # Positive feedback
+        "error": _red,  # Error messages
+        "warning": _yellow,  # Warnings
+        "info": _cyan,  # Information
+        "accent": _violet,  # Secondary highlights
+    }
+
+    component_colors = {
+        "background": (_base0, _base03),
+        "button": (_blue, _base02),
+        "button_focused": (_base03, _blue),
+        "text_input": (_base0, _base02),
+        "border": (_cyan, _base03),
+        "selection": (_base03, _yellow),
+        "disabled": (_base02, _base03),
+    }
+
     def __init__(self):
         """Initialize the Solarized Dark theme."""
         super().__init__(
@@ -38,45 +72,6 @@ class SolarizedDarkTheme(Theme):
             description="Professional dark theme with carefully balanced colors",
             author="FlossWare",
         )
-
-    def get_color_map(self):
-        """
-        Return Solarized Dark color palette.
-
-        Returns:
-            Dictionary mapping semantic color names to RGB tuples.
-            Each RGB value is in range 0-255.
-        """
-        # Solarized base colors
-        base03 = (0, 43, 54)  # Dark background
-        base02 = (7, 54, 66)  # Darker background highlights
-        base01 = (88, 110, 117)  # Content tone (comments)
-        base00 = (101, 123, 131)  # Body text
-        base0 = (131, 148, 150)  # Primary content
-        base1 = (147, 161, 161)  # Optional emphasized content
-        base2 = (238, 232, 213)  # Background highlights
-        base3 = (253, 246, 227)  # Light background
-
-        # Solarized accent colors
-        yellow = (181, 137, 0)
-        orange = (203, 75, 22)
-        red = (220, 50, 47)
-        magenta = (211, 54, 130)
-        violet = (108, 113, 196)
-        blue = (38, 139, 210)
-        cyan = (42, 161, 152)
-        green = (133, 153, 0)
-
-        return {
-            "background": base03,  # Dark background
-            "foreground": base0,  # Primary text
-            "primary": blue,  # Main UI highlights
-            "success": green,  # Positive feedback
-            "error": red,  # Error messages
-            "warning": yellow,  # Warnings
-            "info": cyan,  # Information
-            "accent": violet,  # Secondary highlights
-        }
 
 
 def main(stdscr):

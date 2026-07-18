@@ -65,43 +65,17 @@ def _parse_color_pair(data):
 
 
 def _build_theme(name, description, author, color_map, components, border_chars):
-    """Dynamically build a Theme subclass from parsed config data."""
-
-    class _ConfigTheme(Theme):
-        def __init__(self):
-            super().__init__(name=name, description=description, author=author)
-            self._color_map = color_map
-            self._components = components
-            self._border_chars = border_chars
-
-        def get_color_map(self):
-            return dict(self._color_map)
-
-        def get_border_chars(self):
-            return self._border_chars
-
-        def get_background(self):
-            return self._components.get("background")
-
-        def get_button(self):
-            return self._components.get("button")
-
-        def get_button_focused(self):
-            return self._components.get("button_focused")
-
-        def get_text_input(self):
-            return self._components.get("text_input")
-
-        def get_border(self):
-            return self._components.get("border")
-
-        def get_selection(self):
-            return self._components.get("selection")
-
-        def get_disabled(self):
-            return self._components.get("disabled")
-
-    return _ConfigTheme()
+    """Build a Theme from parsed config data using the Theme constructor."""
+    return Theme(
+        name=name,
+        description=description,
+        author=author,
+        color_map=color_map,
+        component_colors={
+            cname: (cp.foreground, cp.background) for cname, cp in components.items()
+        } if components else None,
+        border_chars=border_chars,
+    )
 
 
 def load_json_theme(path):

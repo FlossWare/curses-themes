@@ -4,7 +4,7 @@
 
 `curses-themes` is a lightweight theme support library for Python curses applications. It provides professional theming capabilities with zero external dependencies, inspired by the FlossWare curses-java library.
 
-**Version:** 0.1.0  
+**Version:** 0.4  
 **License:** MIT  
 **Author:** FlossWare
 
@@ -45,42 +45,86 @@ if __name__ == "__main__":
 
 ### Theme
 
-Abstract base class for creating curses themes. All custom themes must inherit from this class and implement the required methods.
+Base class for curses themes. Themes can be created by subclassing with class attributes, by passing data to the constructor, or by using `ThemeManager.create()`.
 
 #### Constructor
 
 ```python
-Theme(name: str, description: str = "", author: str = "")
+Theme(
+    name: str,
+    description: str = "",
+    author: str = "",
+    *,
+    color_map: Optional[dict[str, tuple[int, int, int]]] = None,
+    component_colors: Optional[dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]]] = None,
+    border_chars: Optional[str] = None,
+)
 ```
 
 **Parameters:**
 - `name` (str): Human-readable theme name
 - `description` (str, optional): Brief description of the theme's appearance or purpose
 - `author` (str, optional): Name of the theme creator
+- `color_map` (dict, optional): RGB color definitions (keyword-only)
+- `component_colors` (dict, optional): Component color pairs as `(fg_rgb, bg_rgb)` tuples (keyword-only)
+- `border_chars` (str, optional): 8-character border string (keyword-only)
 
-**Example:**
+**Example (subclass with class attributes -- preferred):**
 ```python
 class MyTheme(Theme):
+    color_map = {
+        'background': (0, 0, 0),
+        'foreground': (255, 255, 255),
+        'primary': (0, 120, 215),
+        'success': (16, 124, 16),
+        'error': (232, 17, 35),
+        'warning': (193, 156, 0),
+        'info': (0, 120, 212),
+        'accent': (142, 68, 173),
+    }
+    component_colors = {
+        'background': ((255, 255, 255), (0, 0, 0)),
+        'button': ((0, 120, 215), (0, 0, 0)),
+        'button_focused': ((0, 0, 0), (0, 120, 215)),
+        'text_input': ((0, 255, 0), (0, 0, 0)),
+        'border': ((255, 255, 255), (0, 0, 0)),
+        'selection': ((0, 0, 0), (255, 255, 255)),
+        'disabled': ((128, 128, 128), (0, 0, 0)),
+    }
+    border_chars = "┌─┐││└─┘"
+
     def __init__(self):
         super().__init__(
             name="My Theme",
             description="A custom theme with blue accents",
-            author="Your Name"
+            author="Your Name",
         )
 ```
 
-#### Abstract Methods
+**Example (constructor kwargs -- no subclass needed):**
+```python
+theme = Theme(
+    name="My Theme",
+    color_map={'background': (0, 0, 0), 'foreground': (255, 255, 255), ...},
+    component_colors={'button': ((0, 120, 215), (0, 0, 0)), ...},
+    border_chars="┌─┐││└─┘",
+)
+```
+
+#### Methods
 
 ##### get_color_map()
 
 ```python
-def get_color_map(self) -> Dict[str, Tuple[int, int, int]]
+def get_color_map(self) -> dict[str, tuple[int, int, int]]
 ```
 
-**Required implementation.** Returns RGB color definitions for the theme.
+Returns RGB color definitions for the theme.
+
+**Resolution order:** instance data (from `__init__` kwargs) -> class attribute `color_map` -> raises `NotImplementedError`.
 
 **Returns:**
-- `Dict[str, Tuple[int, int, int]]`: Dictionary mapping semantic color names to RGB tuples (0-255)
+- `dict[str, tuple[int, int, int]]`: Dictionary mapping semantic color names to RGB tuples (0-255)
 
 **Required Keys:**
 - `background`: Default background color
@@ -92,10 +136,10 @@ def get_color_map(self) -> Dict[str, Tuple[int, int, int]]
 - `info`: Informational messages and help text
 - `accent`: Secondary highlight color
 
-**Example:**
+**Example (class attribute -- preferred):**
 ```python
-def get_color_map(self):
-    return {
+class MyTheme(Theme):
+    color_map = {
         'background': (0, 0, 0),      # Black
         'foreground': (255, 255, 255), # White
         'primary': (0, 120, 215),      # Blue
@@ -107,104 +151,67 @@ def get_color_map(self):
     }
 ```
 
-#### Component Color Methods
-
-These methods define color pairs for UI components. All methods return `ColorPair` objects or `None` if not implemented.
-
-##### get_background()
-
+**Example (method override -- for dynamic behavior):**
 ```python
-def get_background(self) -> Optional[ColorPair]
+def get_color_map(self):
+    return {
+        'background': (0, 0, 0),
+        'foreground': (255, 255, 255),
+        'primary': (0, 120, 215),
+        'success': (16, 124, 16),
+        'error': (232, 17, 35),
+        'warning': (193, 156, 0),
+        'info': (0, 120, 212),
+        'accent': (142, 68, 173),
+    }
 ```
 
-Returns the background color pair for normal components.
+##### get_components()
+
+```python
+def get_components(self) -> dict[str, ColorPair]
+```
+
+Returns component color pairs for this theme. This single method replaces the individual `get_background()`, `get_button()`, etc. methods from earlier versions.
+
+**Resolution order:** instance data (from `__init__` kwargs) -> class attribute `component_colors` -> empty dict (all defaults).
 
 **Returns:**
-- `ColorPair` or `None`: Foreground and background colors for normal background
+- `dict[str, ColorPair]`: Dictionary mapping component names to `ColorPair` instances
 
-**Example:**
+**Valid Keys:**
+- `background`: Normal background color pair
+- `button`: Button in normal state
+- `button_focused`: Button when focused
+- `text_input`: Text input fields
+- `border`: Borders and frames
+- `selection`: Selected/highlighted items
+- `disabled`: Disabled components
+
+Missing keys default to color pair 0 (terminal default).
+
+**Example (class attribute -- preferred):**
 ```python
-def get_background(self) -> ColorPair:
-    return ColorPair((255, 255, 255), (0, 0, 0))  # White on Black
+class MyTheme(Theme):
+    component_colors = {
+        'background': ((255, 255, 255), (0, 0, 0)),    # White on Black
+        'button': ((0, 120, 215), (0, 0, 0)),           # Blue on Black
+        'button_focused': ((0, 0, 0), (0, 120, 215)),   # Black on Blue
+        'text_input': ((0, 255, 0), (0, 0, 0)),         # Green on Black
+        'border': ((255, 255, 255), (0, 0, 0)),          # White on Black
+        'selection': ((0, 0, 0), (255, 255, 255)),       # Black on White
+        'disabled': ((128, 128, 128), (0, 0, 0)),        # Gray on Black
+    }
 ```
 
-##### get_button()
-
+**Example (method override):**
 ```python
-def get_button(self) -> Optional[ColorPair]
+def get_components(self) -> dict[str, ColorPair]:
+    return {
+        'background': ColorPair((255, 255, 255), (0, 0, 0)),
+        'button': ColorPair((0, 120, 215), (0, 0, 0)),
+    }
 ```
-
-Returns the color pair for buttons in normal state.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for button rendering
-
-**Example:**
-```python
-def get_button(self) -> ColorPair:
-    return ColorPair((0, 255, 255), (0, 0, 0))  # Cyan on Black
-```
-
-##### get_button_focused()
-
-```python
-def get_button_focused(self) -> Optional[ColorPair]
-```
-
-Returns the color pair for buttons when focused.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for focused button rendering
-
-**Example:**
-```python
-def get_button_focused(self) -> ColorPair:
-    return ColorPair((0, 0, 0), (0, 255, 255))  # Black on Cyan (inverted)
-```
-
-##### get_text_input()
-
-```python
-def get_text_input(self) -> Optional[ColorPair]
-```
-
-Returns the color pair for text input fields.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for text input rendering
-
-##### get_border()
-
-```python
-def get_border(self) -> Optional[ColorPair]
-```
-
-Returns the color pair for borders and frames.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for border rendering
-
-##### get_selection()
-
-```python
-def get_selection(self) -> Optional[ColorPair]
-```
-
-Returns the color pair for selected/highlighted items.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for selection rendering
-
-##### get_disabled()
-
-```python
-def get_disabled(self) -> Optional[ColorPair]
-```
-
-Returns the color pair for disabled components.
-
-**Returns:**
-- `ColorPair` or `None`: Colors for disabled component rendering
 
 #### Border Configuration
 
@@ -415,6 +422,99 @@ theme = ThemeManager.load('TI 99/4A')  # Same as 'ti-99-4a'
 theme = ThemeManager.load('my_custom_theme')  # Same as 'my-custom-theme'
 ```
 
+##### create()
+
+```python
+@classmethod
+def create(
+    cls,
+    name: str,
+    color_map: dict[str, tuple[int, int, int]],
+    *,
+    component_colors: Optional[dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]]] = None,
+    border_chars: Optional[str] = None,
+    description: str = "",
+    author: str = "",
+    effects_3d: Optional[dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]]] = None,
+    double_border_chars: Optional[str] = None,
+    register: bool = True,
+) -> Theme
+```
+
+Creates a theme from data without writing a subclass. If `effects_3d` is provided, creates a `Theme3D` instead of a `Theme`.
+
+**Parameters:**
+- `name` (str): Human-readable theme name
+- `color_map` (dict): Dictionary mapping semantic color names to `(R, G, B)` tuples
+- `component_colors` (dict, optional): Dictionary of component name to `(fg_rgb, bg_rgb)` tuples
+- `border_chars` (str, optional): 8-character border string
+- `description` (str, optional): Theme description
+- `author` (str, optional): Theme author
+- `effects_3d` (dict, optional): If provided, creates a Theme3D with shadow/highlight/lowlight colors
+- `double_border_chars` (str, optional): Double-line border chars (Theme3D only)
+- `register` (bool, optional): Whether to register the theme (default `True`)
+
+**Returns:**
+- `Theme` or `Theme3D`: The created theme instance
+
+**Example:**
+```python
+theme = ThemeManager.create(
+    "My Theme",
+    color_map={
+        'background': (0, 0, 0), 'foreground': (255, 255, 255),
+        'primary': (0, 120, 215), 'success': (16, 124, 16),
+        'error': (232, 17, 35), 'warning': (193, 156, 0),
+        'info': (0, 120, 212), 'accent': (142, 68, 173),
+    },
+    component_colors={
+        'background': ((255, 255, 255), (0, 0, 0)),
+        'button': ((0, 120, 215), (0, 0, 0)),
+    },
+    border_chars="┌─┐││└─┘",
+    description="A custom theme",
+    author="Your Name",
+)
+theme.apply(stdscr)
+
+# The theme is registered automatically and can be loaded by name:
+theme = ThemeManager.load('my-theme')
+```
+
+##### load_from_file()
+
+```python
+@classmethod
+def load_from_file(cls, path: str, name: Optional[str] = None) -> Theme
+```
+
+Loads a theme from a configuration file and registers it. Supports JSON, XML, and YAML formats (detected by file extension). JSON and XML use only the Python standard library. YAML requires the optional PyYAML package.
+
+**Parameters:**
+- `path` (str): Path to the theme configuration file (`.json`, `.xml`, or `.yaml`/`.yml`)
+- `name` (str, optional): Custom registration name. If not provided, uses the name defined in the configuration file
+
+**Returns:**
+- `Theme`: Theme instance loaded from the file
+
+**Raises:**
+- `FileNotFoundError`: If the file does not exist
+- `ValueError`: If the file format is unsupported or content is invalid
+- `ImportError`: If YAML format is used but PyYAML is not installed
+
+**Example:**
+```python
+# Load a JSON theme file
+theme = ThemeManager.load_from_file('my_theme.json')
+theme.apply(stdscr)
+
+# Load with a custom registration name
+theme = ThemeManager.load_from_file('theme.yaml', name='my-yaml-theme')
+
+# The theme is automatically registered and can be loaded by name later
+theme = ThemeManager.load('my-yaml-theme')
+```
+
 ##### list_themes()
 
 ```python
@@ -566,7 +666,7 @@ def initialize_theme(self, theme) -> Tuple[SemanticColors, ComponentColors]
 Initializes all color pairs for a theme. Converts the theme's RGB color map and component colors to curses color pairs appropriate for the terminal's capabilities.
 
 **Parameters:**
-- `theme`: Theme instance with `get_color_map()` and component methods
+- `theme`: Theme instance with `get_color_map()` and `get_components()` methods
 
 **Returns:**
 - `Tuple[SemanticColors, ComponentColors]`: Initialized color pair numbers
@@ -913,16 +1013,25 @@ ColorPair(foreground: Tuple[int, int, int], background: Tuple[int, int, int])
 # Define a color pair
 pair = ColorPair((255, 255, 255), (0, 0, 0))  # White on Black
 
-# Use in theme component methods
-def get_background(self) -> ColorPair:
-    return ColorPair((255, 255, 255), (0, 0, 0))
+# Use in class attribute component_colors (preferred)
+class MyTheme(Theme):
+    component_colors = {
+        'background': ((255, 255, 255), (0, 0, 0)),  # White on Black
+        'button': ((0, 120, 215), (0, 0, 0)),         # Blue on Black
+    }
+
+# Or use in get_components() override
+def get_components(self) -> dict[str, ColorPair]:
+    return {
+        'background': ColorPair((255, 255, 255), (0, 0, 0)),
+    }
 ```
 
 ---
 
 ## Built-in Themes
 
-The library includes 8 built-in themes:
+The library includes 10 built-in themes:
 
 ### 1. Default Theme
 
@@ -981,64 +1090,98 @@ Classic dBASE IV database application theme.
 
 **Load with:** `ThemeManager.load('dbase-iv')`
 
+### 9. Borland 3D Theme
+
+Borland-inspired 3D theme with beveled edges and drop shadows.
+
+**Load with:** `ThemeManager.load('borland-3d')`
+
+### 10. dBASE IV 3D Theme
+
+Classic dBASE IV theme with 3D rendering effects.
+
+**Load with:** `ThemeManager.load('dbase-iv-3d')`
+
 ---
 
 ## Advanced Usage Patterns
 
-### Creating a Custom Theme
+### Creating a Custom Theme (Class Attributes)
 
 ```python
-from curses_themes import Theme, ThemeManager, ColorPair
+from curses_themes import Theme, ThemeManager
 
 class CyberpunkTheme(Theme):
-    """Custom cyberpunk-inspired theme."""
+    """Custom cyberpunk-inspired theme using class attributes."""
+    
+    color_map = {
+        'background': (10, 10, 30),       # Dark blue
+        'foreground': (0, 255, 255),      # Cyan
+        'primary': (255, 0, 255),         # Magenta
+        'success': (0, 255, 128),         # Bright green
+        'error': (255, 0, 128),           # Hot pink
+        'warning': (255, 255, 0),         # Yellow
+        'info': (0, 200, 255),            # Light blue
+        'accent': (255, 128, 0),          # Orange
+    }
+    
+    component_colors = {
+        'background': ((0, 255, 255), (10, 10, 30)),
+        'button': ((255, 0, 255), (10, 10, 30)),
+        'button_focused': ((10, 10, 30), (255, 0, 255)),
+        'text_input': ((0, 255, 128), (10, 10, 30)),
+        'border': ((0, 255, 255), (10, 10, 30)),
+        'selection': ((10, 10, 30), (255, 0, 255)),
+        'disabled': ((100, 100, 120), (10, 10, 30)),
+    }
+    
+    border_chars = "┌─┐││└─┘"
     
     def __init__(self):
         super().__init__(
             name="Cyberpunk",
             description="Neon cyberpunk theme with electric colors",
-            author="Your Name"
+            author="Your Name",
         )
-    
-    def get_color_map(self):
-        return {
-            'background': (10, 10, 30),       # Dark blue
-            'foreground': (0, 255, 255),      # Cyan
-            'primary': (255, 0, 255),         # Magenta
-            'success': (0, 255, 128),         # Bright green
-            'error': (255, 0, 128),           # Hot pink
-            'warning': (255, 255, 0),         # Yellow
-            'info': (0, 200, 255),            # Light blue
-            'accent': (255, 128, 0),          # Orange
-        }
-    
-    def get_background(self) -> ColorPair:
-        return ColorPair((0, 255, 255), (10, 10, 30))
-    
-    def get_button(self) -> ColorPair:
-        return ColorPair((255, 0, 255), (10, 10, 30))
-    
-    def get_button_focused(self) -> ColorPair:
-        return ColorPair((10, 10, 30), (255, 0, 255))
-    
-    def get_text_input(self) -> ColorPair:
-        return ColorPair((0, 255, 128), (10, 10, 30))
-    
-    def get_border(self) -> ColorPair:
-        return ColorPair((0, 255, 255), (10, 10, 30))
-    
-    def get_selection(self) -> ColorPair:
-        return ColorPair((10, 10, 30), (255, 0, 255))
-    
-    def get_disabled(self) -> ColorPair:
-        return ColorPair((100, 100, 120), (10, 10, 30))
-    
-    def get_border_chars(self) -> str:
-        # Use Unicode box-drawing characters
-        return "┌─┐││└─┘"
 
 # Register and use
 ThemeManager.register(CyberpunkTheme)
+theme = ThemeManager.load('cyberpunk')
+```
+
+### Creating a Theme Without Subclassing
+
+Use `ThemeManager.create()` to build a theme from data without writing a class:
+
+```python
+from curses_themes import ThemeManager
+
+theme = ThemeManager.create(
+    "Cyberpunk",
+    color_map={
+        'background': (10, 10, 30),
+        'foreground': (0, 255, 255),
+        'primary': (255, 0, 255),
+        'success': (0, 255, 128),
+        'error': (255, 0, 128),
+        'warning': (255, 255, 0),
+        'info': (0, 200, 255),
+        'accent': (255, 128, 0),
+    },
+    component_colors={
+        'background': ((0, 255, 255), (10, 10, 30)),
+        'button': ((255, 0, 255), (10, 10, 30)),
+        'button_focused': ((10, 10, 30), (255, 0, 255)),
+        'text_input': ((0, 255, 128), (10, 10, 30)),
+        'border': ((0, 255, 255), (10, 10, 30)),
+        'selection': ((10, 10, 30), (255, 0, 255)),
+        'disabled': ((100, 100, 120), (10, 10, 30)),
+    },
+    border_chars="┌─┐││└─┘",
+    description="Neon cyberpunk theme with electric colors",
+    author="Your Name",
+)
+# Theme is automatically registered; load by name later:
 theme = ThemeManager.load('cyberpunk')
 ```
 

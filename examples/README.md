@@ -107,7 +107,7 @@ python examples/theme_switcher.py
 
 **What it teaches:**
 - Creating custom theme classes
-- Implementing `get_color_map()` with RGB values
+- Defining a `color_map` class attribute with RGB values
 - Registering custom themes with ThemeManager
 - Professional color palette design (Solarized example)
 
@@ -124,7 +124,7 @@ python examples/custom_theme.py
 
 **Key takeaways:**
 - Subclass `Theme` for custom themes
-- Override `get_color_map()` to define colors
+- Set `color_map` class attribute to define colors
 - Use `ThemeManager.register(YourTheme)` to make it available
 - Load custom themes by name: `ThemeManager.load('your-theme-name')`
 
@@ -523,7 +523,7 @@ def main(stdscr):
     theme.apply(stdscr)
     
     # Your UI code here
-    stdscr.addstr(0, 0, "Hello", theme.colors.primary)
+    stdscr.addstr(0, 0, "Hello", curses.color_pair(theme.colors.primary))
     stdscr.refresh()
     stdscr.getch()
 
@@ -591,12 +591,13 @@ def show_dialog(stdscr, theme, title, message, width=50):
     # Add message inside
     msg_y = dialog_y + 2
     msg_x = dialog_x + 2
-    stdscr.addstr(msg_y, msg_x, message, theme.colors.foreground)
+    stdscr.addstr(msg_y, msg_x, message, curses.color_pair(theme.colors.foreground))
     
     # Draw buttons
     btn_y = dialog_y + dialog_h - 3
     theme.draw_box(stdscr, btn_y, dialog_x + 10, 3, 12)
-    stdscr.addstr(btn_y + 1, dialog_x + 14, "OK", theme.colors.button_focused)
+    stdscr.addstr(btn_y + 1, dialog_x + 14, "OK",
+                  curses.color_pair(theme.components.button_focused))
     
     stdscr.refresh()
     return stdscr.getch()
@@ -614,7 +615,8 @@ def create_layout(stdscr, theme):
     
     # Menu bar at top
     menu_h = 1
-    stdscr.addstr(0, 0, " File  Edit  View ", theme.colors.selection)
+    stdscr.addstr(0, 0, " File  Edit  View ",
+                  curses.color_pair(theme.components.selection))
     
     # Main content area
     content_y = menu_h
@@ -623,9 +625,9 @@ def create_layout(stdscr, theme):
     
     # Status bar at bottom
     status_y = height - 2
-    stdscr.addstr(status_y, 0, " Ready ", theme.colors.info)
+    stdscr.addstr(status_y, 0, " Ready ", curses.color_pair(theme.colors.info))
     stdscr.addstr(status_y, width - 20, f"Theme: {theme.name}", 
-                  theme.colors.foreground)
+                  curses.color_pair(theme.colors.foreground))
 ```
 
 **Used in:** text_editor_demo.py, table_browser_demo.py, system_monitor_demo.py
@@ -638,24 +640,23 @@ def create_layout(stdscr, theme):
 from curses_themes import Theme, ThemeManager
 
 class MyTheme(Theme):
+    color_map = {
+        'background': (0, 0, 0),
+        'foreground': (255, 255, 255),
+        'primary': (0, 120, 215),
+        'success': (0, 200, 0),
+        'error': (200, 0, 0),
+        'warning': (255, 165, 0),
+        'info': (100, 150, 255),
+        'accent': (150, 100, 255),
+    }
+
     def __init__(self):
         super().__init__(
             name="My Theme",
             description="Custom theme for my app",
             author="Your Name"
         )
-    
-    def get_color_map(self):
-        return {
-            'background': (0, 0, 0),
-            'foreground': (255, 255, 255),
-            'primary': (0, 120, 215),
-            'success': (0, 200, 0),
-            'error': (200, 0, 0),
-            'warning': (255, 165, 0),
-            'info': (100, 150, 255),
-            'accent': (150, 100, 255),
-        }
 
 # Register once at startup
 ThemeManager.register(MyTheme)

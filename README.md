@@ -67,6 +67,22 @@ cd curses-themes
 pip install -e .
 ```
 
+### Windows
+
+Python on Windows doesn't include the `curses` module. Install with Windows support:
+
+```bash
+pip install curses-themes[windows]
+```
+
+Or install `windows-curses` separately:
+
+```bash
+pip install windows-curses
+```
+
+Use [Windows Terminal](https://aka.ms/terminal) for best color support.
+
 ## Theme Gallery
 
 ### Modern Themes
@@ -178,30 +194,48 @@ Turbo Vision 3D look<br>
 from curses_themes import Theme, ThemeManager
 
 class SolarizedTheme(Theme):
-    """Solarized Dark theme"""
-    
+    """Solarized Dark theme using declarative class attributes."""
+    color_map = {
+        'background': (0, 43, 54),
+        'foreground': (131, 148, 150),
+        'primary': (38, 139, 210),
+        'success': (133, 153, 0),
+        'error': (220, 50, 47),
+        'warning': (181, 137, 0),
+        'info': (42, 161, 152),
+        'accent': (211, 54, 130),
+    }
+    component_colors = {
+        'background': ((131, 148, 150), (0, 43, 54)),
+        'button': ((38, 139, 210), (0, 43, 54)),
+        'button_focused': ((0, 43, 54), (38, 139, 210)),
+        'border': ((131, 148, 150), (0, 43, 54)),
+    }
+    border_chars = "┌─┐││└─┘"
+
     def __init__(self):
         super().__init__(
             name="Solarized Dark",
             description="Precision colors for machines and people",
-            author="Ethan Schoonover"
+            author="Ethan Schoonover",
         )
-    
-    def get_color_map(self):
-        return {
-            'background': (0, 43, 54),
-            'foreground': (131, 148, 150),
-            'primary': (38, 139, 210),
-            'success': (133, 153, 0),
-            'error': (220, 50, 47),
-            'warning': (181, 137, 0),
-            'info': (42, 161, 152),
-            'accent': (211, 54, 130),
-        }
 
-# Register and use
 ThemeManager.register(SolarizedTheme)
 theme = ThemeManager.load('solarized-dark')
+```
+
+Or create a theme without subclassing:
+
+```python
+theme = ThemeManager.create(
+    "Quick Theme",
+    color_map={
+        'background': (0, 0, 0), 'foreground': (255, 255, 255),
+        'primary': (0, 120, 215), 'success': (16, 124, 16),
+        'error': (232, 17, 35), 'warning': (193, 156, 0),
+        'info': (0, 120, 212), 'accent': (142, 68, 173),
+    },
+)
 ```
 
 ## Runtime Theme Switching
@@ -211,7 +245,7 @@ import curses
 from curses_themes import ThemeManager
 
 def main(stdscr):
-    themes = ['default', 'dark', 'light', 'borland3d', 'dbase3']
+    themes = ['default', 'dark', 'light', 'borland-3d', 'dbase-iii']
     current = 0
     
     while True:
@@ -276,8 +310,8 @@ See the `examples/` directory for complete demonstrations:
 
 - `basic_usage.py` - Simple theme demonstration
 - `theme_switcher.py` - Interactive theme switching
-- `dashboard.py` - Full TUI dashboard with themes
 - `custom_theme.py` - Creating custom themes
+- `config_theme_demo.py` - Loading themes from config files
 
 ## Contributing
 
@@ -286,8 +320,8 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ### Adding New Themes
 
 1. Create theme class in `curses_themes/themes/your_theme.py`
-2. Implement `get_color_map()` method
-3. Optionally override `get_border_chars()`
+2. Define `color_map` and `component_colors` class attributes
+3. Optionally set `border_chars` (8-character string: TL, T, TR, L, R, BL, B, BR)
 4. Add tests in `tests/test_themes/test_your_theme.py`
 5. Submit pull request
 

@@ -4,10 +4,11 @@ Visual guide to all curses-themes color schemes and border styles.
 
 ## Overview
 
-The curses-themes library includes 8 carefully crafted themes split into two categories:
+The curses-themes library includes 10 carefully crafted themes split into three categories:
 
 - **Modern Themes** (3): Contemporary color schemes for current applications
 - **Retro Themes** (5): Authentic recreations of classic computer interfaces from 1980-1995
+- **3D Effect Themes** (2): Depth-enhanced interfaces inspired by 1990s windowed applications
 
 Each theme includes coordinated color palettes, semantic color mappings, and period-appropriate border styles.
 
@@ -39,8 +40,8 @@ The Default theme provides a timeless terminal aesthetic with high contrast and 
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('default')
+theme = ThemeManager.load('default')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -87,8 +88,8 @@ Modern dark mode aesthetic with muted colors designed for extended viewing sessi
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('dark')
+theme = ThemeManager.load('dark')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -107,13 +108,13 @@ manager.load_theme('dark')
 Border: Unicode ┌─┐││└─┘
 ```
 
+![Dark Screenshot](screenshots/dark.png)
+
 ---
 
 ### 3. Light Theme
 
 **High contrast light theme**
-
-![Dark Screenshot](screenshots/dark.png)
 
 Clean, bright interface with dark text on light background for daytime use.
 
@@ -135,8 +136,8 @@ Clean, bright interface with dark text on light background for daytime use.
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('light')
+theme = ThemeManager.load('light')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -155,6 +156,8 @@ manager.load_theme('light')
 Border: Unicode double ╔═╗║╚═╝║
 ```
 
+![Light Screenshot](screenshots/light.png)
+
 ---
 
 ## Retro Themes
@@ -167,8 +170,6 @@ Recreates the warm cyan-on-blue palette of the first 16-bit home computer.
 
 **Historical Context:**
 The TI-99/4A competed with the Commodore 64 and Apple II. Its distinctive cyan text on medium blue background became iconic in the BASIC programming environment. The color scheme was warmer and more inviting than the stark white-on-black of competitors.
-![Light Screenshot](screenshots/light.png)
-
 
 **Color Palette:**
 - Background: Cyan on blue
@@ -188,8 +189,8 @@ The TI-99/4A competed with the Commodore 64 and Apple II. Its distinctive cyan t
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('ti994a')
+theme = ThemeManager.load('ti-99-4a')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -208,6 +209,8 @@ manager.load_theme('ti994a')
 Border: ASCII +-+||+-+ (1981-era)
 ```
 
+![TI-99/4A Screenshot](screenshots/ti-99-4a.png)
+
 ---
 
 ### 5. TRS-80 Theme (1980-1983)
@@ -218,8 +221,6 @@ Pure monochrome white-on-black display matching the professional business aesthe
 
 **Historical Context:**
 The TRS-80 was one of the "1977 Trinity" of home computers. The Model III and 4 featured crisp monochrome displays that made them popular for business applications and word processing. Radio Shack marketed the professional appearance, contrasting it with "toy-like" color displays.
-
-![TI-99/4A Screenshot](screenshots/ti-99-4a.png)
 
 **Color Palette:**
 - Background: White on black (monochrome)
@@ -240,8 +241,8 @@ The TRS-80 was one of the "1977 Trinity" of home computers. The Model III and 4 
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('trs80')
+theme = ThemeManager.load('trs-80')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -260,6 +261,8 @@ manager.load_theme('trs80')
 Border: ASCII +-+||+-+ (early 80s)
 ```
 
+![TRS-80 Screenshot](screenshots/trs-80.png)
+
 ---
 
 ### 6. DOS Theme (1981-1995)
@@ -270,8 +273,6 @@ The iconic interface that powered the IBM PC era with strategic use of yellow me
 
 **Historical Context:**
 MS-DOS powered the IBM PC and compatibles from 1981 through the mid-1990s. Its 80x25 text mode with 16 colors became the de facto standard for PC software. Key applications like WordPerfect, Lotus 1-2-3, and dBASE all shared this visual language.
-
-![TRS-80 Screenshot](screenshots/trs-80.png)
 
 **Color Palette:**
 - Background: White on black
@@ -292,8 +293,8 @@ MS-DOS powered the IBM PC and compatibles from 1981 through the mid-1990s. Its 8
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('dos')
+theme = ThemeManager.load('dos')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -313,6 +314,8 @@ manager.load_theme('dos')
 Border: ASCII +-+||+-+ (code page 437)
 ```
 
+![DOS Screenshot](screenshots/dos.png)
+
 ---
 
 ### 7. dBASE III Theme (1984-1985)
@@ -325,7 +328,6 @@ The signature cyan menu highlighting that became synonymous with database applic
 dBASE III revolutionized database management on PCs, bringing mainframe-style capabilities to the IBM PC. Its distinctive cyan-on-black interface for menus and white command-line "dot prompt" became iconic. By 1985, dBASE III Plus was the best-selling database software, and its .dbf format became an industry standard.
 
 **Color Palette:**
-![DOS Screenshot](screenshots/dos.png)
 
 - Background: White on black (dot prompt)
 - Buttons: Cyan on black (signature menu color)
@@ -345,8 +347,8 @@ dBASE III revolutionized database management on PCs, bringing mainframe-style ca
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('dbase3')
+theme = ThemeManager.load('dbase-iii')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -366,6 +368,8 @@ manager.load_theme('dbase3')
 Border: ASCII +-+||+-+ (simple box)
 ```
 
+![dBASE III Screenshot](screenshots/dbase-iii.png)
+
 ---
 
 ### 8. dBASE IV Theme (1988-1993)
@@ -380,8 +384,6 @@ dBASE IV (1988) introduced a revolutionary windowed interface with pull-down men
 **Color Palette:**
 - Background: White on blue (Control Center)
 - Buttons: Yellow on blue (menu highlighting)
-![dBASE III Screenshot](screenshots/dbase-iii.png)
-
 - Focused: Blue on yellow (inverted)
 - Text Input: Cyan on blue (data entry)
 - Borders: White on blue
@@ -398,8 +400,8 @@ dBASE IV (1988) introduced a revolutionary windowed interface with pull-down men
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('dbase4')
+theme = ThemeManager.load('dbase-iv')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -420,6 +422,8 @@ manager.load_theme('dbase4')
 Border: ASCII +-+||+-+ (80x25 text)
 ```
 
+![dBASE IV Screenshot](screenshots/dbase-iv.png)
+
 ---
 
 ## Theme Comparison Table
@@ -435,8 +439,6 @@ Border: ASCII +-+||+-+ (80x25 text)
 | **dBASE III** | 1984-1985 | White/Black | Cyan | ASCII `+-+\|\|+-+` | Database apps, data entry |
 | **dBASE IV** | 1988-1993 | White/Blue | Yellow | ASCII `+-+\|\|+-+` | Windowed TUI, menus |
 
-![dBASE IV Screenshot](screenshots/dbase-iv.png)
-
 ---
 
 ## Quick Reference
@@ -446,14 +448,12 @@ Border: ASCII +-+||+-+ (80x25 text)
 ```python
 from curses_themes import ThemeManager
 
-# Initialize manager
-manager = ThemeManager()
-
 # Load any theme by name
-manager.load_theme('default')   # or 'dark', 'light', 'ti994a', etc.
+theme = ThemeManager.load('default')   # or 'dark', 'light', 'ti-99-4a', etc.
+theme.apply(stdscr)
 
 # Get theme information
-theme = manager.get_current_theme()
+theme = ThemeManager.get_current()
 print(f"Theme: {theme.name}")
 print(f"Description: {theme.description}")
 ```
@@ -463,7 +463,8 @@ print(f"Description: {theme.description}")
 Use these exact names when loading themes:
 
 - **Modern:** `default`, `dark`, `light`
-- **Retro:** `ti994a`, `trs80`, `dos`, `dbase3`, `dbase4`
+- **Retro:** `ti-99-4a`, `trs-80`, `dos`, `dbase-iii`, `dbase-iv`
+- **3D Effect:** `borland-3d`, `dbase-iv-3d`
 
 ### Color Components
 
@@ -488,15 +489,7 @@ Themes use two border character sets:
 
 ## Screenshot Gallery
 
-**Note:** Automated screenshot generation is planned for a future release. Screenshots will show each theme applied to real applications including:
-
-- Text editor interface
-- Dialog boxes and menus
-- Data entry forms
-- List/table views
-- Button groups and controls
-
-In the meantime, the ASCII mockups in each theme section provide a visual preview of the color schemes and border styles.
+Screenshots for all 10 themes are available in the `screenshots/` directory. Each theme section above includes its corresponding screenshot, and a side-by-side comparison is available at `screenshots/comparison.png`.
 
 ---
 
@@ -548,8 +541,8 @@ Recreates the sophisticated windowing aesthetic of Borland's Turbo Vision framew
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('borland-3d')
+theme = ThemeManager.load('borland-3d')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
@@ -598,8 +591,8 @@ Combines the classic dBASE IV blue interface with modern 3D depth effects for a 
 ```python
 from curses_themes import ThemeManager
 
-manager = ThemeManager()
-manager.load_theme('dbase-iv-3d')
+theme = ThemeManager.load('dbase-iv-3d')
+theme.apply(stdscr)
 ```
 
 **Visual Preview:**
