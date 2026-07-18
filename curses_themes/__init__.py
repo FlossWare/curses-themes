@@ -33,52 +33,81 @@ Example:
         if __name__ == "__main__":
             curses.wrapper(main)
 
-    Creating a custom theme::
+    Creating a custom theme with class attributes::
 
         from curses_themes import Theme, ThemeManager
 
         class MyTheme(Theme):
+            color_map = {
+                'background': (0, 0, 0),
+                'foreground': (255, 255, 255),
+                'primary': (0, 120, 215),
+                'success': (16, 124, 16),
+                'error': (232, 17, 35),
+                'warning': (193, 156, 0),
+                'info': (0, 120, 212),
+                'accent': (142, 68, 173),
+            }
+            component_colors = {
+                'background': ((255, 255, 255), (0, 0, 0)),
+                'button': ((0, 120, 215), (0, 0, 0)),
+                'button_focused': ((0, 0, 0), (0, 120, 215)),
+                'border': ((255, 255, 255), (0, 0, 0)),
+            }
+
             def __init__(self):
                 super().__init__(
                     name="My Theme",
                     description="A custom theme",
-                    author="Your Name"
+                    author="Your Name",
                 )
 
-            def get_color_map(self):
-                return {
-                    'background': (0, 0, 0),
-                    'foreground': (255, 255, 255),
-                    'primary': (0, 120, 215),
-                    'success': (16, 124, 16),
-                    'error': (232, 17, 35),
-                    'warning': (193, 156, 0),
-                    'info': (0, 120, 212),
-                    'accent': (142, 68, 173),
-                }
-
-        # Register and use
         ThemeManager.register(MyTheme)
         theme = ThemeManager.load('my-theme')
+
+    Or create a theme without subclassing::
+
+        theme = ThemeManager.create(
+            "Quick Theme",
+            color_map={
+                'background': (0, 0, 0), 'foreground': (255, 255, 255),
+                'primary': (0, 120, 215), 'success': (16, 124, 16),
+                'error': (232, 17, 35), 'warning': (193, 156, 0),
+                'info': (0, 120, 212), 'accent': (142, 68, 173),
+            },
+        )
 """
 
-from .colors import ColorManager
-from .config_theme import ConfigTheme, ConfigTheme3D, load_theme_from_file
-from .manager import ThemeManager
-from .theme import ColorPair, ComponentColors, SemanticColors, Theme
-from .theme3d import Theme3D
-from .themes import (
-    Borland3DTheme,
-    DarkTheme,
-    DBase3Theme,
-    DBase4_3DTheme,
-    DBase4Theme,
-    DefaultTheme,
-    DOSTheme,
-    LightTheme,
-    TI994ATheme,
-    TRS80Theme,
-)
+import sys
+
+try:
+    from .colors import ColorManager
+    from .config_theme import ConfigTheme, ConfigTheme3D, load_theme_from_file
+    from .manager import ThemeManager
+    from .theme import ColorPair, ComponentColors, SemanticColors, Theme
+    from .theme3d import Theme3D
+    from .themes import (
+        Borland3DTheme,
+        DarkTheme,
+        DBase3Theme,
+        DBase4_3DTheme,
+        DBase4Theme,
+        DefaultTheme,
+        DOSTheme,
+        LightTheme,
+        TI994ATheme,
+        TRS80Theme,
+    )
+except ImportError as e:
+    if "curses" in str(e).lower() and sys.platform == "win32":
+        raise ImportError(
+            "curses-themes requires the 'curses' module, which is not included "
+            "with Python on Windows. Install windows-curses:\n\n"
+            "    pip install curses-themes[windows]\n\n"
+            "Or directly:\n\n"
+            "    pip install windows-curses"
+        ) from e
+    raise
 
 __version__ = "0.5"
 __author__ = "FlossWare"
