@@ -187,6 +187,7 @@ class Theme3D(Theme):
     Subclasses must define:
     - effects_3d: dict mapping 'shadow', 'highlight', and optionally
       'lowlight' to (fg_rgb_tuple, bg_rgb_tuple) pairs
+    - __init__: call super().__init__(name=...) with at least a name
     """
 ```
 
@@ -195,6 +196,10 @@ class Theme3D(Theme):
 #### `effects_3d`
 
 A dict mapping effect names to `(fg_rgb_tuple, bg_rgb_tuple)` pairs. Required keys are `'shadow'` and `'highlight'`; `'lowlight'` is optional.
+
+### Required `__init__`
+
+Subclasses must call `super().__init__(name="...")` to set the theme name. Optional keyword arguments: `description` and `author`.
 
 **Example:**
 ```python
@@ -711,7 +716,9 @@ curses.wrapper(main)
 
 ### Creating Custom 3D Themes
 
-Extending Theme3D for your own color scheme:
+Extending Theme3D for your own color scheme. Define colors and effects as
+class attributes, then call `super().__init__()` with the theme's name
+(required), description, and author:
 
 ```python
 from curses_themes import Theme3D, ThemeManager
@@ -753,7 +760,7 @@ class Custom3DTheme(Theme3D):
         super().__init__(
             name="Custom 3D Purple",
             description="Purple 3D theme with lavender accents",
-            author="Your Name"
+            author="Your Name",
         )
 
 # Register and use custom theme
