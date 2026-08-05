@@ -8,74 +8,6 @@ support to Python's standard curses module with zero external dependencies.
 Copyright (C) 2024 FlossWare
 
 MIT License - see LICENSE file for details.
-
-Example:
-    Basic usage with built-in theme::
-
-        import curses
-        from curses_themes import ThemeManager
-
-        def main(stdscr):
-            # Load and apply a theme
-            theme = ThemeManager.load('dark')
-            theme.apply(stdscr)
-
-            # Use semantic colors
-            stdscr.addstr(0, 0, "Success!", curses.color_pair(theme.colors.success))
-            stdscr.addstr(1, 0, "Error!", curses.color_pair(theme.colors.error))
-
-            # Draw themed boxes
-            theme.draw_box(stdscr, 3, 2, 10, 40, title="My Panel")
-
-            stdscr.refresh()
-            stdscr.getch()
-
-        if __name__ == "__main__":
-            curses.wrapper(main)
-
-    Creating a custom theme with class attributes::
-
-        from curses_themes import Theme, ThemeManager
-
-        class MyTheme(Theme):
-            color_map = {
-                'background': (0, 0, 0),
-                'foreground': (255, 255, 255),
-                'primary': (0, 120, 215),
-                'success': (16, 124, 16),
-                'error': (232, 17, 35),
-                'warning': (193, 156, 0),
-                'info': (0, 120, 212),
-                'accent': (142, 68, 173),
-            }
-            component_colors = {
-                'background': ((255, 255, 255), (0, 0, 0)),
-                'button': ((0, 120, 215), (0, 0, 0)),
-                'button_focused': ((0, 0, 0), (0, 120, 215)),
-                'border': ((255, 255, 255), (0, 0, 0)),
-            }
-
-            def __init__(self):
-                super().__init__(
-                    name="My Theme",
-                    description="A custom theme",
-                    author="Your Name",
-                )
-
-        ThemeManager.register(MyTheme)
-        theme = ThemeManager.load('my-theme')
-
-    Or create a theme without subclassing::
-
-        theme = ThemeManager.create(
-            "Quick Theme",
-            color_map={
-                'background': (0, 0, 0), 'foreground': (255, 255, 255),
-                'primary': (0, 120, 215), 'success': (16, 124, 16),
-                'error': (232, 17, 35), 'warning': (193, 156, 0),
-                'info': (0, 120, 212), 'accent': (142, 68, 173),
-            },
-        )
 """
 
 import sys
@@ -88,13 +20,19 @@ try:
     from .theme3d import Theme3D
     from .themes import (
         Borland3DTheme,
+        CatppuccinTheme,
         DarkTheme,
         DBase3Theme,
         DBase4_3DTheme,
         DBase4Theme,
         DefaultTheme,
         DOSTheme,
+        DraculaTheme,
         LightTheme,
+        MonokaiTheme,
+        NordTheme,
+        SolarizedDarkTheme,
+        SolarizedLightTheme,
         TI994ATheme,
         TRS80Theme,
     )
@@ -115,6 +53,7 @@ __license__ = "MIT"
 
 __all__ = [
     "Borland3DTheme",
+    "CatppuccinTheme",
     "ColorManager",
     "ColorPair",
     "ComponentColors",
@@ -126,8 +65,13 @@ __all__ = [
     "DOSTheme",
     "DarkTheme",
     "DefaultTheme",
+    "DraculaTheme",
     "LightTheme",
+    "MonokaiTheme",
+    "NordTheme",
     "SemanticColors",
+    "SolarizedDarkTheme",
+    "SolarizedLightTheme",
     "TI994ATheme",
     "TRS80Theme",
     "Theme",

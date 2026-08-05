@@ -99,13 +99,19 @@ class ThemeManager:
         # loading themes until they're actually needed
         try:
             from .themes.borland3d import Borland3DTheme
+            from .themes.catppuccin import CatppuccinTheme
             from .themes.dark import DarkTheme
             from .themes.dbase3 import DBase3Theme
             from .themes.dbase4 import DBase4Theme
             from .themes.dbase4_3d import DBase4_3DTheme
             from .themes.default import DefaultTheme
             from .themes.dos import DOSTheme
+            from .themes.dracula import DraculaTheme
             from .themes.light import LightTheme
+            from .themes.monokai import MonokaiTheme
+            from .themes.nord import NordTheme
+            from .themes.solarized_dark import SolarizedDarkTheme
+            from .themes.solarized_light import SolarizedLightTheme
             from .themes.ti994a import TI994ATheme
             from .themes.trs80 import TRS80Theme
         except ImportError:
@@ -121,6 +127,13 @@ class ThemeManager:
             cls.register(DBase4Theme, "dbase-iv")
             cls.register(Borland3DTheme, "borland-3d")
             cls.register(DBase4_3DTheme, "dbase-iv-3d")
+            # Popular modern developer palettes
+            cls.register(DraculaTheme, "dracula")
+            cls.register(NordTheme, "nord")
+            cls.register(SolarizedDarkTheme, "solarized-dark")
+            cls.register(SolarizedLightTheme, "solarized-light")
+            cls.register(MonokaiTheme, "monokai")
+            cls.register(CatppuccinTheme, "catppuccin")
 
         cls._builtin_registered = True
 
@@ -137,22 +150,6 @@ class ThemeManager:
         Raises:
             TypeError: If theme_class is not a Theme subclass
             ValueError: If a theme with this name is already registered
-
-        Example:
-            ```python
-            class MyTheme(Theme):
-                def __init__(self):
-                    super().__init__("My Theme", "A custom theme")
-
-                def get_color_map(self):
-                    return {...}
-
-            # Register with automatic name
-            ThemeManager.register(MyTheme)
-
-            # Or register with custom name
-            ThemeManager.register(MyTheme, 'my-custom')
-            ```
         """
         if not isinstance(theme_class, type):
             raise TypeError(
@@ -167,19 +164,15 @@ class ThemeManager:
                 "All themes must inherit from Theme."
             )
 
-        # Get name from theme instance if not provided
         if name is None:
             temp_instance = theme_class()  # type: ignore[call-arg]
             name = temp_instance.name
-            # Cache metadata while we have the instance
             cls._theme_metadata[cls._normalize_name(name)] = {
                 "name": temp_instance.name,
                 "description": temp_instance.description,
                 "author": temp_instance.author,
             }
         else:
-            # When explicit name is provided, we still need to cache metadata
-            # Create temporary instance only if not already cached
             normalized_name = cls._normalize_name(name)
             if normalized_name not in cls._theme_metadata:
                 temp_instance = theme_class()  # type: ignore[call-arg]
@@ -191,7 +184,6 @@ class ThemeManager:
 
         normalized_name = cls._normalize_name(name)
 
-        # Check for conflicts
         if normalized_name in cls._themes:
             existing = cls._themes[normalized_name]
             if existing != theme_class:
@@ -200,27 +192,13 @@ class ThemeManager:
                     f"Use a different name or "
                     f"unregister the existing theme first."
                 )
-            # Same factory already registered, silently ignore
             return
 
         cls._themes[normalized_name] = theme_class
 
     @classmethod
     def unregister(cls, name: str) -> None:
-        """
-        Unregister a theme by name.
-
-        Args:
-            name: Name of theme to unregister
-
-        Raises:
-            KeyError: If theme is not registered
-
-        Example:
-            ```python
-            ThemeManager.unregister('my-custom-theme')
-            ```
-        """
+        """Unregister a theme by name."""
         normalized_name = cls._normalize_name(name)
 
         if normalized_name not in cls._themes:
@@ -243,32 +221,7 @@ class ThemeManager:
 
     @classmethod
     def load(cls, name: str) -> Theme:
-        """
-        Load a theme by name.
-
-        Creates a new instance of the requested theme. Built-in themes are
-        automatically registered on first load.
-
-        Args:
-            name: Theme name (case-insensitive, spaces/underscores converted to hyphens)
-
-        Returns:
-            New Theme instance
-
-        Raises:
-            KeyError: If theme is not registered
-
-        Example:
-            ```python
-            theme = ThemeManager.load('dark')
-            theme.apply(stdscr)
-
-            # Names are normalized
-            theme = ThemeManager.load('Dark')  # Same as 'dark'
-            theme = ThemeManager.load('my_custom_theme')  # Same as 'my-custom-theme'
-            ```
-        """
-        # Ensure built-in themes are registered
+        """Load a theme by name."""
         cls._register_builtin_themes()
 
         normalized_name = cls._normalize_name(name)
@@ -279,50 +232,14 @@ class ThemeManager:
                 f"Theme '{normalized_name}' not found. Available themes: {available}"
             )
 
-        # Create new instance from factory (class or callable)
         factory = cls._themes[normalized_name]
         theme_instance = factory()  # type: ignore[call-arg]
-
-        # Track as current theme
         cls._current_theme = theme_instance
-
         return theme_instance
 
     @classmethod
     def load_from_file(cls, path: str, name: Optional[str] = None) -> Theme:
-        """
-        Load a theme from a configuration file and register it.
-
-        Supports JSON, XML, and YAML formats (detected by file extension).
-        JSON and XML use only the Python standard library. YAML requires
-        the optional PyYAML package.
-
-        Args:
-            path: Path to the theme configuration file (.json, .xml, or .yaml/.yml)
-            name: Optional registration name. If not provided, uses the name
-                 defined in the configuration file.
-
-        Returns:
-            Theme instance loaded from the file
-
-        Raises:
-            FileNotFoundError: If the file does not exist
-            ValueError: If the file format is unsupported or content is invalid
-            ImportError: If YAML format is used but PyYAML is not installed
-
-        Example:
-            ```python
-            # Load a JSON theme file
-            theme = ThemeManager.load_from_file('my_theme.json')
-            theme.apply(stdscr)
-
-            # Load with a custom registration name
-            theme = ThemeManager.load_from_file('theme.yaml', name='my-yaml-theme')
-
-            # The theme is automatically registered and can be loaded by name
-            theme = ThemeManager.load('my-yaml-theme')
-            ```
-        """
+        """Load a theme from a configuration file and register it."""
         from .config_theme import load_theme_from_file
 
         theme = load_theme_from_file(path)
@@ -330,53 +247,22 @@ class ThemeManager:
         registration_name = name if name is not None else theme.name
         normalized = cls._normalize_name(registration_name)
 
-        # Cache metadata from the loaded instance
         cls._theme_metadata[normalized] = {
             "name": theme.name,
             "description": theme.description,
             "author": theme.author,
         }
 
-        # Store a factory that re-loads from the same file so ConfigTheme
-        # (which requires a config dict) can be re-created by load().
-        _path = path  # capture for closure
+        _path = path
         cls._themes[normalized] = lambda: load_theme_from_file(_path)
-
-        # Track as current theme
         cls._current_theme = theme
-
         return theme
 
     @classmethod
     def load_themes_from_directory(
         cls, directory: str, pattern: str = "*.json"
     ) -> int:
-        """
-        Load all matching theme files from a directory.
-
-        Scans the given directory for files matching the glob pattern, loads
-        each as a theme, and registers it. Files that fail to load (invalid
-        format, missing required fields, etc.) are silently skipped.
-        ``schema.json`` is always skipped to match the Java API behaviour.
-
-        Args:
-            directory: Path to the directory containing theme files
-            pattern: Glob pattern for theme files (default ``"*.json"``)
-
-        Returns:
-            Number of themes successfully loaded
-
-        Example:
-            ```python
-            count = ThemeManager.load_themes_from_directory('/path/to/themes')
-            print(f"Loaded {count} themes")
-
-            # Load only YAML themes
-            count = ThemeManager.load_themes_from_directory(
-                '/path/to/themes', pattern='*.yaml'
-            )
-            ```
-        """
+        """Load all matching theme files from a directory."""
         dir_path = Path(directory)
         count = 0
 
@@ -387,7 +273,6 @@ class ThemeManager:
                 cls.load_from_file(str(path))
                 count += 1
             except Exception:
-                # Silently skip files that fail to load
                 pass
 
         return count
@@ -410,40 +295,7 @@ class ThemeManager:
         double_border_chars: Optional[str] = None,
         register: bool = True,
     ) -> Theme:
-        """
-        Create a theme from data and optionally register it.
-
-        A convenience factory that creates a Theme (or Theme3D if effects_3d
-        is provided) without writing a subclass.
-
-        Args:
-            name: Human-readable theme name
-            color_map: Dict mapping semantic color names to (R, G, B) tuples
-            component_colors: Optional dict of component -> (fg_rgb, bg_rgb)
-            border_chars: Optional 8-character border string
-            description: Theme description
-            author: Theme author
-            effects_3d: If provided, creates a Theme3D with these 3D colors
-            double_border_chars: Double-line border chars (Theme3D only)
-            register: Whether to register the theme (default True)
-
-        Returns:
-            The created Theme or Theme3D instance
-
-        Example:
-            ```python
-            theme = ThemeManager.create(
-                "My Theme",
-                color_map={
-                    'background': (0, 0, 0), 'foreground': (255, 255, 255),
-                    'primary': (0, 120, 215), 'success': (16, 124, 16),
-                    'error': (232, 17, 35), 'warning': (193, 156, 0),
-                    'info': (0, 120, 212), 'accent': (142, 68, 173),
-                },
-            )
-            theme.apply(stdscr)
-            ```
-        """
+        """Create a theme from data and optionally register it."""
         if effects_3d is not None:
             from .theme3d import Theme3D
 
@@ -496,34 +348,14 @@ class ThemeManager:
 
     @classmethod
     def list_themes(cls) -> dict[str, dict[str, str]]:
-        """
-        List all registered themes with metadata.
-
-        Returns:
-            Dictionary mapping theme names to metadata dictionaries with
-            keys: 'name', 'description', 'author'
-
-        Example:
-            ```python
-            themes = ThemeManager.list_themes()
-            for name, info in themes.items():
-                print(f"{name}:")
-                print(f"  Name: {info['name']}")
-                print(f"  Description: {info['description']}")
-                print(f"  Author: {info['author']}")
-            ```
-        """
-        # Ensure built-in themes are registered
+        """List all registered themes with metadata."""
         cls._register_builtin_themes()
 
         result = {}
         for normalized_name in sorted(cls._themes.keys()):
-            # Use cached metadata if available
             if normalized_name in cls._theme_metadata:
                 result[normalized_name] = cls._theme_metadata[normalized_name].copy()
             else:
-                # Fallback: create temp instance if metadata wasn't cached
-                # This should rarely happen (only for themes registered before this optimization)
                 theme_class = cls._themes[normalized_name]
                 temp_instance = theme_class()  # type: ignore[call-arg]
                 metadata = {
@@ -531,7 +363,6 @@ class ThemeManager:
                     "description": temp_instance.description,
                     "author": temp_instance.author,
                 }
-                # Cache it for next time
                 cls._theme_metadata[normalized_name] = metadata
                 result[normalized_name] = metadata.copy()
 
@@ -539,33 +370,12 @@ class ThemeManager:
 
     @classmethod
     def get_current(cls) -> Optional[Theme]:
-        """
-        Get the currently active theme.
-
-        Returns:
-            Current Theme instance, or None if no theme has been loaded
-
-        Example:
-            ```python
-            current = ThemeManager.get_current()
-            if current:
-                print(f"Current theme: {current.name}")
-            ```
-        """
+        """Get the currently active theme."""
         return cls._current_theme
 
     @classmethod
     def reset(cls) -> None:
-        """
-        Reset the theme manager state.
-
-        Clears all registered themes and current theme. This is primarily
-        for testing purposes.
-
-        Warning:
-            This will unregister all themes, including built-in themes.
-            They will be re-registered on next load() or list_themes() call.
-        """
+        """Reset the theme manager state."""
         cls._themes.clear()
         cls._theme_metadata.clear()
         cls._current_theme = None
