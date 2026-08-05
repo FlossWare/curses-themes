@@ -3,12 +3,18 @@
 
 import pytest
 
+from curses_themes.themes.catppuccin import CatppuccinTheme
 from curses_themes.themes.dark import DarkTheme
 from curses_themes.themes.dbase3 import DBase3Theme
 from curses_themes.themes.dbase4 import DBase4Theme
 from curses_themes.themes.default import DefaultTheme
 from curses_themes.themes.dos import DOSTheme
+from curses_themes.themes.dracula import DraculaTheme
 from curses_themes.themes.light import LightTheme
+from curses_themes.themes.monokai import MonokaiTheme
+from curses_themes.themes.nord import NordTheme
+from curses_themes.themes.solarized_dark import SolarizedDarkTheme
+from curses_themes.themes.solarized_light import SolarizedLightTheme
 from curses_themes.themes.ti994a import TI994ATheme
 from curses_themes.themes.trs80 import TRS80Theme
 
@@ -24,6 +30,12 @@ ALL_BUILTIN_THEMES = [
     DBase4Theme,
     TI994ATheme,
     TRS80Theme,
+    DraculaTheme,
+    NordTheme,
+    SolarizedDarkTheme,
+    SolarizedLightTheme,
+    MonokaiTheme,
+    CatppuccinTheme,
 ]
 
 
@@ -196,7 +208,6 @@ class TestSpecificThemeCharacteristics:
     def test_dos_theme_is_retro(self):
         """Test DOS theme has retro characteristics."""
         theme = DOSTheme()
-        # DOS theme should mention its era or characteristics
         assert "DOS" in theme.name or "dos" in theme.description.lower()
 
     def test_ti994a_theme_is_retro(self):
@@ -217,7 +228,6 @@ class TestThemeColorContrast:
         fg = color_map["foreground"]
         bg = color_map["background"]
 
-        # Colors should be different (at least one component differs)
         assert fg != bg, f"{theme_class.__name__} foreground equals background"
 
     @pytest.mark.parametrize("theme_class", ALL_BUILTIN_THEMES)
@@ -226,13 +236,10 @@ class TestThemeColorContrast:
         theme = theme_class()
         color_map = theme.get_color_map()
 
-        # Success, error, and warning should all be different
         success = color_map["success"]
         error = color_map["error"]
         warning = color_map["warning"]
 
-        # At least one should differ from the others
-        # (Some themes may use similar colors, but not all identical)
         all_same = success == error == warning
         assert not all_same, (
             f"{theme_class.__name__} success/error/warning are all identical"
