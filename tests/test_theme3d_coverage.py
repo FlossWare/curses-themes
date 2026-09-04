@@ -16,7 +16,7 @@ Targets uncovered lines in theme3d.py:
 
 import pytest
 
-from curses_themes import Theme3D
+from curses_tui import Theme3D
 
 
 class TestShadowOffsetValidation:
@@ -91,14 +91,14 @@ class TestSupports3D:
 
     def test_supports_3d_borland(self):
         """Borland3DTheme.supports_3d() must return True."""
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
 
         theme = Borland3DTheme()
         assert theme.supports_3d() is True
 
     def test_supports_3d_dbase(self):
         """DBase4_3DTheme.supports_3d() must return True."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         theme = DBase4_3DTheme()
         assert theme.supports_3d() is True

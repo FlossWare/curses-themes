@@ -12,8 +12,8 @@ border characters that are suitable for terminal rendering. It ensures:
 
 import pytest
 
-from curses_themes import ThemeManager
-from curses_themes.theme3d import Theme3D
+from curses_tui import ThemeManager
+from curses_tui.theme3d import Theme3D
 
 
 class TestBorderCharsLength:

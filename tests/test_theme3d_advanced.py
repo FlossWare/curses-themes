@@ -3,7 +3,7 @@
 
 import pytest
 
-from curses_themes.themes.borland3d import Borland3DTheme
+from curses_tui.themes.borland3d import Borland3DTheme
 
 
 class TestTheme3DShadowEffects:
@@ -172,7 +172,7 @@ class TestBothTheme3DImplementations:
 
     def test_both_themes_have_different_color_palettes(self):
         """Test that Borland and dBase themes have different colors."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         borland = Borland3DTheme()
         dbase = DBase4_3DTheme()
@@ -190,7 +190,7 @@ class TestBothTheme3DImplementations:
 
     def test_both_themes_work_independently(self, mock_curses, mock_stdscr):
         """Test both 3D themes can be used in same session."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         # Use Borland
         borland = Borland3DTheme()

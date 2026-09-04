@@ -8,7 +8,7 @@ Generates ASCII screenshots without requiring a real terminal.
 import argparse
 from pathlib import Path
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 def parse_border_chars(border_str):

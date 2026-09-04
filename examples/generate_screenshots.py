@@ -32,8 +32,8 @@ from pathlib import Path
 # Ensure the parent package is importable when running as a script
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from curses_themes import ThemeManager
-from curses_themes.theme3d import Theme3D
+from curses_tui import ThemeManager
+from curses_tui.theme3d import Theme3D
 
 # ---------------------------------------------------------------------------
 # ASCII canvas helper

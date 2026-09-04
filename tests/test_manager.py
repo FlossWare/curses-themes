@@ -7,8 +7,8 @@ import tempfile
 
 import pytest
 
-from curses_themes import Theme
-from curses_themes.manager import ThemeManager
+from curses_tui import Theme
+from curses_tui.manager import ThemeManager
 
 
 class TestThemeManagerSingleton:

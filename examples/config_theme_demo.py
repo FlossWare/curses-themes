@@ -28,7 +28,7 @@ import json
 import os
 import xml.etree.ElementTree as ET
 
-from curses_themes import ColorPair, Theme
+from curses_tui import ColorPair, Theme
 
 # ---------------------------------------------------------------------------
 # Config-file parsers (JSON, XML, YAML)

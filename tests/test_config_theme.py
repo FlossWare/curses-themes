@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from curses_themes.config_theme import (
+from curses_tui.config_theme import (
     NCURSES_COLOR_MAP,
     ConfigTheme,
     ConfigTheme3D,
@@ -35,8 +35,8 @@ from curses_themes.config_theme import (
     load_theme_from_file,
     validate_config,
 )
-from curses_themes.theme import ColorPair, Theme
-from curses_themes.theme3d import Theme3D
+from curses_tui.theme import ColorPair, Theme
+from curses_tui.theme3d import Theme3D
 
 # ---------------------------------------------------------------------------
 # Shared test data
@@ -1545,7 +1545,7 @@ class TestThemeManagerLoadFromFile:
 
     def test_load_from_json_file(self, tmp_path):
         """ThemeManager.load_from_file loads a JSON theme."""
-        from curses_themes.manager import ThemeManager
+        from curses_tui.manager import ThemeManager
 
         config = _make_config(name="Manager JSON")
         json_path = tmp_path / "manager_theme.json"
@@ -1557,7 +1557,7 @@ class TestThemeManagerLoadFromFile:
 
     def test_load_from_file_custom_name(self, tmp_path):
         """ThemeManager.load_from_file with custom registration name."""
-        from curses_themes.manager import ThemeManager
+        from curses_tui.manager import ThemeManager
 
         config = _make_config(name="Original Name")
         json_path = tmp_path / "custom_name.json"
@@ -1568,7 +1568,7 @@ class TestThemeManagerLoadFromFile:
 
     def test_load_from_xml_file(self, tmp_path):
         """ThemeManager.load_from_file loads an XML theme."""
-        from curses_themes.manager import ThemeManager
+        from curses_tui.manager import ThemeManager
 
         xml = """<theme>
             <meta><name>Manager XML</name></meta>
@@ -1592,14 +1592,14 @@ class TestThemeManagerLoadFromFile:
 
     def test_load_from_file_nonexistent_raises(self):
         """load_from_file with a nonexistent path raises FileNotFoundError."""
-        from curses_themes.manager import ThemeManager
+        from curses_tui.manager import ThemeManager
 
         with pytest.raises(FileNotFoundError):
             ThemeManager.load_from_file("/tmp/absolutely_nonexistent_theme.json")
 
     def test_load_from_file_and_apply(self, mock_curses, mock_stdscr, tmp_path):
         """Load via ThemeManager.load_from_file and apply to mock stdscr."""
-        from curses_themes.manager import ThemeManager
+        from curses_tui.manager import ThemeManager
 
         config = _make_config(
             name="Manager Apply Test",
@@ -1946,7 +1946,7 @@ class TestLoadJavaJsonFiles:
         assert isinstance(theme, ConfigTheme)
 
     def test_dark_components_match_python(self):
-        from curses_themes.themes.dark import DarkTheme
+        from curses_tui.themes.dark import DarkTheme
 
         java_theme = load_theme_from_file(
             os.path.join(JAVA_THEMES_DIR, "dark.json")

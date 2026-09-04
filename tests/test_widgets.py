@@ -1,7 +1,7 @@
 import curses
 from unittest.mock import patch
 
-from curses_themes import Dropdown, Option, Table, Tabs
+from curses_tui import Dropdown, Option, Table, Tabs
 
 
 def test_dropdown_options():
@@ -46,7 +46,7 @@ def test_dropdown_choose_accepts_mouse_click_on_row():
             return self.keys.pop(0)
 
     dropdown = Dropdown(["Alpha"])
-    with patch("curses_themes.widgets.mouse_event", return_value=(4, 3, clicked)):
+    with patch("curses_tui.widgets.mouse_event", return_value=(4, 3, clicked)):
         assert dropdown.choose(Window(), 3, 0, 20) == "Alpha"
 
 

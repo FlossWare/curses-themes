@@ -44,7 +44,7 @@ from curses import panel
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 # Sample database tables for demonstration

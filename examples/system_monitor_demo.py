@@ -44,7 +44,7 @@ from typing import List, Tuple
 
 import psutil
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 class SystemMonitor:

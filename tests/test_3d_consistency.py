@@ -7,7 +7,7 @@ characters, component colors, and shadow offsets are structurally consistent wit
 the Python Borland3DTheme and DBase4_3DTheme classes.
 
 The Java theme files live in the sibling curses-java repo at
-``../../curses-java/themes/`` relative to the curses-themes repo root.  All tests
+``../../curses-java/themes/`` relative to the curses-tui repo root.  All tests
 in this module are skipped when the directory is absent.
 """
 
@@ -17,7 +17,7 @@ import pathlib
 
 import pytest
 
-from curses_themes.config_theme import (
+from curses_tui.config_theme import (
     NCURSES_COLOR_MAP,
     ConfigTheme,
     ConfigTheme3D,
@@ -25,8 +25,8 @@ from curses_themes.config_theme import (
     _convert_java_to_python,
     load_theme_from_file,
 )
-from curses_themes.theme import ColorPair
-from curses_themes.theme3d import Theme3D
+from curses_tui.theme import ColorPair
+from curses_tui.theme3d import Theme3D
 
 # ---------------------------------------------------------------------------
 # Path to the Java theme directory (sibling repo)
@@ -97,7 +97,7 @@ class TestJava3DFilesLoadAsConfigTheme3D:
 
     def test_borland3d_name_matches(self):
         """borland3d.json theme name matches the Python Borland3DTheme name."""
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "borland3d.json"))
         py_theme = Borland3DTheme()
@@ -105,7 +105,7 @@ class TestJava3DFilesLoadAsConfigTheme3D:
 
     def test_dbase4_3d_name_matches(self):
         """dbase4-3d.json theme name matches the Python DBase4_3DTheme name."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "dbase4-3d.json"))
         py_theme = DBase4_3DTheme()
@@ -126,7 +126,7 @@ class TestBorland3DEffectColors:
 
     @pytest.fixture
     def py_theme(self):
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
         return Borland3DTheme()
 
     def test_both_have_shadow_highlight_lowlight(self, java_theme, py_theme):
@@ -197,7 +197,7 @@ class TestDBase4_3DEffectColors:
 
     @pytest.fixture
     def py_theme(self):
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
         return DBase4_3DTheme()
 
     def test_both_have_shadow_highlight_lowlight(self, java_theme, py_theme):
@@ -305,7 +305,7 @@ class TestBorderCharConsistency:
 
     def test_dbase4_3d_borders_match_python(self):
         """dBASE IV 3D borders match between Java (converted) and Python."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "dbase4-3d.json"))
         py_theme = DBase4_3DTheme()
@@ -317,7 +317,7 @@ class TestBorderCharConsistency:
 
     def test_dbase4_3d_double_borders_match_python(self):
         """dBASE IV 3D double borders match between Java (converted) and Python."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "dbase4-3d.json"))
         py_theme = DBase4_3DTheme()
@@ -339,7 +339,7 @@ class TestBorland3DComponentColors:
 
     @pytest.fixture
     def py_theme(self):
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
         return Borland3DTheme()
 
     def test_java_has_all_component_keys(self, java_theme):
@@ -400,7 +400,7 @@ class TestDBase4_3DComponentColors:
 
     @pytest.fixture
     def py_theme(self):
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
         return DBase4_3DTheme()
 
     def test_same_component_keys(self, java_theme, py_theme):
@@ -484,7 +484,7 @@ class TestShadowOffsetConsistency:
 
     def test_borland3d_shadow_offset_x_matches(self):
         """borland3d shadow_offset_x is 2 in both Java and Python."""
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "borland3d.json"))
         py_theme = Borland3DTheme()
@@ -493,7 +493,7 @@ class TestShadowOffsetConsistency:
 
     def test_borland3d_shadow_offset_y_matches(self):
         """borland3d shadow_offset_y is 1 in both Java and Python."""
-        from curses_themes.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.borland3d import Borland3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "borland3d.json"))
         py_theme = Borland3DTheme()
@@ -502,7 +502,7 @@ class TestShadowOffsetConsistency:
 
     def test_dbase4_3d_shadow_offset_x_matches(self):
         """dbase4-3d shadow_offset_x is 2 in both Java and Python."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "dbase4-3d.json"))
         py_theme = DBase4_3DTheme()
@@ -511,7 +511,7 @@ class TestShadowOffsetConsistency:
 
     def test_dbase4_3d_shadow_offset_y_matches(self):
         """dbase4-3d shadow_offset_y is 1 in both Java and Python."""
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         java_theme = load_theme_from_file(str(JAVA_THEMES_DIR / "dbase4-3d.json"))
         py_theme = DBase4_3DTheme()
