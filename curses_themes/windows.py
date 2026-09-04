@@ -64,8 +64,9 @@ class Window:
             return HitRegion.BOTTOM_LEFT
         if bottom and right:
             return HitRegion.BOTTOM_RIGHT
-        if top:
-            return HitRegion.TOP
+        # The title bar owns the top interior row. Corner cells remain resize handles.
+        if top and self.title_height > 0:
+            return HitRegion.TITLE
         if bottom:
             return HitRegion.BOTTOM
         if left:
