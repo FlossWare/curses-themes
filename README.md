@@ -26,15 +26,21 @@ The canonical contract is **JSON only**. YAML and XML are intentionally excluded
 - 🧪 Thoroughly tested
 - 📚 Designed to consume the `tui-schema` 1.0 contract without duplicating it
 
+## Python package
+
+The Python distribution is `curses-tui` and the import namespace is `curses_tui`.
+
+```python
+from curses_tui import ThemeManager, WindowManager
+```
+
+The former `curses_themes` package name is intentionally unsupported. This is a breaking package rename.
+
 ## TUI schema integration
 
 The shared contract is maintained in [`FlossWare/tui-schema`](https://github.com/FlossWare/tui-schema). Version 1.0 defines typed widgets, top-level menus, semantic actions, focus, window behavior, absolute terminal-cell layout, and named themes.
 
 `curses-tui` MUST NOT redefine the schema. It interprets supported schema documents and maps their portable concepts onto native Python/curses primitives.
-
-## Compatibility
-
-The Python import/distribution package remains `curses_themes` for backward compatibility with existing consumers. The repository/project name is `curses-tui`.
 
 ## Related Projects
 
