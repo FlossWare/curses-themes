@@ -33,7 +33,7 @@ except ImportError as e:
         raise ImportError("curses-themes requires curses on Windows; install curses-themes[windows]") from e
     raise
 
-__version__ = "0.12"
+__version__ = "0.13"
 __author__ = "FlossWare"
 __license__ = "MIT"
 
