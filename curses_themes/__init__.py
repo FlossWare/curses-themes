@@ -5,6 +5,21 @@ import sys
 try:
     from .colors import ColorManager
     from .config_theme import ConfigTheme, ConfigTheme3D, load_theme_from_file
+    from .input import (
+        enable_mouse,
+        is_cancel,
+        is_confirm,
+        is_down,
+        is_mouse,
+        is_primary_click,
+        is_up,
+        list_index_at,
+        mouse_event,
+        mouse_position,
+        primary_button_mask,
+        primary_click,
+        resolve_list_mouse,
+    )
     from .manager import ThemeManager
     from .theme import ColorPair, ComponentColors, SemanticColors, Theme
     from .theme3d import Theme3D
@@ -20,8 +35,12 @@ __version__ = "0.10"
 __author__ = "FlossWare"
 __license__ = "MIT"
 
-__all__ = ["Borland3DTheme", "ColorManager", "ColorPair", "ComponentColors", "ConfigTheme",
-           "ConfigTheme3D", "DBase3Theme", "DBase4Theme", "DBase4_3DTheme", "DOSTheme",
-           "DarkTheme", "DefaultTheme", "Dropdown", "LightTheme", "Option", "SemanticColors",
-           "Table", "Tabs", "TI994ATheme", "TRS80Theme", "Theme", "Theme3D", "ThemeManager",
-           "__version__", "load_theme_from_file"]
+__all__ = [
+    "Borland3DTheme", "ColorManager", "ColorPair", "ComponentColors", "ConfigTheme",
+    "ConfigTheme3D", "DBase3Theme", "DBase4Theme", "DBase4_3DTheme", "DOSTheme",
+    "DarkTheme", "DefaultTheme", "Dropdown", "LightTheme", "Option", "SemanticColors",
+    "Table", "Tabs", "TI994ATheme", "TRS80Theme", "Theme", "Theme3D", "ThemeManager",
+    "enable_mouse", "is_cancel", "is_confirm", "is_down", "is_mouse", "is_primary_click",
+    "is_up", "list_index_at", "mouse_event", "mouse_position", "primary_button_mask",
+    "primary_click", "resolve_list_mouse", "__version__", "load_theme_from_file",
+]

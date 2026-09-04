@@ -1,14 +1,19 @@
 """Small, dependency-free curses widgets for FlossWare applications."""
 from __future__ import annotations
+
 import curses
 from dataclasses import dataclass
 from typing import Sequence
+
+from .input import is_primary_click, mouse_event
+
 
 @dataclass(frozen=True)
 class Option:
     value: str
     label: str
     description: str = ""
+
 
 class Dropdown:
     """Keyboard/mouse-friendly single-selection dropdown."""
@@ -30,8 +35,16 @@ class Dropdown:
             elif key in (10, 13, curses.KEY_ENTER, ord(" ")):
                 self.selected = current
                 return self.options[current].value
+            elif key == getattr(curses, "KEY_MOUSE", -1):
+                event = mouse_event()
+                if event is not None:
+                    mouse_x, mouse_y, button_state = event
+                    if mouse_y == y and x <= mouse_x < x + max(1, width) and is_primary_click(button_state):
+                        self.selected = current
+                        return self.options[current].value
             elif key in (27, ord("q")):
                 return None
+
 
 class Tabs:
     """Simple horizontal tab bar with keyboard and mouse support."""
@@ -61,6 +74,23 @@ class Tabs:
                 return True
         return False
 
+    def handle_mouse(self, event: tuple[int, int, int] | None, *, y: int, x: int = 0) -> bool:
+        """Select a tab when its rendered row is primary-clicked."""
+        if event is None or not self.labels:
+            return False
+        mouse_x, mouse_y, button_state = event
+        if mouse_y != y or not is_primary_click(button_state) or mouse_x < x:
+            return False
+        cursor = x
+        for index, label in enumerate(self.labels):
+            width = len(label) + 5
+            if cursor <= mouse_x < cursor + width:
+                self.selected = index
+                return True
+            cursor += width
+        return False
+
+
 class Table:
     """Minimal clipped table suitable for live dashboards."""
     def __init__(self, headers: Sequence[str], rows: Sequence[Sequence[object]]) -> None:
@@ -79,5 +109,6 @@ class Table:
         win.addnstr(y, x, line(self.headers), max(1, width - x - 1), curses.A_BOLD | curses.A_UNDERLINE)
         for offset, row in enumerate(self.rows[: max(0, limit - 1)], 1):
             win.addnstr(y + offset, x, line(row), max(1, width - x - 1))
+
 
 __all__ = ["Dropdown", "Option", "Tabs", "Table"]
