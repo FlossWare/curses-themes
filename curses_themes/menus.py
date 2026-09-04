@@ -135,14 +135,10 @@ class Menu:
             return None
         if key == 27 and not (alt or ctrl or shift):
             return None
-        if key in (getattr(curses, "KEY_DOWN", -1), ord("j")) and not (
-            alt or ctrl
-        ):
+        if key in (getattr(curses, "KEY_DOWN", -1), ord("j")) and not (alt or ctrl):
             self.selected = (self.selected + 1) % len(self.items)
             return None
-        if key in (getattr(curses, "KEY_UP", -1), ord("k")) and not (
-            alt or ctrl
-        ):
+        if key in (getattr(curses, "KEY_UP", -1), ord("k")) and not (alt or ctrl):
             self.selected = (self.selected - 1) % len(self.items)
             return None
         if is_confirm(key) and not (alt or ctrl or shift):
@@ -180,4 +176,10 @@ class Menu:
         ]
 
 
-__all__ = ["AcceleratorError", "Menu", "MenuItem", "key_to_accelerator", "normalize_accelerator"]
+__all__ = [
+    "AcceleratorError",
+    "Menu",
+    "MenuItem",
+    "key_to_accelerator",
+    "normalize_accelerator",
+]
