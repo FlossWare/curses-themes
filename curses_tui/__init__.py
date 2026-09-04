@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""curses-themes: theme and reusable widget support for Python curses apps."""
+"""curses-tui: reusable theme and widget support for Python curses apps."""
 import sys
 
 try:
@@ -48,8 +48,8 @@ try:
 except ImportError as e:
     if "curses" in str(e).lower() and sys.platform == "win32":
         raise ImportError(
-            "curses-themes requires curses on Windows; install windows-curses "
-            "or curses-themes[windows]"
+            "curses-tui requires curses on Windows; install windows-curses "
+            "or curses-tui[windows]"
         ) from e
     raise
 
