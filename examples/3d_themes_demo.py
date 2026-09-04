@@ -26,7 +26,7 @@ MIT License - see LICENSE file for details.
 
 import curses
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 def draw_shadow(window, y, x, height, width, color_pair):

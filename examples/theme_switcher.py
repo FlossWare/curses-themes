@@ -22,7 +22,7 @@ import sys
 # Add parent directory to path to allow running from examples directory
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 def draw_theme_demo(

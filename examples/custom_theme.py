@@ -17,7 +17,7 @@ MIT License - see LICENSE file for details.
 
 import curses
 
-from curses_themes import Theme, ThemeManager
+from curses_tui import Theme, ThemeManager
 
 
 class SolarizedDarkTheme(Theme):

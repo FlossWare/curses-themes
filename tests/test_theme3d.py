@@ -3,8 +3,8 @@
 
 import pytest
 
-from curses_themes.themes.borland3d import Borland3DTheme
-from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+from curses_tui.themes.borland3d import Borland3DTheme
+from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
 
 class TestTheme3DBoxDrawing:
@@ -58,7 +58,7 @@ class TestTheme3DBoxDrawing:
     @pytest.mark.parametrize("theme_class", [Borland3DTheme, DBase4_3DTheme])
     def test_3d_theme_component_colors(self, theme_class):
         """Test 3D theme has component color definitions."""
-        from curses_themes.theme import ColorPair
+        from curses_tui.theme import ColorPair
 
         theme = theme_class()
 
@@ -137,7 +137,7 @@ class TestTheme3DIntegration:
 
     def test_borland_theme_full_workflow(self, mock_curses, mock_stdscr):
         """Test complete workflow with Borland 3D theme."""
-        from curses_themes import ThemeManager
+        from curses_tui import ThemeManager
 
         # Load theme
         theme = ThemeManager.load("borland-3d")
@@ -153,7 +153,7 @@ class TestTheme3DIntegration:
 
     def test_dbase4_3d_theme_full_workflow(self, mock_curses, mock_stdscr):
         """Test complete workflow with dBase IV 3D theme."""
-        from curses_themes import ThemeManager
+        from curses_tui import ThemeManager
 
         # Load theme
         theme = ThemeManager.load("dbase-iv-3d")
@@ -170,7 +170,7 @@ class TestTheme3DIntegration:
     @pytest.mark.parametrize("theme_name", ["borland-3d", "dbase-iv-3d"])
     def test_3d_theme_metadata_complete(self, theme_name):
         """Test 3D themes have complete metadata."""
-        from curses_themes import ThemeManager
+        from curses_tui import ThemeManager
 
         themes = ThemeManager.list_themes()
         assert theme_name in themes
@@ -189,7 +189,7 @@ class TestTheme3DErrorMessages:
 
     def test_missing_3d_colors_error(self, mock_curses, mock_stdscr):
         """Test helpful error when effects_3d is not provided."""
-        from curses_themes import Theme3D
+        from curses_tui import Theme3D
 
         class Incomplete3DTheme(Theme3D):
             def __init__(self):
@@ -222,7 +222,7 @@ class TestTheme3DAbstractMethods:
 
     def test_missing_effects_3d_raises_not_implemented(self):
         """Test that Theme3D without effects_3d raises NotImplementedError on get_3d_colors()."""
-        from curses_themes.theme3d import Theme3D
+        from curses_tui.theme3d import Theme3D
 
         # Subclass missing effects_3d
         class Incomplete3DTheme(Theme3D):
@@ -248,7 +248,7 @@ class TestTheme3DAbstractMethods:
 
     def test_missing_shadow_in_effects_3d_raises_error(self, mock_curses, mock_stdscr):
         """Test that missing 'shadow' key in effects_3d raises RuntimeError on apply()."""
-        from curses_themes.theme3d import Theme3D
+        from curses_tui.theme3d import Theme3D
 
         # Subclass with effects_3d missing 'shadow'
         class MissingShadow(Theme3D):
@@ -279,7 +279,7 @@ class TestTheme3DAbstractMethods:
         self, mock_curses, mock_stdscr
     ):
         """Test that missing 'highlight' key in effects_3d raises RuntimeError on apply()."""
-        from curses_themes.theme3d import Theme3D
+        from curses_tui.theme3d import Theme3D
 
         # Subclass with effects_3d missing 'highlight'
         class MissingHighlight(Theme3D):
@@ -310,7 +310,7 @@ class TestTheme3DAbstractMethods:
         self, mock_curses, mock_stdscr
     ):
         """Test that missing 'lowlight' key in effects_3d raises RuntimeError on apply()."""
-        from curses_themes.theme3d import Theme3D
+        from curses_tui.theme3d import Theme3D
 
         # Subclass with effects_3d missing 'lowlight'
         class MissingLowlight(Theme3D):
@@ -339,8 +339,8 @@ class TestTheme3DAbstractMethods:
 
     def test_complete_implementation_succeeds(self):
         """Test that a complete Theme3D implementation can be instantiated."""
-        from curses_themes.theme import ColorPair
-        from curses_themes.theme3d import Theme3D
+        from curses_tui.theme import ColorPair
+        from curses_tui.theme3d import Theme3D
 
         # Complete subclass with effects_3d class attribute
         class Complete3DTheme(Theme3D):
@@ -375,9 +375,9 @@ class TestTheme3DAbstractMethods:
 
     def test_existing_themes_still_work(self):
         """Test that existing Theme3D implementations (Borland, dBase) still work."""
-        from curses_themes.theme import ColorPair
-        from curses_themes.themes.borland3d import Borland3DTheme
-        from curses_themes.themes.dbase4_3d import DBase4_3DTheme
+        from curses_tui.theme import ColorPair
+        from curses_tui.themes.borland3d import Borland3DTheme
+        from curses_tui.themes.dbase4_3d import DBase4_3DTheme
 
         # Both should instantiate successfully
         borland = Borland3DTheme()

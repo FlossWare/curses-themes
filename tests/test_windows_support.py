@@ -7,13 +7,13 @@ from unittest.mock import patch
 import pytest
 
 
-def _reload_curses_themes(platform: str, block_curses: bool):
-    """Remove curses_themes from module cache and re-import it.
+def _reload_curses_tui(platform: str, block_curses: bool):
+    """Remove curses_tui from module cache and re-import it.
 
     If *block_curses* is True, make ``import curses`` raise ImportError so the
     try/except block in ``__init__.py`` is exercised.
     """
-    mods_to_remove = [k for k in sys.modules if k.startswith("curses_themes")]
+    mods_to_remove = [k for k in sys.modules if k.startswith("curses_tui")]
     saved_modules = {k: sys.modules.pop(k) for k in mods_to_remove}
 
     real_import = builtins_import()
@@ -28,10 +28,10 @@ def _reload_curses_themes(platform: str, block_curses: bool):
             patch.object(sys, "platform", platform),
             patch("builtins.__import__", side_effect=guarded_import),
         ):
-            return importlib.import_module("curses_themes")
+            return importlib.import_module("curses_tui")
     finally:
         for k in list(sys.modules):
-            if k.startswith("curses_themes"):
+            if k.startswith("curses_tui"):
                 del sys.modules[k]
         sys.modules.update(saved_modules)
 
@@ -45,17 +45,17 @@ def builtins_import():
 def test_windows_missing_curses_gives_helpful_message():
     """On Windows with no curses module, the error should mention windows-curses."""
     with pytest.raises(ImportError, match="windows-curses"):
-        _reload_curses_themes("win32", block_curses=True)
+        _reload_curses_tui("win32", block_curses=True)
 
 
 def test_non_windows_reraises_original_error():
     """On non-Windows, a curses import error should re-raise unchanged."""
     with pytest.raises(ImportError, match="No module named"):
-        _reload_curses_themes("linux", block_curses=True)
+        _reload_curses_tui("linux", block_curses=True)
 
 
 def test_non_windows_does_not_mention_windows_curses():
     """On non-Windows, the error should NOT mention windows-curses."""
     with pytest.raises(ImportError) as exc_info:
-        _reload_curses_themes("linux", block_curses=True)
+        _reload_curses_tui("linux", block_curses=True)
     assert "windows-curses" not in str(exc_info.value)

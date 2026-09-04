@@ -3,7 +3,7 @@
 
 import pytest
 
-from curses_themes import Theme
+from curses_tui import Theme
 
 
 class TestThemeMetadata:

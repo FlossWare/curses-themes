@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for Unicode width handling in draw_box and draw_box_3d."""
 
-from curses_themes.theme import _calculate_display_width
+from curses_tui.theme import _calculate_display_width
 
 
 class TestDisplayWidthCalculation:

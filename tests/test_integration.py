@@ -3,7 +3,7 @@
 
 import pytest
 
-from curses_themes import Theme, ThemeManager
+from curses_tui import Theme, ThemeManager
 
 
 class TestCompleteThemeLifecycle:
@@ -133,7 +133,7 @@ class TestMultiThemeScenarios:
 
     def test_color_pair_reuse_across_themes(self, mock_curses, mock_stdscr):
         """Test that color pair cache works across theme switches."""
-        from curses_themes.colors import ColorManager
+        from curses_tui.colors import ColorManager
 
         # Get initial pair count
         initial_pairs = ColorManager._next_pair

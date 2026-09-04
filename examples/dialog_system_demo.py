@@ -54,7 +54,7 @@ Requirements:
 import curses
 import time
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 # ============================================================================
 # Dialog Base Class and Helper Functions

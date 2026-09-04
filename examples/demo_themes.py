@@ -16,7 +16,7 @@ MIT License - see LICENSE file for details.
 
 import curses
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 def show_theme(stdscr, theme_name):

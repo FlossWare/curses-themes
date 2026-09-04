@@ -28,9 +28,9 @@ from PIL import Image, ImageDraw, ImageFont
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from curses_themes import ThemeManager
-from curses_themes.theme import Theme, ColorPair
-from curses_themes.theme3d import Theme3D
+from curses_tui import ThemeManager
+from curses_tui.theme import Theme, ColorPair
+from curses_tui.theme3d import Theme3D
 
 
 class TerminalRenderer:

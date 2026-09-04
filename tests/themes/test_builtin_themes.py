@@ -3,14 +3,14 @@
 
 import pytest
 
-from curses_themes.themes.dark import DarkTheme
-from curses_themes.themes.dbase3 import DBase3Theme
-from curses_themes.themes.dbase4 import DBase4Theme
-from curses_themes.themes.default import DefaultTheme
-from curses_themes.themes.dos import DOSTheme
-from curses_themes.themes.light import LightTheme
-from curses_themes.themes.ti994a import TI994ATheme
-from curses_themes.themes.trs80 import TRS80Theme
+from curses_tui.themes.dark import DarkTheme
+from curses_tui.themes.dbase3 import DBase3Theme
+from curses_tui.themes.dbase4 import DBase4Theme
+from curses_tui.themes.default import DefaultTheme
+from curses_tui.themes.dos import DOSTheme
+from curses_tui.themes.light import LightTheme
+from curses_tui.themes.ti994a import TI994ATheme
+from curses_tui.themes.trs80 import TRS80Theme
 
 # Parametrized test for all lazy-registered built-in themes
 # Note: 3D themes (Borland3DTheme, DBase4_3DTheme) are registered at module load
@@ -110,7 +110,7 @@ class TestBuiltinThemeComponentColors:
     @pytest.mark.parametrize("theme_class", ALL_BUILTIN_THEMES)
     def test_theme_get_components_returns_valid_colorpairs(self, theme_class):
         """Test get_components() returns dict of ColorPair values with valid keys."""
-        from curses_themes.theme import ColorPair
+        from curses_tui.theme import ColorPair
 
         theme = theme_class()
         components = theme.get_components()

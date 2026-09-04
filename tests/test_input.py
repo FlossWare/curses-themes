@@ -1,7 +1,7 @@
 import curses
 from unittest.mock import patch
 
-from curses_themes.input import (
+from curses_tui.input import (
     enable_mouse,
     is_cancel,
     is_confirm,
@@ -48,7 +48,7 @@ def test_mouse_event_normalizes_getmouse():
 
 def test_primary_click_reads_current_event():
     clicked = getattr(curses, "BUTTON1_CLICKED", 0)
-    with patch("curses_themes.input.mouse_event", return_value=(3, 4, clicked)):
+    with patch("curses_tui.input.mouse_event", return_value=(3, 4, clicked)):
         assert primary_click() == (3, 4) if clicked else primary_click() is None
 
 

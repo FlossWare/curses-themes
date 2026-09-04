@@ -9,7 +9,7 @@ Press any key to cycle through themes, 'q' to quit.
 
 import curses
 
-from curses_themes import ThemeManager
+from curses_tui import ThemeManager
 
 
 def draw_demo_ui(stdscr, theme):

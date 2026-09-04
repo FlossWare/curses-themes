@@ -3,7 +3,7 @@
 
 import pytest
 
-from curses_themes.colors import ColorManager
+from curses_tui.colors import ColorManager
 
 
 class TestColorManagerInit:
@@ -169,7 +169,7 @@ class TestThemeInitialization:
 
     def test_initialize_theme_missing_colors(self, mock_curses, mock_stdscr):
         """Test theme initialization fails with missing required colors."""
-        from curses_themes import Theme
+        from curses_tui import Theme
 
         class IncompleteTheme(Theme):
             def __init__(self):
@@ -190,7 +190,7 @@ class TestThemeInitialization:
 
     def test_missing_colors_error_shows_all_required(self, mock_curses, mock_stdscr):
         """Test that missing colors error lists all required colors."""
-        from curses_themes import Theme
+        from curses_tui import Theme
 
         class IncompleteTheme(Theme):
             def __init__(self):

@@ -1,5 +1,5 @@
-from curses_themes.geometry import Rect, SizeConstraints
-from curses_themes.windows import HitRegion, Window, WindowManager
+from curses_tui.geometry import Rect, SizeConstraints
+from curses_tui.windows import HitRegion, Window, WindowManager
 
 
 def test_rect_contains_move_resize_and_clamp():

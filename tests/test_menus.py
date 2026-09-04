@@ -2,7 +2,7 @@ import curses
 
 import pytest
 
-from curses_themes.menus import (
+from curses_tui.menus import (
     AcceleratorError,
     Menu,
     MenuItem,
