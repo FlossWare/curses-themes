@@ -35,7 +35,7 @@ def test_window_drag_moves_and_clamps_to_screen():
     window = Window("Test", Rect(10, 5, 20, 10))
     assert window.begin_interaction(14, 5)
     assert window.update_interaction(30, 20, 40, 30)
-    assert window.rect == Rect(26, 20, 20, 10)
+    assert window.rect == Rect(20, 20, 20, 10)
     window.update_interaction(100, 100, 40, 30)
     assert window.rect == Rect(20, 20, 20, 10)
     window.end_interaction()
