@@ -74,6 +74,34 @@ def test_manager_hit_test_prefers_topmost_and_mouse_focuses_it():
     assert first.focused is False
 
 
+def test_manager_mouse_drag_and_release_moves_window():
+    manager = WindowManager(80, 30)
+    window = manager.add(Window("Test", Rect(10, 5, 20, 10)))
+    pressed = getattr(__import__("curses"), "BUTTON1_PRESSED", 0)
+    released = getattr(__import__("curses"), "BUTTON1_RELEASED", 0)
+    assert pressed
+    assert manager.handle_mouse((14, 5, pressed))
+    assert window.interacting()
+    motion = getattr(__import__("curses"), "REPORT_MOUSE_POSITION", 0)
+    assert manager.handle_mouse((24, 10, motion))
+    assert window.rect == Rect(20, 10, 20, 10)
+    assert manager.handle_mouse((24, 10, released))
+    assert not window.interacting()
+
+
+def test_manager_mouse_resize_and_release():
+    manager = WindowManager(80, 40)
+    window = manager.add(Window("Test", Rect(10, 5, 20, 10)))
+    pressed = getattr(__import__("curses"), "BUTTON1_PRESSED", 0)
+    released = getattr(__import__("curses"), "BUTTON1_RELEASED", 0)
+    assert manager.handle_mouse((29, 14, pressed))
+    assert manager.handle_mouse((39, 24, getattr(__import__("curses"), "REPORT_MOUSE_POSITION", 0)))
+    assert window.rect.width == 30
+    assert window.rect.height == 20
+    assert manager.handle_mouse((39, 24, released))
+    assert not window.interacting()
+
+
 def test_manager_resize_screen_clamps_windows():
     manager = WindowManager(100, 40)
     window = manager.add(Window("Test", Rect(70, 30, 25, 12)))
