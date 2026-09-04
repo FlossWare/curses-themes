@@ -13,6 +13,10 @@ from .windows import Window, WindowManager
 ActionHandler = Callable[[str], object]
 
 
+def _make_menu_action(action_id: str) -> Callable[[], object]:
+    return lambda: action_id
+
+
 def build_menus(document: dict) -> dict[str, Menu]:
     """Build reusable menus while preserving action identifiers."""
     validate(document)
@@ -21,7 +25,7 @@ def build_menus(document: dict) -> dict[str, Menu]:
         items = [
             MenuItem(
                 item["label"],
-                action=(lambda action=item["action"]: action),
+                action=_make_menu_action(item["action"]),
                 accelerator=item.get("accelerator"),
                 enabled=item.get("enabled", True),
             )

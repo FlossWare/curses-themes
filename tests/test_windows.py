@@ -89,6 +89,16 @@ def test_manager_mouse_drag_and_release_moves_window():
     assert not window.interacting()
 
 
+def test_manager_mouse_click_body_starts_no_interaction_returns_true():
+    manager = WindowManager(80, 30)
+    window = manager.add(Window("Test", Rect(10, 5, 20, 10)))
+    pressed = getattr(__import__("curses"), "BUTTON1_PRESSED", 0)
+    # Clicking window body (15, 8) focuses window and returns True even though non-movable region
+    assert manager.handle_mouse((15, 8, pressed))
+    assert manager.active is window
+    assert not window.interacting()
+
+
 def test_manager_mouse_resize_and_release():
     manager = WindowManager(80, 40)
     window = manager.add(Window("Test", Rect(10, 5, 20, 10)))
