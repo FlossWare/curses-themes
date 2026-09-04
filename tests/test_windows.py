@@ -99,6 +99,13 @@ def test_manager_mouse_click_body_starts_no_interaction_returns_true():
     assert not window.interacting()
 
 
+def test_window_top_edge_without_title_is_resize_handle():
+    window = Window("Test", Rect(10, 5, 20, 10), title_height=0)
+    assert window.hit_test(15, 5) == HitRegion.TOP
+    assert window.begin_interaction(15, 5)
+    assert window.interacting()
+
+
 def test_manager_mouse_resize_and_release():
     manager = WindowManager(80, 40)
     window = manager.add(Window("Test", Rect(10, 5, 20, 10)))

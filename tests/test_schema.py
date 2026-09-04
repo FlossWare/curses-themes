@@ -49,6 +49,13 @@ def test_actions_remain_identifiers() -> None:
     assert menu.activate(1) == "app.exit"
 
 
+def test_build_menus_returns_distinct_action_ids() -> None:
+    document = load_fixture()
+    menu = build_menus(document)["file"]
+    action_ids = [item.activate() for item in menu.items]
+    assert action_ids == ["project.open", "app.exit"]
+
+
 def test_declarative_windows_map_to_reusable_manager() -> None:
     document = load_fixture()
     manager = build_window_manager(document, 100, 40)
