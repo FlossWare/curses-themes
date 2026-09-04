@@ -65,8 +65,8 @@ class Window:
         if bottom and right:
             return HitRegion.BOTTOM_RIGHT
         # The title bar owns the top interior row. Corner cells remain resize handles.
-        if top and self.title_height > 0:
-            return HitRegion.TITLE
+        if top:
+            return HitRegion.TITLE if self.title_height > 0 else HitRegion.TOP
         if bottom:
             return HitRegion.BOTTOM
         if left:
@@ -212,7 +212,8 @@ class WindowManager:
                 return True
             return window.update_interaction(x, y, self.screen_width, self.screen_height)
         if is_primary_click(button_state):
-            return window.begin_interaction(x, y)
+            window.begin_interaction(x, y)
+            return True
         return True
 
     def handle_key(self, key: int) -> bool:
