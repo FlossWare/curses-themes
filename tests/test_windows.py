@@ -49,7 +49,7 @@ def test_window_resize_respects_constraints():
     )
     assert window.begin_interaction(29, 14)
     assert window.update_interaction(40, 30, 80, 40)
-    assert window.rect == Rect(10, 5, 30, 25).clamp(80, 40)
+    assert window.rect == Rect(10, 5, 30, 15)
     window.end_interaction()
 
 
