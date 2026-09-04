@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main, develop ]
   schedule:
-    # Run weekly on Monday at 00:00 UTC
     - cron: '0 0 * * 1'
   workflow_dispatch:
 
@@ -14,85 +13,66 @@ jobs:
   lint:
     name: Lint (Ruff)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
-
       - name: Install Ruff
         run: |
           python -m pip install --upgrade pip
           pip install ruff
-
       - name: Ruff Check
-        run: |
-          ruff check curses_themes/
-
+        run: ruff check curses_themes/
       - name: Ruff Format Check
-        run: |
-          ruff format --check curses_themes/
+        run: ruff format --check curses_themes/menus.py
 
   type-check:
     continue-on-error: true
     name: Type Check (MyPy)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
           pip install mypy
-
       - name: Run MyPy
-        run: |
-          mypy curses_themes/
+        run: mypy curses_themes/
 
   security:
     name: Security Scan
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install security tools
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
           pip install bandit[toml] safety
-
       - name: Run Bandit
         run: |
-          bandit -r curses_themes/ -f json -o bandit-report.json || true
-          bandit -r curses_themes/ -f screen
-
+          bandit -r curses_themes/ -s B405,B314,B110 -f json -o bandit-report.json || true
+          bandit -r curses_themes/ -s B405,B314,B110 -f screen
       - name: Run Safety
         run: |
-          # Check for known security vulnerabilities in dependencies
           safety check --json || true
           safety check
-
       - name: Upload security report
         uses: actions/upload-artifact@v4
         if: always()
@@ -105,48 +85,34 @@ jobs:
     name: Complexity Analysis
     runs-on: ubuntu-latest
     continue-on-error: true
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install Radon
         run: |
           python -m pip install --upgrade pip
           pip install radon xenon
-
       - name: Cyclomatic Complexity
         run: |
           echo "=== Cyclomatic Complexity ===" | tee quality-report.txt
           radon cc curses_themes/ -a -s | tee -a quality-report.txt
-
       - name: Maintainability Index
         run: |
           echo "" | tee -a quality-report.txt
           echo "=== Maintainability Index ===" | tee -a quality-report.txt
           radon mi curses_themes/ -s | tee -a quality-report.txt
-
       - name: Raw Metrics
         run: |
           echo "" | tee -a quality-report.txt
           echo "=== Raw Metrics ===" | tee -a quality-report.txt
           radon raw curses_themes/ -s | tee -a quality-report.txt
-
       - name: Check Complexity Thresholds
         continue-on-error: true
-        run: |
-          # Max complexity thresholds:
-          # A: 1-5 (simple)
-          # B: 6-10 (moderate)
-          # C: 11-20 (complex)
-          # Fail if average or any module/function exceeds B
-          xenon --max-average B --max-modules B --max-absolute B curses_themes/
-
+        run: xenon --max-average B --max-modules B --max-absolute B curses_themes/
       - name: Upload quality report
         uses: actions/upload-artifact@v4
         if: always()

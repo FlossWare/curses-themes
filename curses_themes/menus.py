@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Callable, Sequence
-
 import curses
+from collections.abc import Sequence
+from dataclasses import dataclass
+from typing import Callable
 
 from .input import is_confirm, is_primary_click
 
@@ -24,16 +24,18 @@ def normalize_accelerator(value: str) -> str:
         raise ValueError("accelerator must not be empty")
     aliases = {"return": "enter", "esc": "escape", "spacebar": "space"}
     parts = [aliases.get(part, part) for part in value.split("+")]
-    modifiers = {part for part in parts[:-1]}
+    modifiers = set(parts[:-1])
     key = parts[-1]
     valid_modifiers = {"ctrl", "alt", "shift"}
     unknown = modifiers - valid_modifiers
     if unknown:
         raise ValueError(f"unsupported accelerator modifier(s): {sorted(unknown)}")
-    return "+".join(sorted(modifiers) + [key])
+    return "+".join([*sorted(modifiers), key])
 
 
-def key_to_accelerator(key: int, *, alt: bool = False, ctrl: bool = False, shift: bool = False) -> str:
+def key_to_accelerator(
+    key: int, *, alt: bool = False, ctrl: bool = False, shift: bool = False
+) -> str:
     """Convert a curses key value to an accelerator string."""
     if key in (10, 13, getattr(curses, "KEY_ENTER", -1)):
         name = "enter"
@@ -66,7 +68,7 @@ def key_to_accelerator(key: int, *, alt: bool = False, ctrl: bool = False, shift
         modifiers.append("ctrl")
     if shift:
         modifiers.append("shift")
-    return normalize_accelerator("+".join(modifiers + [name]))
+    return normalize_accelerator("+".join([*modifiers, name]))
 
 
 @dataclass(frozen=True)
@@ -80,7 +82,9 @@ class MenuItem:
 
     def __post_init__(self) -> None:
         if self.accelerator is not None:
-            object.__setattr__(self, "accelerator", normalize_accelerator(self.accelerator))
+            object.__setattr__(
+                self, "accelerator", normalize_accelerator(self.accelerator)
+            )
 
     def activate(self) -> object | None:
         if not self.enabled or self.action is None:
@@ -104,7 +108,8 @@ class Menu:
             previous = seen.get(item.accelerator)
             if previous is not None:
                 raise AcceleratorError(
-                    f"accelerator {item.accelerator!r} is assigned to both {previous!r} and {item.label!r}"
+                    f"accelerator {item.accelerator!r} is assigned to both "
+                    f"{previous!r} and {item.label!r}"
                 )
             seen[item.accelerator] = item.label
 
@@ -117,7 +122,14 @@ class Menu:
         self.selected = index
         return self.items[index].activate()
 
-    def handle_key(self, key: int, *, alt: bool = False, ctrl: bool = False, shift: bool = False) -> object | None:
+    def handle_key(
+        self,
+        key: int,
+        *,
+        alt: bool = False,
+        ctrl: bool = False,
+        shift: bool = False,
+    ) -> object | None:
         """Navigate, activate, or dispatch a menu accelerator."""
         if not self.items:
             return None
@@ -137,7 +149,9 @@ class Menu:
                 return self.activate(index)
         return None
 
-    def handle_mouse(self, event: tuple[int, int, int] | None, *, y: int, x: int = 0) -> object | None:
+    def handle_mouse(
+        self, event: tuple[int, int, int] | None, *, y: int, x: int = 0
+    ) -> object | None:
         """Activate a menu item when its rendered row is primary-clicked."""
         if event is None:
             return None
@@ -146,7 +160,9 @@ class Menu:
             return None
         cursor = x
         for index, item in enumerate(self.items):
-            width = len(item.label) + (len(item.accelerator or "") + 3 if item.accelerator else 1)
+            width = len(item.label) + (
+                len(item.accelerator or "") + 3 if item.accelerator else 1
+            )
             if cursor <= mouse_x < cursor + width:
                 return self.activate(index)
             cursor += width
@@ -160,4 +176,10 @@ class Menu:
         ]
 
 
-__all__ = ["AcceleratorError", "Menu", "MenuItem", "key_to_accelerator", "normalize_accelerator"]
+__all__ = [
+    "AcceleratorError",
+    "Menu",
+    "MenuItem",
+    "key_to_accelerator",
+    "normalize_accelerator",
+]
