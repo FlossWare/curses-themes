@@ -43,10 +43,5 @@ jobs:
         if: runner.os == 'Windows'
         run: pip install windows-curses
 
-      - name: Normalize stale test/example imports
-        shell: bash
-        run: |
-          grep -RIl 'curses_themes' tests examples tools --include='*.py' | xargs -r sed -i 's/curses_themes/curses_tui/g'
-
       - name: Run tests
         run: pytest --tb=short -q
