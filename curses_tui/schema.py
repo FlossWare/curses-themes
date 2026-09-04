@@ -53,6 +53,7 @@ def validate(document: dict, schema: dict | None = None) -> dict:
 def _validate_semantics(document: dict) -> None:
     identifiers: set[str] = set()
     actions: set[str] = set()
+    list_item_ids: set[str] = set()
 
     def identifier(value: object, location: str) -> None:
         if not isinstance(value, str):
@@ -70,7 +71,10 @@ def _validate_semantics(document: dict) -> None:
         action(item.get("action"))
         if item.get("type") == "list":
             for index, child in enumerate(item.get("items", [])):
-                identifier(child.get("id"), f"{location}.items[{index}]")
+                item_location = f"{location}.items[{index}]"
+                identifier(child.get("id"), item_location)
+                if isinstance(child.get("id"), str):
+                    list_item_ids.add(child["id"])
         if item.get("type") == "group":
             for index, child in enumerate(item.get("children", [])):
                 widget(child, f"{location}.children[{index}]")
@@ -95,29 +99,40 @@ def _validate_semantics(document: dict) -> None:
         for child_index, item in enumerate(window.get("content", [])):
             widget(item, f"{location}.content[{child_index}]")
 
-    references = {"menuBar": set(), "initialFocus": set(), "selected": set()}
-    for window in document.get("windows", []):
-        for field in references:
-            value = window.get(field)
-            if value:
-                references[field].add(value)
-    for window in document.get("windows", []):
-        for item in window.get("content", []):
-            if item.get("type") == "list" and item.get("selected"):
-                references["selected"].add(item["selected"])
-
     menu_ids = {m.get("id") for m in document.get("menus", [])}
-    if any(value not in menu_ids for value in references["menuBar"]):
-        missing = sorted(references["menuBar"] - menu_ids)
-        raise SchemaError(f"menuBar references unknown menu id(s): {missing}")
+    menu_refs = {
+        window.get("menuBar")
+        for window in document.get("windows", [])
+        if window.get("menuBar")
+    }
+    missing_menu = {value for value in menu_refs if value not in menu_ids}
+    if missing_menu:
+        raise SchemaError(f"menuBar references unknown menu id(s): {sorted(missing_menu)}")
 
-    widget_ids = identifiers
-    missing_focus = references["initialFocus"] - widget_ids
+    widget_ids = identifiers - list_item_ids
+    focus_refs = {
+        window.get("initialFocus")
+        for window in document.get("windows", [])
+        if window.get("initialFocus")
+    }
+    missing_focus = {value for value in focus_refs if value not in widget_ids}
     if missing_focus:
         raise SchemaError(f"initialFocus references unknown widget id(s): {sorted(missing_focus)}")
-    missing_selection = references["selected"] - widget_ids
-    if missing_selection:
-        raise SchemaError(f"selected references unknown id(s): {sorted(missing_selection)}")
+
+    for window_index, window in enumerate(document.get("windows", [])):
+        for item_index, item in enumerate(window.get("content", [])):
+            if item.get("type") != "list" or not item.get("selected"):
+                continue
+            item_ids = {
+                child.get("id")
+                for child in item.get("items", [])
+                if isinstance(child.get("id"), str)
+            }
+            if item["selected"] not in item_ids:
+                location = f"windows[{window_index}].content[{item_index}].selected"
+                raise SchemaError(
+                    f"{location} references unknown list item id: {item['selected']!r}"
+                )
 
 
 __all__ = ["SCHEMA_URL", "SCHEMA_VERSION", "SchemaError", "load_schema", "validate"]
