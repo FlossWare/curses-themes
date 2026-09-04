@@ -1,0 +1,42 @@
+{
+  "schema": "flossware.tui/1.0",
+  "id": "setup",
+  "title": "Setup",
+  "theme": {"name": "default"},
+  "menus": [
+    {
+      "id": "file",
+      "label": "File",
+      "items": [
+        {"id": "open", "label": "Open", "action": "project.open", "accelerator": "o"},
+        {"id": "separator", "type": "separator"},
+        {"id": "exit", "label": "Exit", "action": "app.exit", "accelerator": "q"}
+      ]
+    }
+  ],
+  "windows": [
+    {
+      "id": "main",
+      "kind": "window",
+      "title": "Setup",
+      "menuBar": "file",
+      "initialFocus": "project",
+      "defaultAction": "project.open",
+      "cancelAction": "app.exit",
+      "layout": {"x": 0, "y": 0, "width": 60, "height": 12, "minWidth": 20, "minHeight": 6},
+      "content": [
+        {"id": "heading", "type": "label", "label": "Project"},
+        {"id": "project", "type": "text-input", "label": "Directory", "value": "/tmp/project"},
+        {"id": "enabled", "type": "checkbox", "label": "Enabled", "value": true, "action": "project.toggle"},
+        {"id": "targets", "type": "list", "label": "Targets", "selected": "linux", "items": [
+          {"id": "linux", "label": "Linux", "value": "linux"},
+          {"id": "windows", "label": "Windows", "value": "windows"}
+        ], "action": "project.target"},
+        {"id": "actions", "type": "group", "label": "Actions", "children": [
+          {"id": "save", "type": "button", "label": "Save", "action": "project.save"},
+          {"id": "rule", "type": "separator"}
+        ]}
+      ]
+    }
+  ]
+}
