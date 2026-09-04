@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Iterable
+from typing import Callable
 
 import curses
 
@@ -28,12 +28,7 @@ class HitRegion(str, Enum):
 
 @dataclass
 class Window:
-    """A lightweight screen-space window managed by :class:`WindowManager`.
-
-    The class owns geometry and interaction state. Rendering remains optional
-    through ``draw_callback`` so applications can keep their own content and
-    domain state.
-    """
+    """A lightweight screen-space window managed by :class:`WindowManager`."""
 
     title: str
     rect: Rect
@@ -105,10 +100,8 @@ class Window:
             return False
         start_x, start_y, start_rect = self._resize_start
         dx, dy = x - start_x, y - start_y
-        left = start_rect.x
-        top = start_rect.y
-        right = start_rect.right
-        bottom = start_rect.bottom
+        left, top = start_rect.x, start_rect.y
+        right, bottom = start_rect.right, start_rect.bottom
         region = self._resize_region
         if region in {HitRegion.LEFT, HitRegion.TOP_LEFT, HitRegion.BOTTOM_LEFT}:
             left += dx
@@ -132,6 +125,9 @@ class Window:
         self._resize_region = HitRegion.NONE
         self._resize_start = None
 
+    def interacting(self) -> bool:
+        return self._drag_offset is not None or self._resize_start is not None
+
     def draw(self, screen: curses.window) -> None:
         if not self.visible:
             return
@@ -145,8 +141,6 @@ class Window:
                 self.draw_callback(win, self)
             win.noutrefresh()
         except curses.error:
-            # A terminal can resize between geometry calculation and drawing.
-            # The manager will clamp on the next resize/event pass.
             return
 
 
@@ -206,22 +200,27 @@ class WindowManager:
         if event is None:
             return False
         x, y, button_state = event
-        window = self.hit_test(x, y)
+        window = self._active if self._active and self._active.interacting() else self.hit_test(x, y)
         if window is None:
             return False
         self.focus(window)
+        if window.interacting():
+            released = bool(button_state & getattr(curses, "BUTTON1_RELEASED", 0))
+            if released:
+                window.end_interaction()
+                return True
+            return window.update_interaction(x, y, self.screen_width, self.screen_height)
         if is_primary_click(button_state):
             return window.begin_interaction(x, y)
         return True
 
     def handle_key(self, key: int) -> bool:
-        """Handle generic movement/resize keys for the focused window.
+        """Move the focused window with arrow keys.
 
-        Ctrl+arrow moves the window. Shift+arrow resizes it when curses reports
-        those modifiers. Plain keys are intentionally left to the application.
+        Applications may reserve modified keys for resizing or other commands.
         """
         window = self._active
-        if window is None:
+        if window is None or not window.movable:
             return False
         keymap = {
             curses.KEY_LEFT: (-1, 0),
@@ -232,10 +231,9 @@ class WindowManager:
         if key not in keymap:
             return False
         dx, dy = keymap[key]
-        window.rect = window.rect.move(
-            window.rect.x + dx,
-            window.rect.y + dy,
-        ).clamp(self.screen_width, self.screen_height)
+        window.rect = window.rect.move(window.rect.x + dx, window.rect.y + dy).clamp(
+            self.screen_width, self.screen_height
+        )
         return True
 
     def resize_screen(self, width: int, height: int) -> None:
