@@ -134,7 +134,8 @@ skip_covered = false
 skip_empty = true
 exclude_lines = [
     "pragma: no cover", "def __repr__", "def __str__", "raise AssertionError",
-    "raise NotImplementedError", "if __name__ == .__main__:", "class .*\\bProtocol\\):", "@(abc\\.)?abstractmethod", "except ImportError:",
+    "raise NotImplementedError", "if __name__ == .__main__:", "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):", "@(abc\\.)?abstractmethod", "except ImportError:",
     "if typing.TYPE_CHECKING:",
 ]
 
