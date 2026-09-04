@@ -59,3 +59,16 @@ def test_declarative_windows_map_to_reusable_manager() -> None:
     assert window.rect.height == 12
     assert window.constraints.min_width == 20
     assert window.constraints.min_height == 6
+
+
+def test_list_selection_must_reference_that_list_item() -> None:
+    document = load_fixture()
+    document["windows"][0]["content"][3]["selected"] = "project"
+    with pytest.raises(SchemaError, match="unknown list item id"):
+        validate(document)
+
+
+def test_list_selection_does_not_require_widget_id_semantics() -> None:
+    document = load_fixture()
+    document["windows"][0]["content"][3]["selected"] = "windows"
+    assert validate(document)["windows"][0]["content"][3]["selected"] == "windows"
