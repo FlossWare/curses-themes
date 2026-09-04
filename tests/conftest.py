@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-"""Shared pytest fixtures for curses-themes tests."""
+"""Shared pytest fixtures for curses-tui tests."""
 
 from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from curses_themes import Theme
+from curses_tui import Theme
 
 
 class MockCurses:
     """Mock curses module for testing."""
 
-    # Color constants
     COLOR_BLACK = 0
     COLOR_RED = 1
     COLOR_GREEN = 2
@@ -20,17 +19,13 @@ class MockCurses:
     COLOR_MAGENTA = 5
     COLOR_CYAN = 6
     COLOR_WHITE = 7
-
-    # Terminal capabilities
     COLORS = 256
     COLOR_PAIRS = 256
-
-    # Attributes
     A_BOLD = 1 << 13
     A_DIM = 1 << 14
 
     def __init__(self):
-        self.color_pairs = {}  # Track init_pair calls
+        self.color_pairs = {}
         self.color_support = True
 
     def has_colors(self):
@@ -58,12 +53,9 @@ class MockCurses:
 def mock_curses(monkeypatch):
     """Mock the curses module for testing."""
     mock = MockCurses()
-
-    # Patch curses module in curses_themes.colors
-    monkeypatch.setattr("curses_themes.colors.curses", mock)
-    monkeypatch.setattr("curses_themes.theme.curses", mock)
-    monkeypatch.setattr("curses_themes.theme3d.curses", mock)
-
+    monkeypatch.setattr("curses_tui.colors.curses", mock)
+    monkeypatch.setattr("curses_tui.theme.curses", mock)
+    monkeypatch.setattr("curses_tui.theme3d.curses", mock)
     return mock
 
 
@@ -112,7 +104,7 @@ def simple_theme():
 @pytest.fixture
 def simple_3d_theme():
     """Create a minimal 3D theme for testing."""
-    from curses_themes import Theme3D
+    from curses_tui import Theme3D
 
     class Simple3DTheme(Theme3D):
         color_map = {
@@ -144,7 +136,7 @@ def simple_3d_theme():
 @pytest.fixture(autouse=True)
 def reset_color_manager():
     """Reset ColorManager state between tests."""
-    from curses_themes.colors import ColorManager
+    from curses_tui.colors import ColorManager
 
     yield
     ColorManager._next_pair = 1
@@ -154,7 +146,7 @@ def reset_color_manager():
 @pytest.fixture(autouse=True)
 def reset_theme_manager():
     """Reset ThemeManager state between tests."""
-    from curses_themes.manager import ThemeManager
+    from curses_tui.manager import ThemeManager
 
     yield
     ThemeManager.reset()

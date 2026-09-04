@@ -26,9 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
       - name: Ruff Check
-        run: ruff check curses_themes/
+        run: ruff check curses_tui/
       - name: Ruff Format Check
-        run: ruff format --check curses_themes/menus.py
+        run: ruff format --check curses_tui/menus.py
 
   type-check:
     continue-on-error: true
@@ -48,7 +48,7 @@ jobs:
           pip install -e ".[dev]"
           pip install mypy
       - name: Run MyPy
-        run: mypy curses_themes/
+        run: mypy curses_tui/
 
   security:
     name: Security Scan
@@ -67,8 +67,8 @@ jobs:
           pip install bandit[toml] safety
       - name: Run Bandit
         run: |
-          bandit -r curses_themes/ -s B405,B314,B110 -f json -o bandit-report.json || true
-          bandit -r curses_themes/ -s B405,B314,B110 -f screen
+          bandit -r curses_tui/ -s B405,B314,B110 -f json -o bandit-report.json || true
+          bandit -r curses_tui/ -s B405,B314,B110 -f screen
       - name: Run Safety
         run: |
           safety check --json || true
@@ -99,20 +99,20 @@ jobs:
       - name: Cyclomatic Complexity
         run: |
           echo "=== Cyclomatic Complexity ===" | tee quality-report.txt
-          radon cc curses_themes/ -a -s | tee -a quality-report.txt
+          radon cc curses_tui/ -a -s | tee -a quality-report.txt
       - name: Maintainability Index
         run: |
           echo "" | tee -a quality-report.txt
           echo "=== Maintainability Index ===" | tee -a quality-report.txt
-          radon mi curses_themes/ -s | tee -a quality-report.txt
+          radon mi curses_tui/ -s | tee -a quality-report.txt
       - name: Raw Metrics
         run: |
           echo "" | tee -a quality-report.txt
           echo "=== Raw Metrics ===" | tee -a quality-report.txt
-          radon raw curses_themes/ -s | tee -a quality-report.txt
+          radon raw curses_tui/ -s | tee -a quality-report.txt
       - name: Check Complexity Thresholds
         continue-on-error: true
-        run: xenon --max-average B --max-modules B --max-absolute B curses_themes/
+        run: xenon --max-average B --max-modules B --max-absolute B curses_tui/
       - name: Upload quality report
         uses: actions/upload-artifact@v4
         if: always()

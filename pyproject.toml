@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "curses-themes"
+name = "curses-tui"
 version = "0.14"
-description = "Lightweight theme support for Python curses applications"
+description = "Lightweight terminal UI and theme support for Python curses applications"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "FlossWare", email = "scot.floess@gmail.com"}]
@@ -43,16 +43,16 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/FlossWare/curses-themes"
-Repository = "https://github.com/FlossWare/curses-themes"
-Documentation = "https://github.com/FlossWare/curses-themes/blob/main/README.md"
-"Bug Tracker" = "https://github.com/FlossWare/curses-themes/issues"
+Homepage = "https://github.com/FlossWare/curses-tui"
+Repository = "https://github.com/FlossWare/curses-tui"
+Documentation = "https://github.com/FlossWare/curses-tui/blob/main/README.md"
+"Bug Tracker" = "https://github.com/FlossWare/curses-tui/issues"
 
 [tool.setuptools]
-packages = ["curses_themes", "curses_themes.themes"]
+packages = ["curses_tui", "curses_tui.themes"]
 
 [tool.setuptools.package-data]
-curses_themes = ["py.typed"]
+curses_tui = ["py.typed"]
 
 [tool.ruff]
 line-length = 88
@@ -74,7 +74,7 @@ ignore = [
 [tool.black]
 line-length = 88
 target-version = ["py39", "py310", "py311", "py312"]
-include = '\.pyi?$'
+include = '\\.pyi?$'
 
 [tool.isort]
 profile = "black"
@@ -84,7 +84,7 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
-known_first_party = ["curses_themes"]
+known_first_party = ["curses_tui"]
 skip_glob = ["*/htmlcov/*", "*/.venv/*", "*/build/*", "*/dist/*"]
 
 [tool.mypy]
@@ -120,7 +120,7 @@ skips = ["B101", "B405", "B314", "B110"]
 skips = ["*/test_*.py", "tests/*"]
 
 [tool.coverage.run]
-source = ["curses_themes"]
+source = ["curses_tui"]
 omit = ["*/tests/*", "*/test_*", "*/examples/*", "*/__pycache__/*", "*/site-packages/*", "*/.venv/*", "*/venv/*"]
 branch = true
 parallel = true
@@ -151,7 +151,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = ["--verbose", "--strict-markers", "--strict-config", "--cov=curses_themes", "--cov-report=xml", "--cov-report=term-missing:skip-covered", "--cov-report=html", "--cov-branch", "--cov-fail-under=82", "--maxfail=3"]
+addopts = ["--verbose", "--strict-markers", "--strict-config", "--cov=curses_tui", "--cov-report=xml", "--cov-report=term-missing:skip-covered", "--cov-report=html", "--cov-branch", "--cov-fail-under=82", "--maxfail=3"]
 markers = ["slow: marks tests as slow (deselect with -m not slow)", "integration: marks tests as integration tests", "unit: marks tests as unit tests"]
 filterwarnings = ["error", "ignore::DeprecationWarning", "ignore::PendingDeprecationWarning"]
 timeout = 300
